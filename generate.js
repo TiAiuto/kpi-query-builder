@@ -307,7 +307,7 @@ function resolveQuery(resolvedQueries, name) {
   for (let rootViewDefinition of rootViews) {
     if (rootViewDefinition.name === name) {
       return {
-        name: rootViewDefinition.name, // なくてもいいっちゃいい
+        name,
         resolvedSource: rootViewDefinition.source,
         resolvedColumns: rootViewDefinition.columns,
         sql: buildRootViewQuery(resolvedQueries, rootViewDefinition)
@@ -319,7 +319,9 @@ function resolveQuery(resolvedQueries, name) {
       const dependentQuery = resolveQuery(resolvedQueries, viewDefinition.source);
       console.log(buildViewQuery(resolvedQueries, viewDefinition, dependentQuery));
       return {
+        name,
         resolvedSource: dependentQuery.source,
+        resolvedColumns: viewDefinition.columns, // NOTICE: viewのcolumnsでoriginalName, alphabetNameを直で指定しているので解決不要
         sql: buildViewQuery(resolvedQueries, viewDefinition, dependentQuery)
       };
     }
