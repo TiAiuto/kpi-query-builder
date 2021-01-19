@@ -306,27 +306,39 @@ function resolveQuery(resolvedQueries, name) {
   }
   for (let rootViewDefinition of rootViews) {
     if (rootViewDefinition.name === name) {
-      return {
+      const result = {
         name,
         resolvedSource: rootViewDefinition.source,
         resolvedColumns: rootViewDefinition.columns,
         sql: buildRootViewQuery(resolvedQueries, rootViewDefinition)
       };
+      resolvedQueries.push(result);
+      return result;
     }
   }
   for (let viewDefinition of views) {
     if (viewDefinition.name === name) {
       const dependentQuery = resolveQuery(resolvedQueries, viewDefinition.source);
-      console.log(buildViewQuery(resolvedQueries, viewDefinition, dependentQuery));
-      return {
+      const result = {
         name,
-        resolvedSource: dependentQuery.source,
+        resolvedSource: viewDefinition.alphabetName,
         resolvedColumns: viewDefinition.columns, // NOTICE: viewのcolumnsでoriginalName, alphabetNameを直で指定しているので解決不要
         sql: buildViewQuery(resolvedQueries, viewDefinition, dependentQuery)
       };
+      resolvedQueries.push(result);
+      return result;
     }
   }
   throw new Error(`${options.name}は未定義です`);
+}
+
+function findResolvedColumnName(resolvedView, name) {
+  for (let resolvedColumn of resolvedView.resolvedColumns) {
+    if (resolvedColumn.name === name) {
+      return resolvedColumn.alphabetName;
+    }
+  }
+  throw new Error(`${name}は未定義です`);
 }
 
 function main() {
@@ -336,14 +348,20 @@ function main() {
     const resolvedView = resolveQuery(resolvedQueries, resultColumn.source);
 
     // いったんCOUNT, transformありの場合だけ実装する
-    console.log(`SELECT COUNT(${resultColumn.value}) AS ${resultColumn.alphabetName} 
+    resolvedQueries.push({
+      name: resultColumn.name,
+      resolvedSource: resultColumn.name,
+      resolvedColumns: [],
+      sql: `SELECT COUNT(${findResolvedColumnName(resolvedView, resultColumn.value)}) AS ${resultColumn.alphabetName} 
       FROM (
-      SELECT FORMAT_TIMESTAMP('%Y-%m-%d', ${resultColumn.groupBy[0].transform.columnName}, 'Asia/Tokyo') AS auto_generated_unit_name, 
-      ${resultColumn.value}
-      FROM ${resultColumn.source}
+      SELECT FORMAT_TIMESTAMP('%Y-%m-%d', ${findResolvedColumnName(resolvedView, resultColumn.groupBy[0].transform.columnName)}, 'Asia/Tokyo') AS auto_generated_unit_name, 
+      ${findResolvedColumnName(resolvedView, resultColumn.value)}
+      FROM ${resolvedView.resolvedSource}
       )
-      GROUP BY auto_generated_unit_name
-      `);
+      GROUP BY auto_generated_unit_name`
+    });
+
+    console.log(resolvedQueries);
   });
 }
 
