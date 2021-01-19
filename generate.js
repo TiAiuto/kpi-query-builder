@@ -143,6 +143,7 @@ const filters = [
 const rootViews = [
   {
     name: 'ユーザコード付きPLUS契約',
+    alphabetName: 'plus_contracts_with_user_code',
     source: '`h-navi.lo_production.plus_contracts` plus_contracts',
     columns: [
       {
@@ -181,6 +182,7 @@ const rootViews = [
   },
   {
     name: 'PLUSユーザコード付きアクセスログ',
+    alphabetName: 'plus_users_logs_with_user_code',
     source: '`h-navi.lo_applog_transform.action_rack_plus_*` rack_plus',
     dateSuffixEnabled: true,
     columns: [
@@ -214,6 +216,7 @@ const rootViews = [
   },
   {
     name: '個別ケース相談一次相談',
+    alphabetName: 'plus_counseling_first_applictions',
     source: '`h-navi.lo_plusmine_production.counseling_case_application_tickets` application_tickets',
     columns: [
       {
@@ -233,6 +236,7 @@ const rootViews = [
 const views = [
   {
     name: 'PLUS契約者アクセスログ',
+    alphabetName: 'plus_contracted_users_logs',
     source: 'PLUSユーザコード付きアクセスログ',
     columns: [
       {
