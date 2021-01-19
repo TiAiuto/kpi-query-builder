@@ -131,8 +131,10 @@ const filters = [
         type: 'IN',
         columnName: 'ユーザコード',
         valueSetType: 'selectColumn',
-        valueSetSource: 'ユーザコード付きPLUS契約',
-        valueSetSourceColumnName: 'ユーザコード'
+        selectColumn: {
+          source: 'ユーザコード付きPLUS契約',
+          columnName: 'ユーザコード'
+        }
       }
     ]
   }
