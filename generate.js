@@ -354,6 +354,27 @@ function findResolvedColumnName(resolvedView, name) {
 function main() {
   const resolvedQueries = [];
 
+  // resultRowsが複数ある場合の挙動は要検討、行が増えるがどう増やすか？
+  resultRows.forEach((resultRow) => {
+    if (resultRow.pattern.name === '日付') {
+      resolvedQueries.push({
+        name: '列日付基準集合生成クエリ',
+        resolvedSource: 'row_base_unit_value',
+        resolvedColumns: [
+          {
+            name: '集計基準値',
+            alphabetName: 'unit_value',
+            originalName: 'unit_value'
+          }
+        ],
+        sql: `SELECT unit_value FROM UNNEST(GENERATE_DATE_ARRAY(PARSE_DATE("%Y%m%d", "${targetDateRange[0]}"), 
+          PARSE_DATE("%Y%m%d", "${targetDateRange[1]}"))) AS unit_value`
+      });
+    } else {
+      throw new Error(`${resultRow.pattern.name} は未実装`);
+    }
+  });
+
   resultColumns.forEach((resultColumn) => {
     const resolvedView = resolveQuery(resolvedQueries, resultColumn.source);
 
@@ -366,11 +387,12 @@ function main() {
     resolvedQueries.push({
       name: resultColumn.name,
       resolvedSource: resultColumn.alphabetName,
-      resolvedColumns: [{
-        name: resultColumn.name,
-        alphabetName: resultColumn.alphabetName,
-        originalName: resultColumn.alphabetName
-      },
+      resolvedColumns: [
+        {
+          name: resultColumn.name,
+          alphabetName: resultColumn.alphabetName,
+          originalName: resultColumn.alphabetName
+        },
         {
           name: '集計単位（自動生成）',
           alphabetName: 'auto_generated_unit_name',
