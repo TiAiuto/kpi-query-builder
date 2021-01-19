@@ -353,6 +353,8 @@ function findResolvedColumnName(resolvedView, name) {
 
 function main() {
   const resolvedQueries = [];
+  const resultColumnSelect = [];
+  const resultColumnJoins = [];
 
   // resultRowsが複数ある場合の挙動は要検討、行が増えるがどう増やすか？
   resultRows.forEach((resultRow) => {
@@ -367,7 +369,7 @@ function main() {
             originalName: 'unit_value'
           }
         ],
-        sql: `SELECT unit_value FROM UNNEST(GENERATE_DATE_ARRAY(PARSE_DATE("%Y%m%d", "${targetDateRange[0]}"), 
+        sql: `SELECT FORMAT_DATE("%Y-%m-%d", unit_value) as unit_value FROM UNNEST(GENERATE_DATE_ARRAY(PARSE_DATE("%Y%m%d", "${targetDateRange[0]}"), 
           PARSE_DATE("%Y%m%d", "${targetDateRange[1]}"))) AS unit_value`
       });
     } else {
@@ -390,8 +392,8 @@ function main() {
       resolvedColumns: [
         {
           name: resultColumn.name,
-          alphabetName: resultColumn.alphabetName,
-          originalName: resultColumn.alphabetName
+          alphabetName: resultColumn.alphabetName + '_value',
+          originalName: resultColumn.alphabetName + '_value'
         },
         {
           name: '集計単位（自動生成）',
@@ -401,7 +403,7 @@ function main() {
       ],
       sql: `SELECT 
       auto_generated_unit_name, 
-      COUNT(${findResolvedColumnName(resolvedView, resultColumn.value)}) AS ${resultColumn.alphabetName} 
+      COUNT(${findResolvedColumnName(resolvedView, resultColumn.value)}) AS ${resultColumn.alphabetName}_value 
       FROM (
       SELECT FORMAT_TIMESTAMP('%Y-%m-%d', ${findResolvedColumnName(resolvedView, resultColumn.groupBy[0].transform.columnName)}, 'Asia/Tokyo') AS auto_generated_unit_name, 
       ${findResolvedColumnName(resolvedView, resultColumn.value)}
@@ -411,10 +413,14 @@ function main() {
       GROUP BY auto_generated_unit_name
       ORDER BY auto_generated_unit_name`
     });
+
+    resultColumnSelect.push(` ${resultColumn.alphabetName}.${resultColumn.alphabetName}_value AS ${resultColumn.alphabetName} `);
+    resultColumnJoins.push(`LEFT JOIN ${resultColumn.alphabetName} ON unit_value = ${resultColumn.alphabetName}.auto_generated_unit_name`);
   });
 
   const withQueries = resolvedQueries.map((resolvedQuery) => `${resolvedQuery.resolvedSource} AS (${resolvedQuery.sql})`);
   console.log('WITH ' + withQueries.join(', \n'));
+  console.log(` SELECT unit_value, ${resultColumnSelect.join(', ')} \n FROM row_base_unit_value ${resultColumnJoins.join('\n')} ORDER BY unit_value `);
 }
 
 main();
