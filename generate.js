@@ -6,7 +6,7 @@
 // ルーティンの場合と初期オンボーディングの場合
 
 // これは引数で渡せるようにしたほうがよさそう
-const targetDateRange = ['2020-12-01', '2020-12-31'];
+const targetDateRange = ['20201201', '20201231'];
 
 const resultColumns = [
   {
@@ -114,7 +114,7 @@ const filters = [
     conditions: [
       {
         type: 'raw',
-        raw: 'REGEXP_CONTAINS(path, \'^/plus/counseling/\\w+?$\')'
+        raw: 'REGEXP_CONTAINS(path, \'^/plus/counseling/\\\\w+?$\')'
       }
     ]
   },
@@ -270,7 +270,7 @@ function resolveCondition(resolvedQueries, condition) {
   if (condition.type === 'raw') {
     return condition.raw;
   } else if (condition.type === 'in') {
-    return ' 1 '; // TODO: そのうち実装する
+    return ' TRUE '; // TODO: そのうち実装する
   }
 }
 
@@ -309,7 +309,6 @@ function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
 }
 
 function resolveQuery(resolvedQueries, name) {
-  console.log(name);
   for (let resolvedQuery of resolvedQueries) {
     if (resolvedQuery.name === name) {
       return resolvedQuery; // 既に解決済みなら前回の値を返す
@@ -368,20 +367,22 @@ function main() {
       name: resultColumn.name,
       resolvedSource: resultColumn.alphabetName,
       resolvedColumns: [],
-      sql: `SELECT COUNT(${findResolvedColumnName(resolvedView, resultColumn.value)}) AS ${resultColumn.alphabetName} 
+      sql: `SELECT 
+      auto_generated_unit_name, 
+      COUNT(${findResolvedColumnName(resolvedView, resultColumn.value)}) AS ${resultColumn.alphabetName} 
       FROM (
       SELECT FORMAT_TIMESTAMP('%Y-%m-%d', ${findResolvedColumnName(resolvedView, resultColumn.groupBy[0].transform.columnName)}, 'Asia/Tokyo') AS auto_generated_unit_name, 
       ${findResolvedColumnName(resolvedView, resultColumn.value)}
       FROM ${resolvedView.resolvedSource}
       WHERE ${filterConditions.length ? filterConditions.join(' AND ') : 'TRUE'}
       )
-      GROUP BY auto_generated_unit_name`
+      GROUP BY auto_generated_unit_name
+      ORDER BY auto_generated_unit_name`
     });
-
-    console.log(resolvedQueries);
-    const withQueries = resolvedQueries.map((resolvedQuery) => `${resolvedQuery.resolvedSource} AS (${resolvedQuery.sql})`);
-    console.log(withQueries.join(', \n'));
   });
+
+  const withQueries = resolvedQueries.map((resolvedQuery) => `${resolvedQuery.resolvedSource} AS (${resolvedQuery.sql})`);
+  console.log('WITH ' + withQueries.join(', \n'));
 }
 
 main();
