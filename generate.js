@@ -288,7 +288,7 @@ function buildRootViewQuery(resolvedQueries, rootViewDefinition) {
   let filterConditions = [];
   (rootViewDefinition.filters || []).forEach((filter) => filterConditions = [...filterConditions, ...resolveFilter(resolvedQueries, filter)]);
   const conditionsAndFilters = [...conditions, ...filterConditions].join(' AND ');
-  return `SELECT ${columns} FROM ${rootViewDefinition.source} ${joins} WHERE ${conditionsAndFilters.length ? conditionsAndFilters : 1}`;
+  return `SELECT ${columns} FROM ${rootViewDefinition.source} ${joins} WHERE ${conditionsAndFilters.length ? conditionsAndFilters : 'TRUE'} `;
 }
 
 function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
@@ -299,10 +299,11 @@ function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
   let filterConditions = [];
   (viewDefinition.filters || []).forEach((filter) => filterConditions = [...filterConditions, ...resolveFilter(resolvedQueries, filter)]);
   const conditionsAndFilters = [...conditions, ...filterConditions].join(' AND ');
-  return `SELECT ${columns} FROM ${dependentQuery.resolvedSource} WHERE ${conditionsAndFilters.length ? conditionsAndFilters : 1};`;
+  return `SELECT ${columns} FROM ${dependentQuery.resolvedSource} WHERE ${conditionsAndFilters.length ? conditionsAndFilters : 'TRUE'} `;
 }
 
 function resolveQuery(resolvedQueries, name) {
+  console.log(name);
   for (let resolvedQuery of resolvedQueries) {
     if (resolvedQuery.name === name) {
       return resolvedQuery; // 既に解決済みなら前回の値を返す
@@ -312,7 +313,7 @@ function resolveQuery(resolvedQueries, name) {
     if (rootViewDefinition.name === name) {
       const result = {
         name,
-        resolvedSource: rootViewDefinition.source,
+        resolvedSource: rootViewDefinition.alphabetName,
         resolvedColumns: rootViewDefinition.columns,
         sql: buildRootViewQuery(resolvedQueries, rootViewDefinition)
       };
@@ -354,7 +355,7 @@ function main() {
     // いったんCOUNT, transformありの場合だけ実装する
     resolvedQueries.push({
       name: resultColumn.name,
-      resolvedSource: resultColumn.name,
+      resolvedSource: resultColumn.alphabetName,
       resolvedColumns: [],
       sql: `SELECT COUNT(${findResolvedColumnName(resolvedView, resultColumn.value)}) AS ${resultColumn.alphabetName} 
       FROM (
@@ -366,6 +367,8 @@ function main() {
     });
 
     console.log(resolvedQueries);
+    const withQueries = resolvedQueries.map((resolvedQuery) => `${resolvedQuery.resolvedSource} AS (${resolvedQuery.sql})`);
+    console.log(withQueries.join(', \n'));
   });
 }
 
