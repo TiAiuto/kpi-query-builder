@@ -358,6 +358,11 @@ function main() {
   resultColumns.forEach((resultColumn) => {
     const resolvedView = resolveQuery(resolvedQueries, resultColumn.source);
 
+    let filterConditions = [];
+    resultColumn.filters.forEach((filter) => {
+      filterConditions = [...filterConditions, resolveFilter(resolvedQueries, filter)];
+    });
+
     // いったんCOUNT, transformありの場合だけ実装する
     resolvedQueries.push({
       name: resultColumn.name,
@@ -368,6 +373,7 @@ function main() {
       SELECT FORMAT_TIMESTAMP('%Y-%m-%d', ${findResolvedColumnName(resolvedView, resultColumn.groupBy[0].transform.columnName)}, 'Asia/Tokyo') AS auto_generated_unit_name, 
       ${findResolvedColumnName(resolvedView, resultColumn.value)}
       FROM ${resolvedView.resolvedSource}
+      WHERE ${filterConditions.length ? filterConditions.join(' AND ') : 'TRUE'}
       )
       GROUP BY auto_generated_unit_name`
     });
