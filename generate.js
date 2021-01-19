@@ -366,7 +366,17 @@ function main() {
     resolvedQueries.push({
       name: resultColumn.name,
       resolvedSource: resultColumn.alphabetName,
-      resolvedColumns: [],
+      resolvedColumns: [{
+        name: resultColumn.name,
+        alphabetName: resultColumn.alphabetName,
+        originalName: resultColumn.alphabetName
+      },
+        {
+          name: '集計単位（自動生成）',
+          alphabetName: 'auto_generated_unit_name',
+          originalName: 'auto_generated_unit_name'
+        }
+      ],
       sql: `SELECT 
       auto_generated_unit_name, 
       COUNT(${findResolvedColumnName(resolvedView, resultColumn.value)}) AS ${resultColumn.alphabetName} 
