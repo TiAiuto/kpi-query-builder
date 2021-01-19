@@ -82,44 +82,57 @@ const filters = [
   {
     name: '成功リクエスト',
     conditions: [
-      {raw: 'status_code = \'200\''}
+      {
+        type: 'raw',
+        raw: 'status_code = \'200\''
+      }
     ]
   },
   {
     name: '契約者リクエスト',
     conditions: [
-      {raw: 'status_code = \'200\''}
+      {
+        type: 'raw',
+        raw: 'status_code = \'200\''
+      }
     ]
   },
   {
     name: 'ケース相談TOP表示',
     conditions: [
-      {raw: 'REGEXP_CONTAINS(path, \'^/plus/counseling$\')'}
+      {
+        type: 'raw',
+        raw: 'REGEXP_CONTAINS(path, \'^/plus/counseling$\')'
+      }
     ]
   },
   {
     name: 'ケース相談詳細ページ表示',
     conditions: [
-      {raw: 'REGEXP_CONTAINS(path, \'^/plus/counseling/\\w+?$\')'}
+      {
+        type: 'raw',
+        raw: 'REGEXP_CONTAINS(path, \'^/plus/counseling/\\w+?$\')'
+      }
     ]
   },
   {
     name: '個別ケース相談申し込み済み一次相談',
     conditions: [
-      {raw: 'application_datetime IS NOT NULL'}
+      {
+        type: 'raw',
+        raw: 'application_datetime IS NOT NULL'
+      }
     ]
   },
   {
     name: 'PLUS契約ユーザ（解約済み含む）',
     conditions: [
       {
-        columnName: 'ユーザコード',
         type: 'IN',
-        options: {
-          valueSetType: 'selectColumn',
-          source: 'ユーザコード付きPLUS契約',
-          sourceColumnName: 'ユーザコード'
-        },
+        columnName: 'ユーザコード',
+        valueSetType: 'selectColumn',
+        valueSetSource: 'ユーザコード付きPLUS契約',
+        valueSetSourceColumnName: 'ユーザコード'
       }
     ]
   }
