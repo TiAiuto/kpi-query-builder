@@ -219,13 +219,19 @@ const views = [
     source: 'PLUSユーザコード付きアクセスログ',
     extendedColumns: [
       {
-        name: 'ユーザコード'
+        name: 'ユーザコード',
+        alphabetName: 'user_code',
+        originalName: 'user_code'
       },
       {
-        name: 'path'
+        name: 'path',
+        alphabetName: 'path',
+        originalName: 'path'
       },
       {
-        name: 'アクセス日時'
+        name: 'アクセス日時',
+        alphabetName: 'time',
+        originalName: 'time'
       }
     ],
     filters: [
