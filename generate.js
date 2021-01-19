@@ -168,6 +168,7 @@ const rootViews = [
     ],
     conditions: [
       {
+        type: 'raw',
         raw: 'plus_contracts.usage_start_date IS NOT NULL'
       }
     ],
@@ -233,7 +234,7 @@ const views = [
   {
     name: 'PLUS契約者アクセスログ',
     source: 'PLUSユーザコード付きアクセスログ',
-    extendedColumns: [
+    columns: [
       {
         name: 'ユーザコード',
         alphabetName: 'user_code',
@@ -258,30 +259,43 @@ const views = [
   },
 ];
 
+function resolveCondition(resolvedQueries, condition) {
+  if (condition.type === 'raw') {
+    return condition.raw;
+  } else if (condition.type === 'in') {
+    return ' 1 '; // TODO: そのうち実装する
+  }
+}
+
 function resolveFilter(resolvedQueries, filter) {
   const targetFilterDefinition = filters.find((filterDefinition) => filterDefinition.name === filter.name);
   if (!targetFilterDefinition) {
     throw new Error(`${filter.name}は未定義です`);
   }
-  return targetFilterDefinition.conditions.map((filterCondition) => {
-    if (filterCondition.type === 'raw') {
-      return filterCondition.raw;
-    } else if (filterCondition.type === 'in') {
-      return ' 1 '; // TODO: そのうち実装する
-    }
-  });
+  return targetFilterDefinition.conditions.map((condition) => resolveCondition(resolvedQueries, condition));
 }
 
-function buildRootQuery(resolvedQueries, rootViewDefinition) {
+function buildRootViewQuery(resolvedQueries, rootViewDefinition) {
   const columns = rootViewDefinition.columns.map((column) => `${column.originalName} AS ${column.alphabetName} `)
     .join(', ');
   const joins = (rootViewDefinition.joins || []).map((join) => ` JOIN ${join.source} ON ${join.on} `)
     .join('\n');
-  const conditions = (rootViewDefinition.conditions || []).map((condition) => `${condition.raw} `);
+  const conditions = (rootViewDefinition.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition));
   let filterConditions = [];
   (rootViewDefinition.filters || []).forEach((filter) => filterConditions = [...filterConditions, ...resolveFilter(resolvedQueries, filter)]);
   const conditionsAndFilters = [...conditions, ...filterConditions].join(' AND ');
   return `SELECT ${columns} FROM ${rootViewDefinition.source} ${joins} WHERE ${conditionsAndFilters.length ? conditionsAndFilters : 1}`;
+}
+
+function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
+  // viewはjoinsは未実装
+  const columns = viewDefinition.columns.map((column) => `${column.originalName} AS ${column.alphabetName} `)
+    .join(', ');
+  const conditions = (viewDefinition.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition));
+  let filterConditions = [];
+  (viewDefinition.filters || []).forEach((filter) => filterConditions = [...filterConditions, ...resolveFilter(resolvedQueries, filter)]);
+  const conditionsAndFilters = [...conditions, ...filterConditions].join(' AND ');
+  return `SELECT ${columns} FROM ${dependentQuery.resolvedSource} WHERE ${conditionsAndFilters.length ? conditionsAndFilters : 1};`;
 }
 
 function resolveQuery(resolvedQueries, name) {
@@ -295,16 +309,19 @@ function resolveQuery(resolvedQueries, name) {
       return {
         name: rootViewDefinition.name, // なくてもいいっちゃいい
         resolvedSource: rootViewDefinition.source,
-        resolvedColumns: [],
-        sql: buildRootQuery(resolvedQueries, rootViewDefinition)
+        resolvedColumns: rootViewDefinition.columns,
+        sql: buildRootViewQuery(resolvedQueries, rootViewDefinition)
       };
     }
   }
   for (let viewDefinition of views) {
     if (viewDefinition.name === name) {
       const dependentQuery = resolveQuery(resolvedQueries, viewDefinition.source);
-      console.log(dependentQuery);
-      return {};
+      console.log(buildViewQuery(resolvedQueries, viewDefinition, dependentQuery));
+      return {
+        resolvedSource: dependentQuery.source,
+        sql: buildViewQuery(resolvedQueries, viewDefinition, dependentQuery)
+      };
     }
   }
   throw new Error(`${options.name}は未定義です`);
@@ -315,8 +332,6 @@ function main() {
 
   resultColumns.forEach((resultColumn) => {
     const resolvedView = resolveQuery(resolvedQueries, resultColumn.source);
-
-    console.log(resolvedView);
 
     // いったんCOUNT, transformありの場合だけ実装する
     console.log(`SELECT COUNT(${resultColumn.value}) AS ${resultColumn.alphabetName} 
