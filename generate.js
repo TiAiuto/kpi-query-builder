@@ -128,7 +128,7 @@ const filters = [
     name: 'PLUS契約ユーザ（解約済み含む）',
     conditions: [
       {
-        type: 'IN',
+        type: 'in',
         columnName: 'ユーザコード',
         valueSetType: 'selectColumn',
         selectColumn: {
@@ -258,14 +258,29 @@ const views = [
   },
 ];
 
-function buildRootQuery(rootViewDefinition) {
+function resolveFilter(resolvedQueries, filter) {
+  const targetFilterDefinition = filters.find((filterDefinition) => filterDefinition.name === filter.name);
+  if (!targetFilterDefinition) {
+    throw new Error(`${filter.name}は未定義です`);
+  }
+  return targetFilterDefinition.conditions.map((filterCondition) => {
+    if (filterCondition.type === 'raw') {
+      return filterCondition.raw;
+    } else if (filterCondition.type === 'in') {
+      return ' 1 '; // TODO: そのうち実装する
+    }
+  });
+}
+
+function buildRootQuery(resolvedQueries, rootViewDefinition) {
   const columns = rootViewDefinition.columns.map((column) => `${column.originalName} AS ${column.alphabetName} `)
     .join(', ');
   const joins = (rootViewDefinition.joins || []).map((join) => ` JOIN ${join.source} ON ${join.on} `)
     .join('\n');
   const conditions = (rootViewDefinition.conditions || []).map((condition) => `${condition.raw} `);
-  const filters = '';
-  const conditionsAndFilters = [...conditions, ...filters].join(' AND ');
+  let filterConditions = [];
+  (rootViewDefinition.filters || []).forEach((filter) => filterConditions = [...filterConditions, ...resolveFilter(resolvedQueries, filter)]);
+  const conditionsAndFilters = [...conditions, ...filterConditions].join(' AND ');
   return `SELECT ${columns} FROM ${rootViewDefinition.source} ${joins} WHERE ${conditionsAndFilters.length ? conditionsAndFilters : 1}`;
 }
 
@@ -281,7 +296,7 @@ function resolveQuery(resolvedQueries, name) {
         name: rootViewDefinition.name, // なくてもいいっちゃいい
         resolvedSource: rootViewDefinition.source,
         resolvedColumns: [],
-        sql: buildRootQuery(rootViewDefinition)
+        sql: buildRootQuery(resolvedQueries, rootViewDefinition)
       };
     }
   }
