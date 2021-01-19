@@ -113,12 +113,13 @@ const filters = [
     name: 'PLUS契約ユーザ（解約済み含む）',
     conditions: [
       {
-        type: 'IN',
         columnName: 'ユーザコード',
-        selectColumn: {
+        type: 'IN',
+        options: {
+          valueSetType: 'selectColumn',
           source: 'ユーザコード付きPLUS契約',
-          columnName: 'ユーザコード'
-        }
+          sourceColumnName: 'ユーザコード'
+        },
       }
     ]
   }
@@ -242,6 +243,17 @@ const views = [
   },
 ];
 
+function buildRootQuery(rootViewDefinition) {
+  const columns = rootViewDefinition.columns.map((column) => `${column.originalName} AS ${column.alphabetName} `)
+    .join(', ');
+  const joins = (rootViewDefinition.joins || []).map((join) => ` JOIN ${join.source} ON ${join.on} `)
+    .join('\n');
+  const conditions = (rootViewDefinition.conditions || []).map((condition) => `${condition.raw} `);
+  const filters = '';
+  const conditionsAndFilters = [...conditions, ...filters].join(' AND ');
+  return `SELECT ${columns} FROM ${rootViewDefinition.source} ${joins} WHERE ${conditionsAndFilters.length ? conditionsAndFilters : 1}`;
+}
+
 function resolveQuery(resolvedQueries, name) {
   for (let resolvedQuery of resolvedQueries) {
     if (resolvedQuery.name === name) {
@@ -251,14 +263,17 @@ function resolveQuery(resolvedQueries, name) {
   for (let rootViewDefinition of rootViews) {
     if (rootViewDefinition.name === name) {
       return {
-        name: rootViewDefinition.name,
+        name: rootViewDefinition.name, // なくてもいいっちゃいい
         resolvedSource: rootViewDefinition.source,
-        resolvedColumns: []
+        resolvedColumns: [],
+        sql: buildRootQuery(rootViewDefinition)
       };
     }
   }
   for (let viewDefinition of views) {
     if (viewDefinition.name === name) {
+      const dependentQuery = resolveQuery(resolvedQueries, viewDefinition.source);
+      console.log(dependentQuery);
       return {};
     }
   }
