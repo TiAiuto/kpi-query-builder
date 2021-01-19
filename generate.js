@@ -5,6 +5,9 @@
 // PLUSを契約していたユーザのみ
 // ルーティンの場合と初期オンボーディングの場合
 
+// これは引数で渡せるようにしたほうがよさそう
+const targetDateRange = ['2020-12-01', '2020-12-31'];
+
 const resultColumns = [
   {
     name: 'ケース相談相談TOP表示数',
@@ -287,8 +290,11 @@ function buildRootViewQuery(resolvedQueries, rootViewDefinition) {
   const conditions = (rootViewDefinition.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition));
   let filterConditions = [];
   (rootViewDefinition.filters || []).forEach((filter) => filterConditions = [...filterConditions, ...resolveFilter(resolvedQueries, filter)]);
-  const conditionsAndFilters = [...conditions, ...filterConditions].join(' AND ');
-  return `SELECT ${columns} FROM ${rootViewDefinition.source} ${joins} WHERE ${conditionsAndFilters.length ? conditionsAndFilters : 'TRUE'} `;
+  const conditionsAndFilters = [...conditions, ...filterConditions];
+  if (rootViewDefinition.dateSuffixEnabled) {
+    conditionsAndFilters.push(` _TABLE_SUFFIX BETWEEN '${targetDateRange[0]}' AND '${targetDateRange[1]}' `);
+  }
+  return `SELECT ${columns} \n FROM ${rootViewDefinition.source} \n ${joins} \n WHERE ${conditionsAndFilters.length ? conditionsAndFilters.join(' AND ') : 'TRUE'} `;
 }
 
 function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
@@ -298,8 +304,8 @@ function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
   const conditions = (viewDefinition.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition));
   let filterConditions = [];
   (viewDefinition.filters || []).forEach((filter) => filterConditions = [...filterConditions, ...resolveFilter(resolvedQueries, filter)]);
-  const conditionsAndFilters = [...conditions, ...filterConditions].join(' AND ');
-  return `SELECT ${columns} FROM ${dependentQuery.resolvedSource} WHERE ${conditionsAndFilters.length ? conditionsAndFilters : 'TRUE'} `;
+  const conditionsAndFilters = [...conditions, ...filterConditions];
+  return `SELECT ${columns} \n FROM ${dependentQuery.resolvedSource} \n WHERE ${conditionsAndFilters.length ? conditionsAndFilters.join(' AND ') : 'TRUE'} `;
 }
 
 function resolveQuery(resolvedQueries, name) {
