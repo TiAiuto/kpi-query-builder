@@ -76,8 +76,7 @@ const resultColumns = [
     groupBy: [
       {
         transform: {
-          name: '日付抽出',
-          columnName: '申込日時'
+          name: '日付抽出'
         }
       }
     ],
@@ -119,8 +118,7 @@ const resultColumns = [
     groupBy: [
       {
         transform: {
-          name: '日付抽出',
-          columnName: '提出日時'
+          name: '日付抽出'
         }
       }
     ],
