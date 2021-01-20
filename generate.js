@@ -137,17 +137,17 @@ const caseApplicationsDailyUu = [
     name: 'ケース相談相談TOP表示数',
     alphabetName: 'counseling_top_uu',
     source: '[ACTION]個別ケース相談TOP表示',
-    value: 'ユーザコード',
     aggregate: {
+      value: 'ユーザコード',
       type: 'COUNT_DISTINCT',
-    },
-    groupBy: [
-      {
-        transform: {
-          name: '月抽出'
+      groupBy: [
+        {
+          transform: {
+            name: '月抽出'
+          }
         }
-      }
-    ],
+      ],
+    },
     filters: [
       {
         name: '契約後一ヶ月以内'
@@ -158,17 +158,17 @@ const caseApplicationsDailyUu = [
     name: 'ケース相談相談詳細表示数',
     alphabetName: 'counseling_show_uu',
     source: '[ACTION]ケース相談詳細ページ表示',
-    value: 'ユーザコード',
     aggregate: {
+      value: 'ユーザコード',
       type: 'COUNT_DISTINCT',
-    },
-    groupBy: [
-      {
-        transform: {
-          name: '月抽出'
+      groupBy: [
+        {
+          transform: {
+            name: '月抽出'
+          }
         }
-      }
-    ],
+      ],
+    },
     filters: [
       {
         name: '契約後一ヶ月以内'
@@ -179,17 +179,17 @@ const caseApplicationsDailyUu = [
     name: 'ケース相談1次相談新規作成フォーム表示数',
     alphabetName: 'visit_counseling_first_question_form_uu',
     source: '[ACTION]ケース相談1次相談新規作成フォーム表示',
-    value: 'ユーザコード',
     aggregate: {
+      value: 'ユーザコード',
       type: 'COUNT_DISTINCT',
-    },
-    groupBy: [
-      {
-        transform: {
-          name: '月抽出'
+      groupBy: [
+        {
+          transform: {
+            name: '月抽出'
+          }
         }
-      }
-    ],
+      ],
+    },
     filters: [
       {
         name: '契約後一ヶ月以内'
@@ -200,17 +200,17 @@ const caseApplicationsDailyUu = [
     name: 'ケース相談1次相談編集フォーム表示数',
     alphabetName: 'visit_counseling_first_question_edit_form_uu',
     source: '[ACTION]ケース相談1次相談編集フォーム表示',
-    value: 'ユーザコード',
     aggregate: {
       type: 'COUNT_DISTINCT',
-    },
-    groupBy: [
-      {
-        transform: {
-          name: '月抽出'
+      value: 'ユーザコード',
+      groupBy: [
+        {
+          transform: {
+            name: '月抽出'
+          }
         }
-      }
-    ],
+      ],
+    },
     filters: [
       {
         name: '契約後一ヶ月以内'
@@ -221,17 +221,17 @@ const caseApplicationsDailyUu = [
     name: 'ケース相談相談申込数',
     alphabetName: 'counseling_case_applications_uu_count',
     source: '[ACTION]ケース相談一次相談申込',
-    value: 'ユーザコード',
     aggregate: {
+      value: 'ユーザコード',
       type: 'COUNT_DISTINCT',
-    },
-    groupBy: [
-      {
-        transform: {
-          name: '月抽出'
+      groupBy: [
+        {
+          transform: {
+            name: '月抽出'
+          }
         }
-      }
-    ],
+      ],
+    },
     filters: [
       {
         name: '契約後一ヶ月以内'
@@ -242,17 +242,17 @@ const caseApplicationsDailyUu = [
     name: 'ケース相談相談詳細表示数',
     alphabetName: 'visit_counseling_application_detail_uu',
     source: '[ACTION]ケース相談相談詳細ページ表示',
-    value: 'ユーザコード',
     aggregate: {
+      value: 'ユーザコード',
       type: 'COUNT_DISTINCT',
-    },
-    groupBy: [
-      {
-        transform: {
-          name: '月抽出'
+      groupBy: [
+        {
+          transform: {
+            name: '月抽出'
+          }
         }
-      }
-    ],
+      ],
+    },
     filters: [
       {
         name: '契約後一ヶ月以内'
@@ -263,17 +263,17 @@ const caseApplicationsDailyUu = [
     name: 'ケース相談二次相談編集フォーム表示数',
     alphabetName: 'visit_counseling_application_second_question_edit_uu',
     source: '[ACTION]ケース相談二次相談編集ページ表示',
-    value: 'ユーザコード',
     aggregate: {
+      value: 'ユーザコード',
       type: 'COUNT_DISTINCT',
-    },
-    groupBy: [
-      {
-        transform: {
-          name: '月抽出'
+      groupBy: [
+        {
+          transform: {
+            name: '月抽出'
+          }
         }
-      }
-    ],
+      ],
+    },
     filters: [
       {
         name: '契約後一ヶ月以内'
@@ -284,17 +284,17 @@ const caseApplicationsDailyUu = [
     name: 'ケース相談二次相談申込数',
     alphabetName: 'submit_counseling_case_application_second_question_uu_count',
     source: '[ACTION]ケース相談二次相談申込',
-    value: 'ユーザコード',
     aggregate: {
+      value: 'ユーザコード',
       type: 'COUNT_DISTINCT',
-    },
-    groupBy: [
-      {
-        transform: {
-          name: '月抽出'
+      groupBy: [
+        {
+          transform: {
+            name: '月抽出'
+          }
         }
-      }
-    ],
+      ],
+    },
     filters: [
       {
         name: '契約後一ヶ月以内'
