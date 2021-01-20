@@ -85,6 +85,21 @@ const resultColumns = [
         }
       }
     ],
+  },
+  {
+    name: 'ケース相談相談詳細表示数',
+    alphabetName: 'visit_counseling_application_detail_pv',
+    source: '[ACTION]ケース相談相談詳細ページ表示',
+    value: 'ユーザコード',
+    aggregate: 'COUNT',
+    groupBy: [
+      {
+        transform: {
+          name: '日付抽出',
+          columnName: 'アクセス日時タイムスタンプ'
+        }
+      }
+    ],
   }
 ];
 
@@ -301,7 +316,7 @@ const views = [
     conditions: [
       {
         type: 'raw',
-        raw: 'REGEXP_CONTAINS(path, \'^/plus/mypage/case_applications/\\\\w+?/edit\')'
+        raw: 'REGEXP_CONTAINS(path, \'^/plus/mypage/case_applications/\\\\w+?/edit$\')'
       }
     ]
   },
@@ -316,7 +331,20 @@ const views = [
         name: '個別ケース相談申し込み済み一次相談'
       }
     ],
-  }
+  },
+  {
+    name: '[ACTION]ケース相談相談詳細ページ表示',
+    alphabetName: 'visit_counseling_application_detail',
+    source: 'PLUS契約者アクセスログ',
+    value: 'ユーザコード',
+    columnsInheritanceEnabled: true,
+    conditions: [
+      {
+        type: 'raw',
+        raw: 'REGEXP_CONTAINS(path, \'^/plus/mypage/case_applications/\\\\w+?$\')'
+      }
+    ]
+  },
 ];
 
 // TODO: このロジックはクラスに移せそう
