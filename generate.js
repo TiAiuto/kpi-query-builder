@@ -617,38 +617,6 @@ const views = [
       }
     ],
   },
-  // 以下は一度viewとして定義するが、後で自動生成に戻したいやつ
-  {
-    name: '列日付基準集合生成クエリ',
-    alphabetName: 'row_base_unit_value',
-    type: 'routine',
-    routine: {
-      name: '期間集合生成',
-      args: ['日単位', '20200901', '20210119']
-    }
-  },
-  {
-    name: 'ケース相談相談TOP表示数',
-    alphabetName: 'counseling_top_uu',
-    type: 'aggregate',
-    source: '[ACTION]個別ケース相談TOP表示',
-    aggregate: {
-      value: 'ユーザコード',
-      type: 'COUNT_DISTINCT',
-      groupBy: [
-        {
-          transform: {
-            name: '月抽出'
-          }
-        }
-      ],
-    },
-    filters: [
-      {
-        name: '契約後一ヶ月以内'
-      }
-    ]
-  }
 ];
 
 // TODO: このロジックはクラスに移せそう
@@ -930,90 +898,71 @@ function buildTransformPhrase(transformType, columnAlphabetName) {
 
 function main() {
   const resolvedQueries = [];
-  const resultColumnSelect = [];
-  const resultColumnJoins = [];
 
-  // resultRowsが複数ある場合の挙動は要検討、行が増えるがどう増やすか？
-  resultRows.forEach((resultRow) => {
-    if (resultRow.pattern.name === '月抽出') {
-      const unitValuePhrase = buildTransformPhrase('月抽出', 'TIMESTAMP(unit_raw_value, "Asia/Tokyo")');
-
-      resolvedQueries.push({
-        name: '列日付基準集合生成クエリ',
-        resolvedSource: 'row_base_unit_value',
-        resolvedColumns: [
+  // 以下の内容は動的に生成することになりそう
+  const viewsForReport = [
+    {
+      name: '列日付基準集合生成クエリ',
+      alphabetName: 'row_base_unit_value',
+      type: 'routine',
+      routine: {
+        name: '期間集合生成',
+        args: ['日単位', '20200901', '20210119']
+      }
+    },
+    {
+      name: 'ケース相談相談TOP表示数',
+      alphabetName: 'counseling_top_uu',
+      type: 'aggregate',
+      source: '[ACTION]個別ケース相談TOP表示',
+      aggregate: {
+        value: 'ユーザコード',
+        type: 'COUNT_DISTINCT',
+        groupBy: [
           {
-            name: '集計基準値',
-            alphabetName: 'unit_value',
-            originalName: 'unit_value'
+            transform: {
+              name: '月抽出'
+            }
           }
         ],
-        sql: `SELECT DISTINCT ${unitValuePhrase} as unit_value FROM UNNEST(GENERATE_DATE_ARRAY(PARSE_DATE("%Y%m%d", "${targetDateRange[0]}"), 
-          PARSE_DATE("%Y%m%d", "${targetDateRange[1]}"))) AS unit_raw_value`
-      });
-    } else {
-      throw new Error(`${resultRow.pattern.name} は未実装`);
-    }
-  });
-
-  resultColumns.forEach((resultColumn) => {
-    const resolvedView = resolveQuery(resolvedQueries, resultColumn.source);
-    // この集計クエリの内側のクエリが参照できるカラムを指定
-    const viewColumns = resolvedView.resolvedColumns; // TODO: auto_generated_unit_name とかも入れてもいいかも
-
-    let joinDefs = resultColumn.joins || [];
-    let conditionDefs = resultColumn.conditions || [];
-
-    (resultColumn.filters || []).forEach((filterRef) => {
-      const filter = resolveFilter(resolvedQueries, filterRef.name, viewColumns);
-      conditionDefs = conditionDefs.concat(filter.conditions);
-      joinDefs = joinDefs.concat(filter.joins || []);
-    });
-    const conditionPhrases = conditionDefs.map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
-    const joins = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, resolvedView.resolvedSource, viewColumns))
-      .join('\n');
-
-    const aggregatePhrase = buildAggregatePhrase(resultColumn.aggregate.type, findResolvedColumnName(resolvedView, resultColumn.value));
-    // TODO: そもそもtransformが必要かどうかで分岐が必要
-    const generatedUnitPhrase = buildTransformPhrase(resultColumn.groupBy[0].transform.name, findResolvedColumnName(resolvedView, resultColumn.groupBy[0].transform.columnName || 'タイムスタンプ'));
-
-    // いったんCOUNT, transformありの場合だけ実装する
-    resolvedQueries.push({
-      name: resultColumn.name,
-      resolvedSource: resultColumn.alphabetName,
-      resolvedColumns: [
+      },
+      filters: [
         {
-          name: resultColumn.name,
-          alphabetName: resultColumn.alphabetName + '_value',
-          originalName: resultColumn.alphabetName + '_value'
-        },
-        {
-          name: '集計単位（自動生成）',
-          alphabetName: 'auto_generated_unit_name',
-          originalName: 'auto_generated_unit_name'
+          name: '契約後一ヶ月以内'
         }
-      ],
-      sql: `SELECT 
-      auto_generated_unit_name, 
-      ${aggregatePhrase} AS ${resultColumn.alphabetName}_value 
-      FROM (
-      SELECT ${generatedUnitPhrase} AS auto_generated_unit_name, 
-      ${findResolvedColumnName(resolvedView, resultColumn.value)}
-      FROM ${resolvedView.resolvedSource} 
-      ${joins}
-      WHERE ${conditionPhrases.length ? conditionPhrases.join(' AND ') : 'TRUE'}
-      )
-      GROUP BY auto_generated_unit_name
-      ORDER BY auto_generated_unit_name`
-    });
+      ]
+    }
+  ];
 
-    resultColumnSelect.push(` ${resultColumn.alphabetName}.${resultColumn.alphabetName}_value AS ${resultColumn.alphabetName} `);
-    resultColumnJoins.push(`LEFT JOIN ${resultColumn.alphabetName} ON unit_value = ${resultColumn.alphabetName}.auto_generated_unit_name`);
+  const documentView = {
+    type: 'default',
+    name: 'レポート本体',
+    alphabetName: 'report_body',
+    source: '列日付基準集合生成クエリ',
+    columnsInheritanceEnabled: true,
+    joins: []
+  };
+  viewsForReport.forEach((reportView) => {
+    views.push(reportView);
+    resolveQuery(resolvedQueries, reportView.name);
+    documentView.joins.push({
+      type: 'left_join',
+      target: reportView.name,
+      conditions: [
+        {
+          sourceColumnName: 'ユーザコード',
+          targetColumnName: 'ユーザコード'
+        }
+      ]
+    });
   });
+
+  views.push(documentView);
+  resolveQuery(resolvedQueries, 'レポート本体');
 
   const withQueries = resolvedQueries.map((resolvedQuery) => `${resolvedQuery.resolvedSource} AS (${resolvedQuery.sql})`);
   console.log('WITH ' + withQueries.join(', \n'));
-  console.log(` SELECT unit_value, ${resultColumnSelect.join(', ')} \n FROM row_base_unit_value ${resultColumnJoins.join('\n')} ORDER BY unit_value `);
+  console.log('SELECT * FROM report_body;');
 }
 
 main();
