@@ -732,6 +732,7 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
   const sourceResolvedView = resolveQuery(resolvedQueries, viewDefinition.source);
   // この集計クエリの内側のクエリが参照できるカラムを指定
   const viewColumns = sourceResolvedView.resolvedColumns; // TODO: 集計viewのauto_generated_unit_name, 集計値も必要なら入れる
+  // TODO: viewColumnsにjoin先のcolumnも入れる必要があるかも
 
   let joinDefs = viewDefinition.joins || [];
   let conditionDefs = viewDefinition.conditions || [];
@@ -742,7 +743,7 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
     joinDefs = joinDefs.concat(filter.joins || []);
   });
   const conditionPhrases = conditionDefs.map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
-  const joins = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, sourceResolvedView.resolvedSource, viewColumns))
+  const joinPhrases = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, sourceResolvedView.resolvedSource, viewColumns))
     .join('\n');
 
   const aggregatePhrase = buildAggregatePhrase(viewDefinition.aggregate.type, findResolvedColumnName(sourceResolvedView, viewDefinition.aggregate.value));
@@ -773,7 +774,7 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
       SELECT ${generatedUnitPhrase} AS auto_generated_unit_name, 
       ${findResolvedColumnName(sourceResolvedView, viewDefinition.aggregate.value)}
       FROM ${sourceResolvedView.resolvedSource} 
-      ${joins}
+      ${joinPhrases}
       WHERE ${conditionPhrases.length ? conditionPhrases.join(' AND ') : 'TRUE'}
       )
       GROUP BY auto_generated_unit_name
@@ -782,31 +783,32 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
 }
 
 function buildRootViewQuery(resolvedQueries, rootViewDefinition) {
-  const columnsToSelect = rootViewDefinition.columns.map((column) => `${column.originalName} AS ${column.alphabetName} `).join(', ');
+  const viewColumns = rootViewDefinition.columns; // TODO: ここにjoin先のカラムも含める必要がある？
 
   let joinDefs = rootViewDefinition.joins || [];
   let conditionDefs = rootViewDefinition.conditions || [];
 
   (rootViewDefinition.filters || []).forEach((filterRef) => {
-    const filter = resolveFilter(resolvedQueries, filterRef.name, rootViewDefinition.columns);
+    const filter = resolveFilter(resolvedQueries, filterRef.name, viewColumns);
     conditionDefs = conditionDefs.concat(filter.conditions);
     joinDefs = joinDefs.concat(filter.joins || []);
   });
 
-  const conditionPhrases = conditionDefs.map((condition) => resolveCondition(resolvedQueries, condition, rootViewDefinition.columns));
+  const conditionPhrases = conditionDefs.map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
   if (rootViewDefinition.dateSuffixEnabled) {
     conditionPhrases.push(` _TABLE_SUFFIX BETWEEN '${targetDateRange[0]}' AND '${targetDateRange[1]}' `);
   }
-  const joins = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, rootViewDefinition.alphabetName, rootViewDefinition.columns))
+  const joinPhrases = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, rootViewDefinition.alphabetName, viewColumns))
     .join('\n');
-  return `SELECT ${columnsToSelect} \n FROM ${rootViewDefinition.source} \n ${joins} \n WHERE ${conditionPhrases.length ? conditionPhrases.join(' AND ') : 'TRUE'} `;
+
+  const columnsToSelect = rootViewDefinition.columns.map((column) => `${column.originalName} AS ${column.alphabetName} `).join(', ');
+
+  return `SELECT ${columnsToSelect} \n FROM ${rootViewDefinition.source} \n ${joinPhrases} \n WHERE ${conditionPhrases.length ? conditionPhrases.join(' AND ') : 'TRUE'} `;
 }
 
 function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
+// TODO: 本当はここで自身, 継承したcolumnsとjoinしたcolumnsの名前空間の区別が必要
   const viewColumns = appendInheritedColumns(viewDefinition, dependentQuery);
-  // viewはjoinsは未実装
-  const columnsToSelect = viewColumns.map((column) => `${resolveColumnByResolvedQuery(dependentQuery, column.originalName)} AS ${column.alphabetName} `)
-    .join(', ');
 
   let joinDefs = viewDefinition.joins || [];
   let conditionDefs = viewDefinition.conditions || [];
@@ -817,9 +819,20 @@ function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
     joinDefs = joinDefs.concat(filter.joins || []);
   });
   const conditionPhrases = conditionDefs.map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
-  const joins = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, dependentQuery.resolvedSource, viewColumns))
+  const joinPhrases = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, dependentQuery.resolvedSource, viewColumns))
     .join('\n');
-  return `SELECT ${columnsToSelect} \n FROM ${dependentQuery.resolvedSource} \n ${joins} \n WHERE ${conditionPhrases.length ? conditionPhrases.join(' AND ') : 'TRUE'} `;
+
+  const selectColumnPhrases = [];
+  viewColumns.forEach((columnDef) => {
+    if (columnDef.source) {
+      const columnResolvedSource = resolveQuery(resolvedQueries, columnDef.source);
+      selectColumnPhrases.push(`${columnResolvedSource.resolvedSource}.${resolveColumnByResolvedQuery(columnResolvedSource, columnDef.name)}`);
+    } else {
+      selectColumnPhrases.push(`${resolveColumnByResolvedQuery(dependentQuery, columnDef.originalName)} AS ${columnDef.alphabetName} `);
+    }
+  });
+
+  return `SELECT ${selectColumnPhrases.join(', ')} \n FROM ${dependentQuery.resolvedSource} \n ${joinPhrases} \n WHERE ${conditionPhrases.length ? conditionPhrases.join(' AND ') : 'TRUE'} `;
 }
 
 function resolveQuery(resolvedQueries, name) {
@@ -906,7 +919,7 @@ function main() {
     type: 'routine',
     routine: {
       name: '期間集合生成',
-      args: ['日単位', '20200901', '20210119']
+      args: ['月単位', '20200901', '20210119']
     }
   };
   views.push(baseUnitValueView);
@@ -949,7 +962,10 @@ function main() {
   viewsForReport.forEach((reportView) => {
     views.push(reportView);
     const resolvedReportView = resolveQuery(resolvedQueries, reportView.name);
-    documentView.columns.push(resolvedReportView.resolvedColumns[1]); // 集計基準値の次に集計値が入っている
+    documentView.columns.push({
+      ...resolvedReportView.resolvedColumns[1],
+      source: reportView.name
+    }); // 集計基準値の次に集計値が入っている
     documentView.joins.push({
       type: 'left_join',
       target: reportView.name,
