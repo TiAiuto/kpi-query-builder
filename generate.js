@@ -350,13 +350,13 @@ const rootViews = [
     columns: [
       {
         name: '利用開始日',
-        alphabetName: 'usage_start_date_jst',
-        originalName: 'DATE(usage_start_date, \'+9\')'
+        alphabetName: 'usage_start_date',
+        originalName: 'usage_start_date'
       },
       {
         name: '利用終了日',
-        alphabetName: 'usage_end_date_jst',
-        originalName: 'DATE(usage_end_date, \'+9\')'
+        alphabetName: 'usage_end_date',
+        originalName: 'usage_end_date'
       },
       {
         name: 'ユーザコード',
