@@ -12,21 +12,16 @@ const resultColumns = [
   {
     name: 'ケース相談相談TOP表示数',
     alphabetName: 'counseling_top_pv',
-    source: 'PLUS契約者アクセスログ',
+    source: '[ACTION]個別ケース相談TOP表示',
     value: 'ユーザコード',
     aggregate: {
       type: 'COUNT',
     },
-    filters: [
-      {
-        name: 'ケース相談TOP表示'
-      }
-    ],
     groupBy: [
       {
         transform: {
           name: '日付抽出',
-          columnName: 'アクセス日時'
+          columnName: 'アクセス日時タイムスタンプ'
         }
       }
     ],
@@ -34,19 +29,14 @@ const resultColumns = [
   {
     name: 'ケース相談相談詳細表示数',
     alphabetName: 'counseling_show_pv',
-    source: 'PLUS契約者アクセスログ',
+    source: '[ACTION]ケース相談詳細ページ表示',
     value: 'ユーザコード',
     aggregate: 'COUNT',
-    filters: [
-      {
-        name: 'ケース相談詳細ページ表示'
-      }
-    ],
     groupBy: [
       {
         transform: {
           name: '日付抽出',
-          columnName: 'アクセス日時'
+          columnName: 'アクセス日時タイムスタンプ'
         }
       }
     ],
@@ -54,14 +44,9 @@ const resultColumns = [
   {
     name: 'ケース相談相談申込数',
     alphabetName: 'counseling_case_applications_count',
-    source: '個別ケース相談一次相談',
+    source: '[ACTION]ケース相談相談申込',
     value: 'ユーザコード',
     aggregate: 'COUNT',
-    filters: [
-      {
-        name: '個別ケース相談申し込み済み一次相談'
-      }
-    ],
     groupBy: [
       {
         transform: {
@@ -208,7 +193,7 @@ const rootViews = [
         originalName: 'rack_plus.path',
       },
       {
-        name: 'アクセス日時',
+        name: 'アクセス日時タイムスタンプ',
         alphabetName: 'time',
         originalName: 'TIMESTAMP_SECONDS(rack_plus.time)',
       }
@@ -256,6 +241,42 @@ const views = [
       }
     ]
   },
+  {
+    name: '[ACTION]個別ケース相談TOP表示',
+    alphabetName: 'visit_counseling_top',
+    source: 'PLUS契約者アクセスログ',
+    value: 'ユーザコード',
+    columnsInheritanceEnabled: true,
+    filters: [
+      {
+        name: 'ケース相談TOP表示'
+      }
+    ],
+  },
+  {
+    name: '[ACTION]ケース相談詳細ページ表示',
+    alphabetName: 'visit_counseling_top_pv',
+    source: 'PLUS契約者アクセスログ',
+    value: 'ユーザコード',
+    columnsInheritanceEnabled: true,
+    filters: [
+      {
+        name: 'ケース相談詳細ページ表示'
+      }
+    ],
+  },
+  {
+    name: '[ACTION]ケース相談相談申込',
+    alphabetName: 'submit_counseling_case_application',
+    source: '個別ケース相談一次相談',
+    value: 'ユーザコード',
+    columnsInheritanceEnabled: true,
+    filters: [
+      {
+        name: '個別ケース相談申し込み済み一次相談'
+      }
+    ],
+  }
 ];
 
 // TODO: このロジックはクラスに移せそう
@@ -421,7 +442,7 @@ function main() {
     const resolvedView = resolveQuery(resolvedQueries, resultColumn.source);
 
     let filterConditions = [];
-    resultColumn.filters.forEach((filter) => {
+    (resultColumn.filters || []).forEach((filter) => {
       // TODO: resolveFilterの第三引数に現在のviewの定義を渡す必要がある
       filterConditions = [...filterConditions, resolveFilter(resolvedQueries, filter, {})];
     });
