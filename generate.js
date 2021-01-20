@@ -345,9 +345,15 @@ const caseApplicationsDailyUu = [
       }
     ],
     joins: [
-      { // TODO: ここはエイリアス指定に変えたい
-        type: 'raw',
-        raw: 'JOIN plus_contracts_with_user_code ON user_code = contracted_user_code'
+      {
+        type: 'join',
+        target: 'ユーザコード付きPLUS契約',
+        conditions: [
+          {
+            sourceColumnName: 'ユーザコード',
+            targetColumnName: '契約ユーザコード'
+          }
+        ]
       }
     ],
     filters: [
