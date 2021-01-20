@@ -167,7 +167,7 @@ const rootViews = [
       {
         name: 'ユーザID',
         alphabetName: 'user_id',
-        originalName: 'user_id',
+        originalName: 'users.id',
       },
     ],
     conditions: [
