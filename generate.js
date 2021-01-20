@@ -716,6 +716,10 @@ function buildAggregatePhrase(aggregateType, columnAlphabetName) {
   }
 }
 
+function buildGeneratedUnitPhrase(unitType, columnAlphabetName) {
+  return `FORMAT_TIMESTAMP('%Y-%m-%d', ${columnAlphabetName}, 'Asia/Tokyo')`;
+}
+
 function main() {
   const resolvedQueries = [];
   const resultColumnSelect = [];
@@ -752,6 +756,7 @@ function main() {
     });
 
     const aggregatePhrase = buildAggregatePhrase(resultColumn.aggregate.type, findResolvedColumnName(resolvedView, resultColumn.value));
+    const generatedUnitPhrase = buildGeneratedUnitPhrase(resultColumn.groupBy[0].transform.name, findResolvedColumnName(resolvedView, resultColumn.groupBy[0].transform.columnName || 'タイムスタンプ'));
 
     // いったんCOUNT, transformありの場合だけ実装する
     resolvedQueries.push({
@@ -773,7 +778,7 @@ function main() {
       auto_generated_unit_name, 
       ${aggregatePhrase} AS ${resultColumn.alphabetName}_value 
       FROM (
-      SELECT FORMAT_TIMESTAMP('%Y-%m-%d', ${findResolvedColumnName(resolvedView, resultColumn.groupBy[0].transform.columnName || 'タイムスタンプ')}, 'Asia/Tokyo') AS auto_generated_unit_name, 
+      SELECT ${generatedUnitPhrase} AS auto_generated_unit_name, 
       ${findResolvedColumnName(resolvedView, resultColumn.value)}
       FROM ${resolvedView.resolvedSource}
       WHERE ${filterConditions.length ? filterConditions.join(' AND ') : 'TRUE'}
