@@ -432,7 +432,7 @@ const views = [
 function resolveColumnByViewColumns(viewColumns, columnName) {
   for (let column of viewColumns) {
     if (column.name === columnName) {
-      return column.originalName;
+      return column.alphabetName;
     }
   }
   throw new Error(`${columnName}は未定義`);
@@ -508,7 +508,7 @@ function buildRootViewQuery(resolvedQueries, rootViewDefinition) {
 function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
   const viewColumns = appendInheritedColumns(viewDefinition, dependentQuery);
   // viewはjoinsは未実装
-  const columns = viewColumns.map((column) => `${column.originalName} AS ${column.alphabetName} `)
+  const columns = viewColumns.map((column) => `${resolveColumnByResolvedQuery(dependentQuery, column.originalName)} AS ${column.alphabetName} `)
     .join(', ');
   const conditions = (viewDefinition.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
   let filterConditions = [];
