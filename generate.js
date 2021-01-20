@@ -722,7 +722,7 @@ function buildRootViewQuery(resolvedQueries, rootViewDefinition) {
 
   (rootViewDefinition.filters || []).forEach((filterRef) => {
     const filter = resolveFilter(resolvedQueries, filterRef.name, rootViewDefinition.columns);
-    conditionDefs = conditionDefs.concat(filter.conditions || []);
+    conditionDefs = conditionDefs.concat(filter.conditions);
     joinDefs = joinDefs.concat(filter.joins || []);
   });
 
@@ -746,7 +746,7 @@ function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
 
   (viewDefinition.filters || []).forEach((filterRef) => {
     const filter = resolveFilter(resolvedQueries, filterRef.name);
-    conditionDefs = conditionDefs.concat(filter.conditions || []);
+    conditionDefs = conditionDefs.concat(filter.conditions);
     joinDefs = joinDefs.concat(filter.joins || []);
   });
   const conditionPhrases = conditionDefs.map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
@@ -851,15 +851,14 @@ function main() {
     const viewColumns = resolvedView.resolvedColumns; // TODO: auto_generated_unit_name とかも入れてもいいかも
 
     let joinDefs = resultColumn.joins || [];
-    let filterConditions = [];
+    let conditionDefs = resultColumn.conditions || [];
+
     (resultColumn.filters || []).forEach((filterRef) => {
       const filter = resolveFilter(resolvedQueries, filterRef.name, viewColumns);
-      filter.conditions.forEach((condition) => filterConditions.push(resolveCondition(resolvedQueries, condition, viewColumns)));
+      conditionDefs = conditionDefs.concat(filter.conditions);
       joinDefs = joinDefs.concat(filter.joins || []);
     });
-    const conditions = (resultColumn.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
-    const conditionsAndFilters = [...conditions, ...filterConditions];
-
+    const conditionPhrases = conditionDefs.map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
     const joins = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, resolvedView.resolvedSource, viewColumns))
       .join('\n');
 
@@ -891,7 +890,7 @@ function main() {
       ${findResolvedColumnName(resolvedView, resultColumn.value)}
       FROM ${resolvedView.resolvedSource} 
       ${joins}
-      WHERE ${conditionsAndFilters.length ? conditionsAndFilters.join(' AND ') : 'TRUE'}
+      WHERE ${conditionPhrases.length ? conditionPhrases.join(' AND ') : 'TRUE'}
       )
       GROUP BY auto_generated_unit_name
       ORDER BY auto_generated_unit_name`
