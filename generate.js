@@ -725,12 +725,12 @@ function resolveCondition(resolvedQueries, condition, viewColumns) {
   }
 }
 
-function resolveFilter(resolvedQueries, filter, abstractViewDefinition) {
+function resolveFilter(resolvedQueries, filter, viewColumns) {
   const targetFilterDefinition = filters.find((filterDefinition) => filterDefinition.name === filter.name);
   if (!targetFilterDefinition) {
     throw new Error(`${filter.name}は未定義です`);
   }
-  return targetFilterDefinition.conditions.map((condition) => resolveCondition(resolvedQueries, condition, abstractViewDefinition));
+  return targetFilterDefinition.conditions.map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
 }
 
 function buildRootViewQuery(resolvedQueries, rootViewDefinition) {
@@ -825,6 +825,9 @@ function buildTransformPhrase(transformType, columnAlphabetName) {
   }
 }
 
+function resolveJoin(joinDefinition) {
+}
+
 function main() {
   const resolvedQueries = [];
   const resultColumnSelect = [];
@@ -855,12 +858,17 @@ function main() {
 
   resultColumns.forEach((resultColumn) => {
     const resolvedView = resolveQuery(resolvedQueries, resultColumn.source);
+    // TODO: ここのjoinで名前解決も要実装
+    const joins = (resultColumn.joins || []).map((join) => `JOIN ${join.source} ON ${join.on} `)
+      .join('\n');
 
     let filterConditions = [];
     (resultColumn.filters || []).forEach((filter) => {
       // TODO: resolveFilterの第三引数に現在のviewの定義を渡す必要がある
-      filterConditions = [...filterConditions, resolveFilter(resolvedQueries, filter, {})];
+      filterConditions = [...filterConditions, resolveFilter(resolvedQueries, filter, [])];
     });
+    const conditions = (resultColumn.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition, [])); // TODO: この集計クエリが持っているカラムを指定する
+    const conditionsAndFilters = [...conditions, ...filterConditions];
 
     const aggregatePhrase = buildAggregatePhrase(resultColumn.aggregate.type, findResolvedColumnName(resolvedView, resultColumn.value));
     // TODO: そもそもtransformが必要かどうかで分岐が必要
@@ -888,8 +896,9 @@ function main() {
       FROM (
       SELECT ${generatedUnitPhrase} AS auto_generated_unit_name, 
       ${findResolvedColumnName(resolvedView, resultColumn.value)}
-      FROM ${resolvedView.resolvedSource}
-      WHERE ${filterConditions.length ? filterConditions.join(' AND ') : 'TRUE'}
+      FROM ${resolvedView.resolvedSource} 
+      ${joins}
+      WHERE ${conditionsAndFilters.length ? conditionsAndFilters.join(' AND ') : 'TRUE'}
       )
       GROUP BY auto_generated_unit_name
       ORDER BY auto_generated_unit_name`
