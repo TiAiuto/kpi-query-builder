@@ -207,7 +207,7 @@ const caseApplicationsDailyUu = [
   {
     name: 'ケース相談相談申込数',
     alphabetName: 'counseling_case_applications_uu_count',
-    source: '[ACTION]ケース相談一次相談申込',
+    source: '[ACTION]ケース相談一次相談申込契約後一定期間内',
     value: 'ユーザコード',
     aggregate: {
       type: 'COUNT_DISTINCT',
@@ -253,9 +253,9 @@ const caseApplicationsDailyUu = [
     ],
   },
   {
-    name: 'ケース相談相談申込数',
+    name: 'ケース相談二次相談申込数',
     alphabetName: 'submit_counseling_case_application_second_question_uu_count',
-    source: '[ACTION]ケース相談二次相談申込',
+    source: '[ACTION]ケース相談二次相談申込契約後一定期間内',
     value: 'ユーザコード',
     aggregate: {
       type: 'COUNT_DISTINCT',
@@ -270,7 +270,7 @@ const caseApplicationsDailyUu = [
   },
 ];
 
-const resultColumns = caseApplicationDailyPv;
+const resultColumns = caseApplicationsDailyUu;
 
 const resultRows = [
   {
