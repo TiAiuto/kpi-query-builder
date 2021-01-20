@@ -626,6 +626,16 @@ const views = [
       }
     ],
   },
+  // 以下は一度viewとして定義するが、後で自動生成に戻したいやつ
+  {
+    name: '列日付基準集合生成クエリ',
+    alphabetName: 'row_base_unit_value',
+    type: 'routine',
+    routine: {
+      name: '期間集合生成',
+      args: ['日単位', '20200901', '20210119']
+    }
+  }
 ];
 
 // TODO: このロジックはクラスに移せそう
@@ -707,6 +717,36 @@ function buildJoinPhrase(resolvedQueries, joinDefinition, viewAlphabetName, view
   throw new Error(`${joinDefinition.type}は未定義`);
 }
 
+function generateRoutineView(resolvedQueries, {name, alphabetName, routine}) {
+  if (routine.name === '期間集合生成') {
+    const resolvedQuery = {
+      name,
+      resolvedSource: alphabetName,
+      resolvedColumns: [
+        {
+          name: '集計基準値',
+          alphabetName: 'unit_value',
+          originalName: 'unit_value' // 本当は空でもいい
+        }
+      ]
+    };
+    const [rangeType, dateRangeBegin, dateRangeEnd] = routine.args;
+    let sql = null;
+    if (rangeType === '日単位') {
+      resolvedQuery.sql = `SELECT FORMAT_DATE('%Y-%m-%d', unit_raw_value) as unit_value FROM UNNEST(GENERATE_DATE_ARRAY(PARSE_DATE("%Y%m%d", "${dateRangeBegin}"), 
+          PARSE_DATE("%Y%m%d", "${dateRangeEnd}"))) AS unit_raw_value`
+    } else if (rangeType === '月単位') {
+      resolvedQuery.sql = `SELECT DISTINCT FORMAT_DATE('%Y-%m', unit_raw_value) as unit_value FROM UNNEST(GENERATE_DATE_ARRAY(PARSE_DATE("%Y%m%d", "${dateRangeBegin}"), 
+          PARSE_DATE("%Y%m%d", "${dateRangeEnd}"))) AS unit_raw_value`
+    } else {
+      throw new Error(`${rangeType}は未定義`);
+    }
+    return resolvedQuery;
+  } else {
+    throw new Error(`${routine.name}は未定義`);
+  }
+}
+
 function buildRootViewQuery(resolvedQueries, rootViewDefinition) {
   const columnsToSelect = rootViewDefinition.columns.map((column) => `${column.originalName} AS ${column.alphabetName} `).join(', ');
 
@@ -768,16 +808,24 @@ function resolveQuery(resolvedQueries, name) {
   }
   for (let viewDefinition of views) {
     if (viewDefinition.name === name) {
-      const dependentQuery = resolveQuery(resolvedQueries, viewDefinition.source);
-      const resolvedColumns = appendInheritedColumns(viewDefinition, dependentQuery);
-      const result = {
-        name,
-        resolvedSource: viewDefinition.alphabetName,
-        resolvedColumns,
-        sql: buildViewQuery(resolvedQueries, viewDefinition, dependentQuery)
-      };
-      resolvedQueries.push(result);
-      return result;
+      if (viewDefinition.type === 'routine') {
+        const result = generateRoutineView(resolvedQueries, viewDefinition);
+        resolvedQueries.push(result);
+        return result;
+      } else {
+        // NOTICE: いったんelseを通常のviewとして実装しておく
+        // TODO: すべてのviewにtypeを指定したい、rootViewも統合してもいいかも
+        const dependentQuery = resolveQuery(resolvedQueries, viewDefinition.source);
+        const resolvedColumns = appendInheritedColumns(viewDefinition, dependentQuery);
+        const result = {
+          name,
+          resolvedSource: viewDefinition.alphabetName,
+          resolvedColumns,
+          sql: buildViewQuery(resolvedQueries, viewDefinition, dependentQuery)
+        };
+        resolvedQueries.push(result);
+        return result;
+      }
     }
   }
   throw new Error(`${name}は未定義です`);
@@ -837,6 +885,8 @@ function main() {
       throw new Error(`${resultRow.pattern.name} は未実装`);
     }
   });
+
+  // resolveQuery(resolvedQueries, '列日付基準集合生成クエリ'); // 強制的に読み込む
 
   resultColumns.forEach((resultColumn) => {
     const resolvedView = resolveQuery(resolvedQueries, resultColumn.source);
