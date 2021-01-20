@@ -8,7 +8,7 @@
 // これは引数で渡せるようにしたほうがよさそう
 const targetDateRange = ['20200901', '20210119'];
 
-const resultColumns = [
+const caseApplicationDailyPv = [
   {
     name: 'ケース相談相談TOP表示数',
     alphabetName: 'counseling_top_pv',
@@ -124,6 +124,125 @@ const resultColumns = [
     ],
   },
 ];
+
+const caseApplicationsDailyUu =  [
+  {
+    name: 'ケース相談相談TOP表示数',
+    alphabetName: 'counseling_top_uu',
+    source: '[ACTION]個別ケース相談TOP表示',
+    value: 'ユーザコード',
+    aggregate: {
+      type: 'COUNT_DISTINCT',
+    },
+    groupBy: [
+      {
+        transform: {
+          name: '日付抽出'
+        }
+      }
+    ],
+  },
+  {
+    name: 'ケース相談相談詳細表示数',
+    alphabetName: 'counseling_show_uu',
+    source: '[ACTION]ケース相談詳細ページ表示',
+    value: 'ユーザコード',
+    aggregate: 'COUNT_DISTINCT',
+    groupBy: [
+      {
+        transform: {
+          name: '日付抽出'
+        }
+      }
+    ],
+  },
+  {
+    name: 'ケース相談1次相談新規作成フォーム表示数',
+    alphabetName: 'visit_counseling_first_question_form_uu',
+    source: '[ACTION]ケース相談1次相談新規作成フォーム表示',
+    value: 'ユーザコード',
+    aggregate: 'COUNT_DISTINCT',
+    groupBy: [
+      {
+        transform: {
+          name: '日付抽出'
+        }
+      }
+    ],
+  },
+  {
+    name: 'ケース相談1次相談編集フォーム表示数',
+    alphabetName: 'visit_counseling_first_question_edit_form_uu',
+    source: '[ACTION]ケース相談1次相談編集フォーム表示',
+    value: 'ユーザコード',
+    aggregate: 'COUNT_DISTINCT',
+    groupBy: [
+      {
+        transform: {
+          name: '日付抽出'
+        }
+      }
+    ],
+  },
+  {
+    name: 'ケース相談相談申込数',
+    alphabetName: 'counseling_case_applications_uu_count',
+    source: '[ACTION]ケース相談一次相談申込',
+    value: 'ユーザコード',
+    aggregate: 'COUNT_DISTINCT',
+    groupBy: [
+      {
+        transform: {
+          name: '日付抽出'
+        }
+      }
+    ],
+  },
+  {
+    name: 'ケース相談相談詳細表示数',
+    alphabetName: 'visit_counseling_application_detail_uu',
+    source: '[ACTION]ケース相談相談詳細ページ表示',
+    value: 'ユーザコード',
+    aggregate: 'COUNT_DISTINCT',
+    groupBy: [
+      {
+        transform: {
+          name: '日付抽出'
+        }
+      }
+    ],
+  },
+  {
+    name: 'ケース相談二次相談編集フォーム表示数',
+    alphabetName: 'visit_counseling_application_second_question_edit_uu',
+    source: '[ACTION]ケース相談二次相談編集ページ表示',
+    value: 'ユーザコード',
+    aggregate: 'COUNT_DISTINCT',
+    groupBy: [
+      {
+        transform: {
+          name: '日付抽出'
+        }
+      }
+    ],
+  },
+  {
+    name: 'ケース相談相談申込数',
+    alphabetName: 'submit_counseling_case_application_second_question_uu_count',
+    source: '[ACTION]ケース相談二次相談申込',
+    value: 'ユーザコード',
+    aggregate: 'COUNT_DISTINCT',
+    groupBy: [
+      {
+        transform: {
+          name: '日付抽出'
+        }
+      }
+    ],
+  },
+];
+
+const resultColumns = caseApplicationsDailyUu;
 
 const resultRows = [
   {
