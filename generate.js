@@ -25,7 +25,7 @@ const resultColumns = [
     groupBy: [
       {
         transform: {
-          name: '日付',
+          name: '日付抽出',
           columnName: 'アクセス日時'
         }
       }
@@ -45,7 +45,7 @@ const resultColumns = [
     groupBy: [
       {
         transform: {
-          name: '日付',
+          name: '日付抽出',
           columnName: 'アクセス日時'
         }
       }
@@ -65,7 +65,7 @@ const resultColumns = [
     groupBy: [
       {
         transform: {
-          name: '日付',
+          name: '日付抽出',
           columnName: '申込日時'
         }
       }
