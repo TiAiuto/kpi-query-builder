@@ -379,7 +379,7 @@ function resolveQuery(resolvedQueries, name) {
       return result;
     }
   }
-  throw new Error(`${options.name}は未定義です`);
+  throw new Error(`${name}は未定義です`);
 }
 
 function findResolvedColumnName(resolvedView, name) {
