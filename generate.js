@@ -20,7 +20,7 @@ const caseApplicationDailyPv = [
     groupBy: [ // groupByはaggregateの中に入れてもいいかも
       {
         transform: {
-          name: '日付抽出'
+          name: '月抽出'
         }
       }
     ],
@@ -36,7 +36,7 @@ const caseApplicationDailyPv = [
     groupBy: [
       {
         transform: {
-          name: '日付抽出'
+          name: '月抽出'
         }
       }
     ],
@@ -52,7 +52,7 @@ const caseApplicationDailyPv = [
     groupBy: [
       {
         transform: {
-          name: '日付抽出'
+          name: '月抽出'
         }
       }
     ],
@@ -68,7 +68,7 @@ const caseApplicationDailyPv = [
     groupBy: [
       {
         transform: {
-          name: '日付抽出'
+          name: '月抽出'
         }
       }
     ],
@@ -84,7 +84,7 @@ const caseApplicationDailyPv = [
     groupBy: [
       {
         transform: {
-          name: '日付抽出'
+          name: '月抽出'
         }
       }
     ],
@@ -100,7 +100,7 @@ const caseApplicationDailyPv = [
     groupBy: [
       {
         transform: {
-          name: '日付抽出'
+          name: '月抽出'
         }
       }
     ],
@@ -116,7 +116,7 @@ const caseApplicationDailyPv = [
     groupBy: [
       {
         transform: {
-          name: '日付抽出'
+          name: '月抽出'
         }
       }
     ],
@@ -132,7 +132,7 @@ const caseApplicationDailyPv = [
     groupBy: [
       {
         transform: {
-          name: '日付抽出'
+          name: '月抽出'
         }
       }
     ],
@@ -270,7 +270,7 @@ const caseApplicationsDailyUu = [
   },
 ];
 
-const resultColumns = caseApplicationsDailyUu;
+const resultColumns = caseApplicationDailyPv;
 
 const resultRows = [
   {
