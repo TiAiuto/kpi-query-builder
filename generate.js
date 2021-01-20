@@ -636,20 +636,19 @@ function resolveColumnByResolvedQuery(resolvedQuery, columnName) {
       return resolvedColumn.alphabetName;
     }
   }
+  throw new Error(`${columnName}は未定義`);
 }
 
 // TODO: このロジックはクラスに移せそう
 function appendInheritedColumns(viewDefinition, dependentQuery) {
   if (viewDefinition.columnsInheritanceEnabled) {
-    const columns = (viewDefinition.columns || []).concat([]);
-    dependentQuery.resolvedColumns.forEach((column) => {
-      columns.push({
+    return dependentQuery.resolvedColumns.map((column) => {
+      return {
         name: column.name,
         alphabetName: column.alphabetName,
         originalName: column.name // 依存先クエリで使っている名前がそのまま自クエリの名前になる
-      });
-    });
-    return columns;
+      };
+    }).concat(viewDefinition.columns || []);
   } else {
     return viewDefinition.columns;
   }
@@ -684,10 +683,11 @@ function resolveFilter(resolvedQueries, filterName) {
 function buildJoinPhrase(resolvedQueries, joinDefinition, viewAlphabetName, viewColumns) {
   if (joinDefinition.type === 'raw') {
     return joinDefinition.raw;
-  } else if (joinDefinition.type === 'join') {
+  } else if (joinDefinition.type === 'join' || joinDefinition.type === 'left_join') {
     return joinDefinition.conditions.map((joinCondition) => {
       const targetResolvedQuery = resolveQuery(resolvedQueries, joinDefinition.target);
-      let joinPhrase = `JOIN ${targetResolvedQuery.resolvedSource} ON `;
+      const leftJoinWord = joinDefinition.type === 'left_join' ? 'LEFT ' : '';
+      let joinPhrase = `${leftJoinWord}JOIN ${targetResolvedQuery.resolvedSource} ON `;
       joinPhrase += `${viewAlphabetName}.${resolveColumnByViewColumns(viewColumns, joinCondition.sourceColumnName)}`;
       joinPhrase += ' = ';
       joinPhrase += `${targetResolvedQuery.resolvedSource}.${resolveColumnByResolvedQuery(targetResolvedQuery, joinCondition.targetColumnName)}`;
@@ -705,7 +705,7 @@ function generateRoutineView(resolvedQueries, {name, alphabetName, routine}) {
       resolvedSource: alphabetName,
       resolvedColumns: [
         {
-          name: '集計基準値',
+          name: '集計単位（自動生成）',
           alphabetName: 'unit_value',
           originalName: 'unit_value' // 本当は空でもいい
         }
@@ -756,15 +756,15 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
     resolvedSource: viewDefinition.alphabetName,
     resolvedColumns: [
       {
+        name: '集計単位（自動生成）',
+        alphabetName: 'auto_generated_unit_name',
+        originalName: 'auto_generated_unit_name'
+      },
+      {
         name: viewDefinition.name,
         alphabetName: viewDefinition.alphabetName + '_value',
         originalName: viewDefinition.alphabetName + '_value'
       },
-      {
-        name: '集計単位（自動生成）',
-        alphabetName: 'auto_generated_unit_name',
-        originalName: 'auto_generated_unit_name'
-      }
     ],
     sql: `SELECT 
       auto_generated_unit_name, 
@@ -817,7 +817,7 @@ function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
     joinDefs = joinDefs.concat(filter.joins || []);
   });
   const conditionPhrases = conditionDefs.map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
-  const joins = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, viewDefinition.alphabetName, viewColumns))
+  const joins = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, dependentQuery.resolvedSource, viewColumns))
     .join('\n');
   return `SELECT ${columnsToSelect} \n FROM ${dependentQuery.resolvedSource} \n ${joins} \n WHERE ${conditionPhrases.length ? conditionPhrases.join(' AND ') : 'TRUE'} `;
 }
@@ -900,16 +900,19 @@ function main() {
   const resolvedQueries = [];
 
   // 以下の内容は動的に生成することになりそう
+  const baseUnitValueView = {
+    name: '列日付基準集合生成クエリ',
+    alphabetName: 'row_base_unit_value',
+    type: 'routine',
+    routine: {
+      name: '期間集合生成',
+      args: ['日単位', '20200901', '20210119']
+    }
+  };
+  views.push(baseUnitValueView);
+  resolveQuery(resolvedQueries, '列日付基準集合生成クエリ')
+
   const viewsForReport = [
-    {
-      name: '列日付基準集合生成クエリ',
-      alphabetName: 'row_base_unit_value',
-      type: 'routine',
-      routine: {
-        name: '期間集合生成',
-        args: ['日単位', '20200901', '20210119']
-      }
-    },
     {
       name: 'ケース相談相談TOP表示数',
       alphabetName: 'counseling_top_uu',
@@ -940,18 +943,20 @@ function main() {
     alphabetName: 'report_body',
     source: '列日付基準集合生成クエリ',
     columnsInheritanceEnabled: true,
-    joins: []
+    joins: [],
+    columns: []
   };
   viewsForReport.forEach((reportView) => {
     views.push(reportView);
-    resolveQuery(resolvedQueries, reportView.name);
+    const resolvedReportView = resolveQuery(resolvedQueries, reportView.name);
+    documentView.columns.push(resolvedReportView.resolvedColumns[1]); // 集計基準値の次に集計値が入っている
     documentView.joins.push({
       type: 'left_join',
       target: reportView.name,
       conditions: [
         {
-          sourceColumnName: 'ユーザコード',
-          targetColumnName: 'ユーザコード'
+          sourceColumnName: '集計単位（自動生成）',
+          targetColumnName: '集計単位（自動生成）'
         }
       ]
     });
