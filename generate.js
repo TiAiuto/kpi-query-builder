@@ -740,23 +740,23 @@ function buildRootViewQuery(resolvedQueries, rootViewDefinition) {
 function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
   const viewColumns = appendInheritedColumns(viewDefinition, dependentQuery);
   // viewはjoinsは未実装
-  const columns = viewColumns.map((column) => `${resolveColumnByResolvedQuery(dependentQuery, column.originalName)} AS ${column.alphabetName} `)
+  const columnsToSelect = viewColumns.map((column) => `${resolveColumnByResolvedQuery(dependentQuery, column.originalName)} AS ${column.alphabetName} `)
     .join(', ');
 
   let joinDefs = viewDefinition.joins || [];
-  const conditions = (viewDefinition.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
-  let filterConditions = [];
+  let conditionDefs = viewDefinition.conditions || [];
+
   (viewDefinition.filters || []).forEach((filterRef) => {
     const filter = resolveFilter(resolvedQueries, filterRef.name);
-    filter.conditions.forEach((condition) => filterConditions.push(resolveCondition(resolvedQueries, condition, viewColumns)));
+    conditionDefs = conditionDefs.concat(filter.conditions || []);
     if (filter.joins) {
-      joinDefs = [...joinDefs, ...filter.joins];
+      joinDefs = joinDefs.concat(filter.joins);
     }
   });
-  const conditionsAndFilters = [...conditions, ...filterConditions];
+  const conditionPhrases = conditionDefs.map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
   const joins = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, viewDefinition.alphabetName, viewColumns))
     .join('\n');
-  return `SELECT ${columns} \n FROM ${dependentQuery.resolvedSource} \n ${joins} \n WHERE ${conditionsAndFilters.length ? conditionsAndFilters.join(' AND ') : 'TRUE'} `;
+  return `SELECT ${columnsToSelect} \n FROM ${dependentQuery.resolvedSource} \n ${joins} \n WHERE ${conditionPhrases.length ? conditionPhrases.join(' AND ') : 'TRUE'} `;
 }
 
 function resolveQuery(resolvedQueries, name) {
