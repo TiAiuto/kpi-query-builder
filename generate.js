@@ -95,24 +95,6 @@ const filters = [
     ]
   },
   {
-    name: 'ケース相談TOP表示',
-    conditions: [
-      {
-        type: 'raw',
-        raw: 'REGEXP_CONTAINS(path, \'^/plus/counseling$\')'
-      }
-    ]
-  },
-  {
-    name: 'ケース相談詳細ページ表示',
-    conditions: [
-      {
-        type: 'raw',
-        raw: 'REGEXP_CONTAINS(path, \'^/plus/counseling/\\\\w+?$\')'
-      }
-    ]
-  },
-  {
     name: '個別ケース相談申し込み済み一次相談',
     conditions: [
       {
@@ -247,11 +229,12 @@ const views = [
     source: 'PLUS契約者アクセスログ',
     value: 'ユーザコード',
     columnsInheritanceEnabled: true,
-    filters: [
+    conditions: [
       {
-        name: 'ケース相談TOP表示'
+        type: 'raw',
+        raw: 'REGEXP_CONTAINS(path, \'^/plus/counseling$\')'
       }
-    ],
+    ]
   },
   {
     name: '[ACTION]ケース相談詳細ページ表示',
@@ -259,11 +242,12 @@ const views = [
     source: 'PLUS契約者アクセスログ',
     value: 'ユーザコード',
     columnsInheritanceEnabled: true,
-    filters: [
+    conditions: [
       {
-        name: 'ケース相談詳細ページ表示'
+        type: 'raw',
+        raw: 'REGEXP_CONTAINS(path, \'^/plus/counseling/\\\\w+?$\')'
       }
-    ],
+    ]
   },
   {
     name: '[ACTION]ケース相談相談申込',
