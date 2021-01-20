@@ -324,15 +324,6 @@ const filters = [
     ]
   },
   {
-    name: '契約者リクエスト',
-    conditions: [
-      {
-        type: 'raw',
-        raw: 'status_code = \'200\''
-      }
-    ]
-  },
-  {
     name: '契約済み契約',
     conditions: [
       {
