@@ -74,7 +74,7 @@ const resultColumns = [
   {
     name: 'ケース相談相談申込数',
     alphabetName: 'counseling_case_applications_count',
-    source: '[ACTION]ケース相談相談申込',
+    source: '[ACTION]ケース相談一次相談申込',
     value: 'ユーザコード',
     aggregate: 'COUNT',
     groupBy: [
@@ -160,6 +160,15 @@ const filters = [
       {
         type: 'raw',
         raw: 'application_datetime IS NOT NULL'
+      }
+    ]
+  },
+  {
+    name: '個別ケース相談申し込み済み二次相談',
+    conditions: [
+      {
+        type: 'raw',
+        raw: 'submitted_at IS NOT NULL'
       }
     ]
   },
@@ -268,6 +277,23 @@ const rootViews = [
         originalName: 'application_tickets.application_datetime',
       },
     ]
+  },
+  {
+    name: '個別ケース相談二次相談',
+    alphabetName: 'plus_counseling_first_applictions',
+    source: '`h-navi.lo_plusmine_production.counseling_case_additional_question_tickets` second_question_tickets',
+    columns: [
+      {
+        name: 'ユーザコード',
+        alphabetName: 'user_code',
+        originalName: 'second_question_tickets.user_code',
+      },
+      {
+        name: '提出日時',
+        alphabetName: 'submitted_at',
+        originalName: 'second_question_tickets.submitted_at',
+      },
+    ]
   }
 ];
 
@@ -287,7 +313,6 @@ const views = [
     name: '[ACTION]個別ケース相談TOP表示',
     alphabetName: 'visit_counseling_top',
     source: 'PLUS契約者アクセスログ',
-    value: 'ユーザコード',
     columnsInheritanceEnabled: true,
     conditions: [
       {
@@ -300,7 +325,6 @@ const views = [
     name: '[ACTION]ケース相談詳細ページ表示',
     alphabetName: 'visit_counseling_show',
     source: 'PLUS契約者アクセスログ',
-    value: 'ユーザコード',
     columnsInheritanceEnabled: true,
     conditions: [
       {
@@ -313,7 +337,6 @@ const views = [
     name: '[ACTION]ケース相談1次相談新規作成フォーム表示',
     alphabetName: 'visit_counseling_first_question_form',
     source: 'PLUS契約者アクセスログ',
-    value: 'ユーザコード',
     columnsInheritanceEnabled: true,
     conditions: [
       {
@@ -326,7 +349,6 @@ const views = [
     name: '[ACTION]ケース相談1次相談編集フォーム表示',
     alphabetName: 'visit_counseling_first_question_edit_form',
     source: 'PLUS契約者アクセスログ',
-    value: 'ユーザコード',
     columnsInheritanceEnabled: true,
     conditions: [
       {
@@ -336,10 +358,9 @@ const views = [
     ]
   },
   {
-    name: '[ACTION]ケース相談相談申込',
+    name: '[ACTION]ケース相談一次相談申込',
     alphabetName: 'submit_counseling_case_application',
     source: '個別ケース相談一次相談',
-    value: 'ユーザコード',
     columnsInheritanceEnabled: true,
     filters: [
       {
@@ -348,10 +369,20 @@ const views = [
     ],
   },
   {
+    name: '[ACTION]ケース相談二次相談申込',
+    alphabetName: 'submit_counseling_case_application_second_question',
+    source: '個別ケース相談申し込み済み二次相談',
+    columnsInheritanceEnabled: true,
+    filters: [
+      {
+        name: '個別ケース相談申し込み済み二次相談'
+      }
+    ],
+  },
+  {
     name: '[ACTION]ケース相談相談詳細ページ表示',
     alphabetName: 'visit_counseling_application_detail',
     source: 'PLUS契約者アクセスログ',
-    value: 'ユーザコード',
     columnsInheritanceEnabled: true,
     conditions: [
       {
@@ -364,7 +395,6 @@ const views = [
     name: '[ACTION]ケース相談二次相談編集ページ表示',
     alphabetName: 'visit_counseling_application_second_question_edit',
     source: 'PLUS契約者アクセスログ',
-    value: 'ユーザコード',
     columnsInheritanceEnabled: true,
     conditions: [
       {
