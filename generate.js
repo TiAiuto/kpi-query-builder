@@ -151,7 +151,7 @@ const caseApplicationsDailyUu = [
     groupBy: [
       {
         transform: {
-          name: '日付抽出'
+          name: '月抽出'
         }
       }
     ],
@@ -167,7 +167,7 @@ const caseApplicationsDailyUu = [
     groupBy: [
       {
         transform: {
-          name: '日付抽出'
+          name: '月抽出'
         }
       }
     ],
@@ -183,7 +183,7 @@ const caseApplicationsDailyUu = [
     groupBy: [
       {
         transform: {
-          name: '日付抽出'
+          name: '月抽出'
         }
       }
     ],
@@ -199,7 +199,7 @@ const caseApplicationsDailyUu = [
     groupBy: [
       {
         transform: {
-          name: '日付抽出'
+          name: '月抽出'
         }
       }
     ],
@@ -215,7 +215,7 @@ const caseApplicationsDailyUu = [
     groupBy: [
       {
         transform: {
-          name: '日付抽出'
+          name: '月抽出'
         }
       }
     ],
@@ -231,7 +231,7 @@ const caseApplicationsDailyUu = [
     groupBy: [
       {
         transform: {
-          name: '日付抽出'
+          name: '月抽出'
         }
       }
     ],
@@ -247,7 +247,7 @@ const caseApplicationsDailyUu = [
     groupBy: [
       {
         transform: {
-          name: '日付抽出'
+          name: '月抽出'
         }
       }
     ],
@@ -263,7 +263,7 @@ const caseApplicationsDailyUu = [
     groupBy: [
       {
         transform: {
-          name: '日付抽出'
+          name: '月抽出'
         }
       }
     ],
@@ -275,7 +275,7 @@ const resultColumns = caseApplicationsDailyUu;
 const resultRows = [
   {
     pattern: {
-      name: '日付'
+      name: '月抽出'
     },
   }
 ];
@@ -716,8 +716,12 @@ function buildAggregatePhrase(aggregateType, columnAlphabetName) {
   }
 }
 
-function buildGeneratedUnitPhrase(unitType, columnAlphabetName) {
-  return `FORMAT_TIMESTAMP('%Y-%m-%d', ${columnAlphabetName}, 'Asia/Tokyo')`;
+function buildTransformPhrase(transformType, columnAlphabetName) {
+  if (transformType === '日付抽出') {
+    return `FORMAT_TIMESTAMP('%Y-%m-%d', ${columnAlphabetName}, 'Asia/Tokyo')`;
+  } else if (transformType === '月抽出') {
+    return `FORMAT_TIMESTAMP('%Y-%m', ${columnAlphabetName}, 'Asia/Tokyo')`;
+  }
 }
 
 function main() {
@@ -727,7 +731,9 @@ function main() {
 
   // resultRowsが複数ある場合の挙動は要検討、行が増えるがどう増やすか？
   resultRows.forEach((resultRow) => {
-    if (resultRow.pattern.name === '日付') {
+    if (resultRow.pattern.name === '月抽出') {
+      const unitValuePhrase = buildTransformPhrase('月抽出', 'TIMESTAMP(unit_raw_value, "Asia/Tokyo")');
+
       resolvedQueries.push({
         name: '列日付基準集合生成クエリ',
         resolvedSource: 'row_base_unit_value',
@@ -738,8 +744,8 @@ function main() {
             originalName: 'unit_value'
           }
         ],
-        sql: `SELECT FORMAT_DATE("%Y-%m-%d", unit_value) as unit_value FROM UNNEST(GENERATE_DATE_ARRAY(PARSE_DATE("%Y%m%d", "${targetDateRange[0]}"), 
-          PARSE_DATE("%Y%m%d", "${targetDateRange[1]}"))) AS unit_value`
+        sql: `SELECT DISTINCT ${unitValuePhrase} as unit_value FROM UNNEST(GENERATE_DATE_ARRAY(PARSE_DATE("%Y%m%d", "${targetDateRange[0]}"), 
+          PARSE_DATE("%Y%m%d", "${targetDateRange[1]}"))) AS unit_raw_value`
       });
     } else {
       throw new Error(`${resultRow.pattern.name} は未実装`);
@@ -757,7 +763,7 @@ function main() {
 
     const aggregatePhrase = buildAggregatePhrase(resultColumn.aggregate.type, findResolvedColumnName(resolvedView, resultColumn.value));
     // TODO: そもそもtransformが必要かどうかで分岐が必要
-    const generatedUnitPhrase = buildGeneratedUnitPhrase(resultColumn.groupBy[0].transform.name, findResolvedColumnName(resolvedView, resultColumn.groupBy[0].transform.columnName || 'タイムスタンプ'));
+    const generatedUnitPhrase = buildTransformPhrase(resultColumn.groupBy[0].transform.name, findResolvedColumnName(resolvedView, resultColumn.groupBy[0].transform.columnName || 'タイムスタンプ'));
 
     // いったんCOUNT, transformありの場合だけ実装する
     resolvedQueries.push({
