@@ -100,6 +100,21 @@ const resultColumns = [
         }
       }
     ],
+  },
+  {
+    name: 'ケース相談二次相談編集フォーム表示数',
+    alphabetName: 'visit_counseling_application_second_question_edit_pv',
+    source: '[ACTION]ケース相談二次相談編集ページ表示',
+    value: 'ユーザコード',
+    aggregate: 'COUNT',
+    groupBy: [
+      {
+        transform: {
+          name: '日付抽出',
+          columnName: 'アクセス日時タイムスタンプ'
+        }
+      }
+    ],
   }
 ];
 
@@ -342,6 +357,19 @@ const views = [
       {
         type: 'raw',
         raw: 'REGEXP_CONTAINS(path, \'^/plus/mypage/case_applications/\\\\w+?$\')'
+      }
+    ]
+  },
+  {
+    name: '[ACTION]ケース相談二次相談編集ページ表示',
+    alphabetName: 'visit_counseling_application_second_question_edit',
+    source: 'PLUS契約者アクセスログ',
+    value: 'ユーザコード',
+    columnsInheritanceEnabled: true,
+    conditions: [
+      {
+        type: 'raw',
+        raw: 'REGEXP_CONTAINS(path, \'^/plus/mypage/case_applications/\\\\w+?/second_question$\')'
       }
     ]
   },
