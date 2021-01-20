@@ -249,23 +249,7 @@ const views = [
     name: 'PLUS契約者アクセスログ',
     alphabetName: 'plus_contracted_users_logs',
     source: 'PLUSユーザコード付きアクセスログ',
-    columns: [
-      {
-        name: 'ユーザコード',
-        alphabetName: 'user_code', // TODO: ここを一括でextendするようにしたい
-        originalName: 'user_code'
-      },
-      {
-        name: 'path',
-        alphabetName: 'path',
-        originalName: 'path'
-      },
-      {
-        name: 'アクセス日時',
-        alphabetName: 'time',
-        originalName: 'time'
-      }
-    ],
+    columnsInheritanceEnabled: true,
     filters: [
       {
         name: 'PLUS契約ユーザ（解約済み含む）'
@@ -274,8 +258,9 @@ const views = [
   },
 ];
 
-function resolveColumnByViewDefinition(abstractViewDefinition, columnName) {
-  for (let column of abstractViewDefinition.columns) {
+// TODO: このロジックはクラスに移せそう
+function resolveColumnByViewColumns(viewColumns, columnName) {
+  for (let column of viewColumns) {
     if (column.name === columnName) {
       return column.originalName;
     }
@@ -283,6 +268,7 @@ function resolveColumnByViewDefinition(abstractViewDefinition, columnName) {
   throw new Error(`${columnName}は未定義`);
 }
 
+// TODO: このロジックはクラスに移せそう
 function resolveColumnByResolvedQuery(resolvedQuery, columnName) {
   for (let resolvedColumn of resolvedQuery.resolvedColumns) {
     if (resolvedColumn.name === columnName) {
@@ -291,14 +277,31 @@ function resolveColumnByResolvedQuery(resolvedQuery, columnName) {
   }
 }
 
-function resolveCondition(resolvedQueries, condition, abstractViewDefinition) {
+// TODO: このロジックはクラスに移せそう
+function appendInheritedColumns(viewDefinition, dependentQuery) {
+  if (viewDefinition.columnsInheritanceEnabled) {
+    const columns = (viewDefinition.columns || []).concat([]);
+    dependentQuery.resolvedColumns.forEach((column) => {
+      columns.push({
+        name: column.name,
+        alphabetName: column.alphabetName,
+        originalName: column.alphabetName // 依存先クエリで使っている名前がそのまま自クエリの名前になる
+      });
+    });
+    return columns;
+  } else {
+    return viewDefinition.columns;
+  }
+}
+
+function resolveCondition(resolvedQueries, condition, viewColumns) {
   if (condition.type === 'raw') {
     return condition.raw;
   } else if (condition.type === 'in') {
     if (condition.valueSetType === 'selectColumn') {
       const sourceResolvedQuery = resolveQuery(resolvedQueries, condition.selectColumn.source);
       let inCondition = '';
-      inCondition += `${resolveColumnByViewDefinition(abstractViewDefinition, condition.selectColumn.columnName)} IN (`;
+      inCondition += `${resolveColumnByViewColumns(viewColumns, condition.selectColumn.columnName)} IN (`;
       inCondition += `SELECT ${resolveColumnByResolvedQuery(sourceResolvedQuery, condition.selectColumn.columnName)} `;
       inCondition += `FROM ${sourceResolvedQuery.resolvedSource}`;
       inCondition += ') ';
@@ -322,9 +325,9 @@ function buildRootViewQuery(resolvedQueries, rootViewDefinition) {
     .join(', ');
   const joins = (rootViewDefinition.joins || []).map((join) => `JOIN ${join.source} ON ${join.on} `)
     .join('\n');
-  const conditions = (rootViewDefinition.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition, rootViewDefinition));
+  const conditions = (rootViewDefinition.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition, rootViewDefinition.columns));
   let filterConditions = [];
-  (rootViewDefinition.filters || []).forEach((filter) => filterConditions = [...filterConditions, ...resolveFilter(resolvedQueries, filter, rootViewDefinition)]);
+  (rootViewDefinition.filters || []).forEach((filter) => filterConditions = [...filterConditions, ...resolveFilter(resolvedQueries, filter, rootViewDefinition.columns)]);
   const conditionsAndFilters = [...conditions, ...filterConditions];
   if (rootViewDefinition.dateSuffixEnabled) {
     conditionsAndFilters.push(` _TABLE_SUFFIX BETWEEN '${targetDateRange[0]}' AND '${targetDateRange[1]}' `);
@@ -333,12 +336,13 @@ function buildRootViewQuery(resolvedQueries, rootViewDefinition) {
 }
 
 function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
+  const viewColumns = appendInheritedColumns(viewDefinition, dependentQuery);
   // viewはjoinsは未実装
-  const columns = viewDefinition.columns.map((column) => `${column.originalName} AS ${column.alphabetName} `)
+  const columns = viewColumns.map((column) => `${column.originalName} AS ${column.alphabetName} `)
     .join(', ');
-  const conditions = (viewDefinition.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition, viewDefinition));
+  const conditions = (viewDefinition.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
   let filterConditions = [];
-  (viewDefinition.filters || []).forEach((filter) => filterConditions = [...filterConditions, ...resolveFilter(resolvedQueries, filter, viewDefinition)]);
+  (viewDefinition.filters || []).forEach((filter) => filterConditions = [...filterConditions, ...resolveFilter(resolvedQueries, filter, viewColumns)]);
   const conditionsAndFilters = [...conditions, ...filterConditions];
   return `SELECT ${columns} \n FROM ${dependentQuery.resolvedSource} \n WHERE ${conditionsAndFilters.length ? conditionsAndFilters.join(' AND ') : 'TRUE'} `;
 }
@@ -364,10 +368,11 @@ function resolveQuery(resolvedQueries, name) {
   for (let viewDefinition of views) {
     if (viewDefinition.name === name) {
       const dependentQuery = resolveQuery(resolvedQueries, viewDefinition.source);
+      const resolvedColumns = appendInheritedColumns(viewDefinition, dependentQuery);
       const result = {
         name,
         resolvedSource: viewDefinition.alphabetName,
-        resolvedColumns: viewDefinition.columns, // NOTICE: viewのcolumnsでoriginalName, alphabetNameを直で指定しているので解決不要
+        resolvedColumns,
         sql: buildViewQuery(resolvedQueries, viewDefinition, dependentQuery)
       };
       resolvedQueries.push(result);
