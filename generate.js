@@ -20,8 +20,7 @@ const resultColumns = [
     groupBy: [
       {
         transform: {
-          name: '日付抽出',
-          columnName: 'アクセス日時タイムスタンプ'
+          name: '日付抽出'
         }
       }
     ],
@@ -35,8 +34,7 @@ const resultColumns = [
     groupBy: [
       {
         transform: {
-          name: '日付抽出',
-          columnName: 'アクセス日時タイムスタンプ'
+          name: '日付抽出'
         }
       }
     ],
@@ -50,8 +48,7 @@ const resultColumns = [
     groupBy: [
       {
         transform: {
-          name: '日付抽出',
-          columnName: 'アクセス日時タイムスタンプ'
+          name: '日付抽出'
         }
       }
     ],
@@ -65,8 +62,7 @@ const resultColumns = [
     groupBy: [
       {
         transform: {
-          name: '日付抽出',
-          columnName: 'アクセス日時タイムスタンプ'
+          name: '日付抽出'
         }
       }
     ],
@@ -95,8 +91,7 @@ const resultColumns = [
     groupBy: [
       {
         transform: {
-          name: '日付抽出',
-          columnName: 'アクセス日時タイムスタンプ'
+          name: '日付抽出'
         }
       }
     ],
@@ -110,8 +105,7 @@ const resultColumns = [
     groupBy: [
       {
         transform: {
-          name: '日付抽出',
-          columnName: 'アクセス日時タイムスタンプ'
+          name: '日付抽出'
         }
       }
     ],
@@ -259,7 +253,7 @@ const rootViews = [
         originalName: 'rack_plus.path',
       },
       {
-        name: 'アクセス日時タイムスタンプ',
+        name: 'タイムスタンプ',
         alphabetName: 'time',
         originalName: 'TIMESTAMP_SECONDS(rack_plus.time)',
       }
@@ -608,7 +602,7 @@ function main() {
       auto_generated_unit_name, 
       COUNT(${findResolvedColumnName(resolvedView, resultColumn.value)}) AS ${resultColumn.alphabetName}_value 
       FROM (
-      SELECT FORMAT_TIMESTAMP('%Y-%m-%d', ${findResolvedColumnName(resolvedView, resultColumn.groupBy[0].transform.columnName)}, 'Asia/Tokyo') AS auto_generated_unit_name, 
+      SELECT FORMAT_TIMESTAMP('%Y-%m-%d', ${findResolvedColumnName(resolvedView, resultColumn.groupBy[0].transform.columnName || 'タイムスタンプ')}, 'Asia/Tokyo') AS auto_generated_unit_name, 
       ${findResolvedColumnName(resolvedView, resultColumn.value)}
       FROM ${resolvedView.resolvedSource}
       WHERE ${filterConditions.length ? filterConditions.join(' AND ') : 'TRUE'}
