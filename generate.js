@@ -155,6 +155,17 @@ const caseApplicationsDailyUu = [
         }
       }
     ],
+    joins: [
+      { // TODO: ここはエイリアス指定に変えたい
+        source: 'plus_contracts_with_user_code',
+        on: 'user_code = contracted_user_code'
+      }
+    ],
+    filters: [
+      {
+        name: '契約後一ヶ月以内'
+      }
+    ]
   },
   {
     name: 'ケース相談相談詳細表示数',
@@ -171,6 +182,17 @@ const caseApplicationsDailyUu = [
         }
       }
     ],
+    joins: [
+      { // TODO: ここはエイリアス指定に変えたい
+        source: 'plus_contracts_with_user_code',
+        on: 'user_code = contracted_user_code'
+      }
+    ],
+    filters: [
+      {
+        name: '契約後一ヶ月以内'
+      }
+    ]
   },
   {
     name: 'ケース相談1次相談新規作成フォーム表示数',
@@ -187,6 +209,17 @@ const caseApplicationsDailyUu = [
         }
       }
     ],
+    joins: [
+      { // TODO: ここはエイリアス指定に変えたい
+        source: 'plus_contracts_with_user_code',
+        on: 'user_code = contracted_user_code'
+      }
+    ],
+    filters: [
+      {
+        name: '契約後一ヶ月以内'
+      }
+    ]
   },
   {
     name: 'ケース相談1次相談編集フォーム表示数',
@@ -203,11 +236,22 @@ const caseApplicationsDailyUu = [
         }
       }
     ],
+    joins: [
+      { // TODO: ここはエイリアス指定に変えたい
+        source: 'plus_contracts_with_user_code',
+        on: 'user_code = contracted_user_code'
+      }
+    ],
+    filters: [
+      {
+        name: '契約後一ヶ月以内'
+      }
+    ]
   },
   {
     name: 'ケース相談相談申込数',
     alphabetName: 'counseling_case_applications_uu_count',
-    source: '[ACTION]ケース相談一次相談申込契約後一定期間内',
+    source: '[ACTION]ケース相談一次相談申込',
     value: 'ユーザコード',
     aggregate: {
       type: 'COUNT_DISTINCT',
@@ -219,6 +263,17 @@ const caseApplicationsDailyUu = [
         }
       }
     ],
+    joins: [
+      { // TODO: ここはエイリアス指定に変えたい
+        source: 'plus_contracts_with_user_code',
+        on: 'user_code = contracted_user_code'
+      }
+    ],
+    filters: [
+      {
+        name: '契約後一ヶ月以内'
+      }
+    ]
   },
   {
     name: 'ケース相談相談詳細表示数',
@@ -235,6 +290,17 @@ const caseApplicationsDailyUu = [
         }
       }
     ],
+    joins: [
+      { // TODO: ここはエイリアス指定に変えたい
+        source: 'plus_contracts_with_user_code',
+        on: 'user_code = contracted_user_code'
+      }
+    ],
+    filters: [
+      {
+        name: '契約後一ヶ月以内'
+      }
+    ]
   },
   {
     name: 'ケース相談二次相談編集フォーム表示数',
@@ -251,11 +317,22 @@ const caseApplicationsDailyUu = [
         }
       }
     ],
+    joins: [
+      { // TODO: ここはエイリアス指定に変えたい
+        source: 'plus_contracts_with_user_code',
+        on: 'user_code = contracted_user_code'
+      }
+    ],
+    filters: [
+      {
+        name: '契約後一ヶ月以内'
+      }
+    ]
   },
   {
     name: 'ケース相談二次相談申込数',
     alphabetName: 'submit_counseling_case_application_second_question_uu_count',
-    source: '[ACTION]ケース相談二次相談申込契約後一定期間内',
+    source: '[ACTION]ケース相談二次相談申込',
     value: 'ユーザコード',
     aggregate: {
       type: 'COUNT_DISTINCT',
@@ -267,6 +344,17 @@ const caseApplicationsDailyUu = [
         }
       }
     ],
+    joins: [
+      { // TODO: ここはエイリアス指定に変えたい
+        source: 'plus_contracts_with_user_code',
+        on: 'user_code = contracted_user_code'
+      }
+    ],
+    filters: [
+      {
+        name: '契約後一ヶ月以内'
+      }
+    ]
   },
 ];
 
@@ -484,17 +572,6 @@ const views = [
         raw: 'REGEXP_CONTAINS(path, \'^/plus/counseling$\')'
       }
     ],
-    joins: [
-      { // TODO: ここはエイリアス指定に変えたい
-        source: 'plus_contracts_with_user_code',
-        on: 'user_code = contracted_user_code'
-      }
-    ],
-    filters: [
-      {
-        name: '契約後一ヶ月以内'
-      }
-    ]
   },
   {
     name: '[ACTION]ケース相談詳細ページ表示',
@@ -507,17 +584,6 @@ const views = [
         raw: 'REGEXP_CONTAINS(path, \'^/plus/counseling/\\\\w+?$\')'
       }
     ],
-    joins: [
-      { // TODO: ここはエイリアス指定に変えたい
-        source: 'plus_contracts_with_user_code',
-        on: 'user_code = contracted_user_code'
-      }
-    ],
-    filters: [
-      {
-        name: '契約後一ヶ月以内'
-      }
-    ]
   },
   {
     name: '[ACTION]ケース相談1次相談新規作成フォーム表示',
@@ -530,17 +596,6 @@ const views = [
         raw: 'REGEXP_CONTAINS(path, \'^/plus/counseling/\\\\w+?/form$\')'
       }
     ],
-    joins: [
-      { // TODO: ここはエイリアス指定に変えたい
-        source: 'plus_contracts_with_user_code',
-        on: 'user_code = contracted_user_code'
-      }
-    ],
-    filters: [
-      {
-        name: '契約後一ヶ月以内'
-      }
-    ]
   },
   {
     name: '[ACTION]ケース相談1次相談編集フォーム表示',
@@ -553,17 +608,6 @@ const views = [
         raw: 'REGEXP_CONTAINS(path, \'^/plus/mypage/case_applications/\\\\w+?/edit$\')'
       }
     ],
-    joins: [
-      { // TODO: ここはエイリアス指定に変えたい
-        source: 'plus_contracts_with_user_code',
-        on: 'user_code = contracted_user_code'
-      }
-    ],
-    filters: [
-      {
-        name: '契約後一ヶ月以内'
-      }
-    ]
   },
   {
     name: '[ACTION]ケース相談一次相談申込',
@@ -580,23 +624,6 @@ const views = [
     filters: [
       {
         name: '個別ケース相談申し込み済み一次相談'
-      }
-    ]
-  },
-  {
-    name: '[ACTION]ケース相談一次相談申込契約後一定期間内',
-    alphabetName: 'submit_counseling_case_application_within_certain_days',
-    source: '[ACTION]ケース相談一次相談申込',
-    columnsInheritanceEnabled: true,
-    joins: [
-      { // TODO: ここはエイリアス指定に変えたい
-        source: 'plus_contracts_with_user_code',
-        on: 'user_code = contracted_user_code'
-      }
-    ],
-    filters: [
-      {
-        name: '契約後一ヶ月以内'
       }
     ]
   },
@@ -619,23 +646,6 @@ const views = [
     ],
   },
   {
-    name: '[ACTION]ケース相談二次相談申込契約後一定期間内',
-    alphabetName: 'submit_counseling_case_application_second_question_within_certain_days',
-    source: '[ACTION]ケース相談二次相談申込',
-    columnsInheritanceEnabled: true,
-    joins: [
-      { // TODO: ここはエイリアス指定に変えたい
-        source: 'plus_contracts_with_user_code',
-        on: 'user_code = contracted_user_code'
-      }
-    ],
-    filters: [
-      {
-        name: '契約後一ヶ月以内'
-      }
-    ]
-  },
-  {
     name: '[ACTION]ケース相談相談詳細ページ表示',
     alphabetName: 'visit_counseling_application_detail',
     source: 'PLUS契約者アクセスログ',
@@ -646,17 +656,6 @@ const views = [
         raw: 'REGEXP_CONTAINS(path, \'^/plus/mypage/case_applications/\\\\w+?$\')'
       }
     ],
-    joins: [
-      { // TODO: ここはエイリアス指定に変えたい
-        source: 'plus_contracts_with_user_code',
-        on: 'user_code = contracted_user_code'
-      }
-    ],
-    filters: [
-      {
-        name: '契約後一ヶ月以内'
-      }
-    ]
   },
   {
     name: '[ACTION]ケース相談二次相談編集ページ表示',
@@ -669,17 +668,6 @@ const views = [
         raw: 'REGEXP_CONTAINS(path, \'^/plus/mypage/case_applications/\\\\w+?/second_question$\')'
       }
     ],
-    joins: [
-      { // TODO: ここはエイリアス指定に変えたい
-        source: 'plus_contracts_with_user_code',
-        on: 'user_code = contracted_user_code'
-      }
-    ],
-    filters: [
-      {
-        name: '契約後一ヶ月以内'
-      }
-    ]
   },
 ];
 
