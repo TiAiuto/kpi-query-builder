@@ -739,10 +739,18 @@ function resolveFilter(resolvedQueries, filter, viewColumns) {
   return targetFilterDefinition.conditions.map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
 }
 
-function buildJoinPhrase(joinDefinition) {
-  // TODO: ここのjoinで名前解決も要実装
+function buildJoinPhrase(resolvedQueries, joinDefinition, viewAlphabetName, viewColumns) {
   if (joinDefinition.type === 'raw') {
     return joinDefinition.raw;
+  } else if (joinDefinition.type === 'join') {
+    return joinDefinition.conditions.map((joinCondition) => {
+      const targetResolvedQuery = resolveQuery(resolvedQueries, joinDefinition.target);
+      let joinPhrase = `JOIN ${targetResolvedQuery.resolvedSource} ON `;
+      joinPhrase += `${viewAlphabetName}.${resolveColumnByViewColumns(viewColumns, joinCondition.sourceColumnName)}`;
+      joinPhrase += ' = ';
+      joinPhrase += `${targetResolvedQuery.resolvedSource}.${resolveColumnByResolvedQuery(targetResolvedQuery, joinCondition.targetColumnName)}`;
+      return joinPhrase
+    }).join(' \n ');
   }
   console.error(joinDefinition);
   throw new Error(`${joinDefinition.type}は未定義`);
@@ -751,7 +759,7 @@ function buildJoinPhrase(joinDefinition) {
 function buildRootViewQuery(resolvedQueries, rootViewDefinition) {
   const columns = rootViewDefinition.columns.map((column) => `${column.originalName} AS ${column.alphabetName} `)
     .join(', ');
-  const joins = (rootViewDefinition.joins || []).map((join) => buildJoinPhrase(join))
+  const joins = (rootViewDefinition.joins || []).map((join) => buildJoinPhrase(resolvedQueries, join, rootViewDefinition.alphabetName, columns))
     .join('\n');
   const conditions = (rootViewDefinition.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition, rootViewDefinition.columns));
   let filterConditions = [];
@@ -768,7 +776,7 @@ function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
   // viewはjoinsは未実装
   const columns = viewColumns.map((column) => `${resolveColumnByResolvedQuery(dependentQuery, column.originalName)} AS ${column.alphabetName} `)
     .join(', ');
-  const joins = (viewDefinition.joins || []).map((join) => buildJoinPhrase(join))
+  const joins = (viewDefinition.joins || []).map((join) => buildJoinPhrase(resolvedQueries, join, viewDefinition.alphabetName, viewColumns))
     .join('\n');
   const conditions = (viewDefinition.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
   let filterConditions = [];
@@ -869,15 +877,16 @@ function main() {
 
   resultColumns.forEach((resultColumn) => {
     const resolvedView = resolveQuery(resolvedQueries, resultColumn.source);
-    const joins = (resultColumn.joins || []).map((join) => buildJoinPhrase(join))
+    // この集計クエリの内側のクエリが参照できるカラムを指定
+    const viewColumns = resolvedView.resolvedColumns; // TODO: auto_generated_unit_name とかも入れてもいいかも
+    const joins = (resultColumn.joins || []).map((join) => buildJoinPhrase(resolvedQueries, join, resolvedView.resolvedSource, viewColumns))
       .join('\n');
 
     let filterConditions = [];
     (resultColumn.filters || []).forEach((filter) => {
-      // TODO: resolveFilterの第三引数に現在のviewの定義を渡す必要がある
-      filterConditions = [...filterConditions, resolveFilter(resolvedQueries, filter, [])];
+      filterConditions = [...filterConditions, resolveFilter(resolvedQueries, filter, viewColumns)];
     });
-    const conditions = (resultColumn.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition, [])); // TODO: この集計クエリが持っているカラムを指定する
+    const conditions = (resultColumn.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
     const conditionsAndFilters = [...conditions, ...filterConditions];
 
     const aggregatePhrase = buildAggregatePhrase(resultColumn.aggregate.type, findResolvedColumnName(resolvedView, resultColumn.value));
