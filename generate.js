@@ -17,7 +17,7 @@ const caseApplicationDailyPv = [
     aggregate: {
       type: 'COUNT',
     },
-    groupBy: [
+    groupBy: [ // groupByはaggregateの中に入れてもいいかも
       {
         transform: {
           name: '日付抽出'
@@ -30,7 +30,9 @@ const caseApplicationDailyPv = [
     alphabetName: 'counseling_show_pv',
     source: '[ACTION]ケース相談詳細ページ表示',
     value: 'ユーザコード',
-    aggregate: 'COUNT',
+    aggregate: {
+      type: 'COUNT',
+    },
     groupBy: [
       {
         transform: {
@@ -44,7 +46,9 @@ const caseApplicationDailyPv = [
     alphabetName: 'visit_counseling_first_question_form_pv',
     source: '[ACTION]ケース相談1次相談新規作成フォーム表示',
     value: 'ユーザコード',
-    aggregate: 'COUNT',
+    aggregate: {
+      type: 'COUNT',
+    },
     groupBy: [
       {
         transform: {
@@ -58,7 +62,9 @@ const caseApplicationDailyPv = [
     alphabetName: 'visit_counseling_first_question_edit_form_pv',
     source: '[ACTION]ケース相談1次相談編集フォーム表示',
     value: 'ユーザコード',
-    aggregate: 'COUNT',
+    aggregate: {
+      type: 'COUNT',
+    },
     groupBy: [
       {
         transform: {
@@ -72,7 +78,9 @@ const caseApplicationDailyPv = [
     alphabetName: 'counseling_case_applications_count',
     source: '[ACTION]ケース相談一次相談申込',
     value: 'ユーザコード',
-    aggregate: 'COUNT',
+    aggregate: {
+      type: 'COUNT',
+    },
     groupBy: [
       {
         transform: {
@@ -86,7 +94,9 @@ const caseApplicationDailyPv = [
     alphabetName: 'visit_counseling_application_detail_pv',
     source: '[ACTION]ケース相談相談詳細ページ表示',
     value: 'ユーザコード',
-    aggregate: 'COUNT',
+    aggregate: {
+      type: 'COUNT',
+    },
     groupBy: [
       {
         transform: {
@@ -100,7 +110,9 @@ const caseApplicationDailyPv = [
     alphabetName: 'visit_counseling_application_second_question_edit_pv',
     source: '[ACTION]ケース相談二次相談編集ページ表示',
     value: 'ユーザコード',
-    aggregate: 'COUNT',
+    aggregate: {
+      type: 'COUNT',
+    },
     groupBy: [
       {
         transform: {
@@ -114,7 +126,9 @@ const caseApplicationDailyPv = [
     alphabetName: 'submit_counseling_case_application_second_question_count',
     source: '[ACTION]ケース相談二次相談申込',
     value: 'ユーザコード',
-    aggregate: 'COUNT',
+    aggregate: {
+      type: 'COUNT',
+    },
     groupBy: [
       {
         transform: {
@@ -125,7 +139,7 @@ const caseApplicationDailyPv = [
   },
 ];
 
-const caseApplicationsDailyUu =  [
+const caseApplicationsDailyUu = [
   {
     name: 'ケース相談相談TOP表示数',
     alphabetName: 'counseling_top_uu',
@@ -147,7 +161,9 @@ const caseApplicationsDailyUu =  [
     alphabetName: 'counseling_show_uu',
     source: '[ACTION]ケース相談詳細ページ表示',
     value: 'ユーザコード',
-    aggregate: 'COUNT_DISTINCT',
+    aggregate: {
+      type: 'COUNT_DISTINCT',
+    },
     groupBy: [
       {
         transform: {
@@ -161,7 +177,9 @@ const caseApplicationsDailyUu =  [
     alphabetName: 'visit_counseling_first_question_form_uu',
     source: '[ACTION]ケース相談1次相談新規作成フォーム表示',
     value: 'ユーザコード',
-    aggregate: 'COUNT_DISTINCT',
+    aggregate: {
+      type: 'COUNT_DISTINCT',
+    },
     groupBy: [
       {
         transform: {
@@ -175,7 +193,9 @@ const caseApplicationsDailyUu =  [
     alphabetName: 'visit_counseling_first_question_edit_form_uu',
     source: '[ACTION]ケース相談1次相談編集フォーム表示',
     value: 'ユーザコード',
-    aggregate: 'COUNT_DISTINCT',
+    aggregate: {
+      type: 'COUNT_DISTINCT',
+    },
     groupBy: [
       {
         transform: {
@@ -189,7 +209,9 @@ const caseApplicationsDailyUu =  [
     alphabetName: 'counseling_case_applications_uu_count',
     source: '[ACTION]ケース相談一次相談申込',
     value: 'ユーザコード',
-    aggregate: 'COUNT_DISTINCT',
+    aggregate: {
+      type: 'COUNT_DISTINCT',
+    },
     groupBy: [
       {
         transform: {
@@ -203,7 +225,9 @@ const caseApplicationsDailyUu =  [
     alphabetName: 'visit_counseling_application_detail_uu',
     source: '[ACTION]ケース相談相談詳細ページ表示',
     value: 'ユーザコード',
-    aggregate: 'COUNT_DISTINCT',
+    aggregate: {
+      type: 'COUNT_DISTINCT',
+    },
     groupBy: [
       {
         transform: {
@@ -217,7 +241,9 @@ const caseApplicationsDailyUu =  [
     alphabetName: 'visit_counseling_application_second_question_edit_uu',
     source: '[ACTION]ケース相談二次相談編集ページ表示',
     value: 'ユーザコード',
-    aggregate: 'COUNT_DISTINCT',
+    aggregate: {
+      type: 'COUNT_DISTINCT',
+    },
     groupBy: [
       {
         transform: {
@@ -231,7 +257,9 @@ const caseApplicationsDailyUu =  [
     alphabetName: 'submit_counseling_case_application_second_question_uu_count',
     source: '[ACTION]ケース相談二次相談申込',
     value: 'ユーザコード',
-    aggregate: 'COUNT_DISTINCT',
+    aggregate: {
+      type: 'COUNT_DISTINCT',
+    },
     groupBy: [
       {
         transform: {
@@ -678,6 +706,16 @@ function findResolvedColumnName(resolvedView, name) {
   throw new Error(`${name}は未定義です`);
 }
 
+function buildAggregatePhrase(aggregateType, columnAlphabetName) {
+  if (aggregateType === 'COUNT') {
+    return `COUNT(${columnAlphabetName})`;
+  } else if (aggregateType === 'COUNT_DISTINCT') {
+    return `COUNT(DISTINCT ${columnAlphabetName})`;
+  } else {
+    throw new Error(`${aggregateType}は未実装`);
+  }
+}
+
 function main() {
   const resolvedQueries = [];
   const resultColumnSelect = [];
@@ -713,6 +751,8 @@ function main() {
       filterConditions = [...filterConditions, resolveFilter(resolvedQueries, filter, {})];
     });
 
+    const aggregatePhrase = buildAggregatePhrase(resultColumn.aggregate.type, findResolvedColumnName(resolvedView, resultColumn.value));
+
     // いったんCOUNT, transformありの場合だけ実装する
     resolvedQueries.push({
       name: resultColumn.name,
@@ -731,7 +771,7 @@ function main() {
       ],
       sql: `SELECT 
       auto_generated_unit_name, 
-      COUNT(${findResolvedColumnName(resolvedView, resultColumn.value)}) AS ${resultColumn.alphabetName}_value 
+      ${aggregatePhrase} AS ${resultColumn.alphabetName}_value 
       FROM (
       SELECT FORMAT_TIMESTAMP('%Y-%m-%d', ${findResolvedColumnName(resolvedView, resultColumn.groupBy[0].transform.columnName || 'タイムスタンプ')}, 'Asia/Tokyo') AS auto_generated_unit_name, 
       ${findResolvedColumnName(resolvedView, resultColumn.value)}
