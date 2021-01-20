@@ -152,12 +152,12 @@ const rootViews = [
       {
         name: '利用開始日',
         alphabetName: 'usage_start_date_jst',
-        sourceName: 'DATE(usage_start_date, \'+9\')'
+        originalName: 'DATE(usage_start_date, \'+9\')'
       },
       {
         name: '利用終了日',
         alphabetName: 'usage_end_date_jst',
-        sourceName: 'DATE(usage_end_date, \'+9\')'
+        originalName: 'DATE(usage_end_date, \'+9\')'
       },
       {
         name: 'ユーザコード',
@@ -266,11 +266,31 @@ const views = [
   },
 ];
 
+function resolveColumnByResolvedQuery(resolvedQuery, columnName) {
+  for (let resolvedColumn of resolvedQuery.resolvedColumns) {
+    if (resolvedColumn.name === columnName) {
+      return resolvedColumn.alphabetName;
+    }
+  }
+}
+
 function resolveCondition(resolvedQueries, condition) {
   if (condition.type === 'raw') {
     return condition.raw;
   } else if (condition.type === 'in') {
-    return ' TRUE '; // TODO: そのうち実装する
+    if (condition.valueSetType === 'selectColumn') {
+      // NOTICE: ここでColumnResolverのような関数が必要
+      // console.log(condition.selectColumn.columnName);
+      const sourceResolvedQuery = resolveQuery(resolvedQueries, condition.selectColumn.source);
+      let inCondition = '';
+      inCondition += ` ${condition.selectColumn.columnName} IN (`;
+      inCondition += `SELECT ${resolveColumnByResolvedQuery(sourceResolvedQuery, condition.selectColumn.columnName)} `;
+      inCondition += `FROM ${sourceResolvedQuery.resolvedSource}`;
+      inCondition += ') ';
+      return inCondition;
+    } else {
+      throw new Error(`${condition.valueSetType}は未実装`);
+    }
   }
 }
 
