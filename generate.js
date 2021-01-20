@@ -349,13 +349,13 @@ const rootViews = [
     source: '`h-navi.lo_production.plus_contracts` plus_contracts',
     columns: [
       {
-        name: '利用開始日',
-        alphabetName: 'usage_start_date',
+        name: '利用開始日タイムスタンプ',
+        alphabetName: 'usage_start_date_timestamp',
         originalName: 'usage_start_date'
       },
       {
-        name: '利用終了日',
-        alphabetName: 'usage_end_date',
+        name: '利用終了日タイムスタンプ',
+        alphabetName: 'usage_end_date_timestamp',
         originalName: 'usage_end_date'
       },
       {
