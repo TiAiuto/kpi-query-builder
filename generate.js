@@ -6,7 +6,7 @@
 // ルーティンの場合と初期オンボーディングの場合
 
 // これは引数で渡せるようにしたほうがよさそう
-const targetDateRange = ['20201201', '20201231'];
+const targetDateRange = ['20200901', '20210119'];
 
 const resultColumns = [
   {
