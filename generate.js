@@ -244,7 +244,7 @@ const views = [
     columns: [
       {
         name: 'ユーザコード',
-        alphabetName: 'user_code',
+        alphabetName: 'user_code', // TODO: ここを一括でextendするようにしたい
         originalName: 'user_code'
       },
       {
@@ -266,6 +266,15 @@ const views = [
   },
 ];
 
+function resolveColumnByViewDefinition(abstractViewDefinition, columnName) {
+  for (let column of abstractViewDefinition.columns) {
+    if (column.name === columnName) {
+      return column.originalName;
+    }
+  }
+  throw new Error(`${columnName}は未定義`);
+}
+
 function resolveColumnByResolvedQuery(resolvedQuery, columnName) {
   for (let resolvedColumn of resolvedQuery.resolvedColumns) {
     if (resolvedColumn.name === columnName) {
@@ -274,16 +283,14 @@ function resolveColumnByResolvedQuery(resolvedQuery, columnName) {
   }
 }
 
-function resolveCondition(resolvedQueries, condition) {
+function resolveCondition(resolvedQueries, condition, abstractViewDefinition) {
   if (condition.type === 'raw') {
     return condition.raw;
   } else if (condition.type === 'in') {
     if (condition.valueSetType === 'selectColumn') {
-      // NOTICE: ここでColumnResolverのような関数が必要
-      // console.log(condition.selectColumn.columnName);
       const sourceResolvedQuery = resolveQuery(resolvedQueries, condition.selectColumn.source);
       let inCondition = '';
-      inCondition += ` ${condition.selectColumn.columnName} IN (`;
+      inCondition += `${resolveColumnByViewDefinition(abstractViewDefinition, condition.selectColumn.columnName)} IN (`;
       inCondition += `SELECT ${resolveColumnByResolvedQuery(sourceResolvedQuery, condition.selectColumn.columnName)} `;
       inCondition += `FROM ${sourceResolvedQuery.resolvedSource}`;
       inCondition += ') ';
@@ -294,22 +301,22 @@ function resolveCondition(resolvedQueries, condition) {
   }
 }
 
-function resolveFilter(resolvedQueries, filter) {
+function resolveFilter(resolvedQueries, filter, abstractViewDefinition) {
   const targetFilterDefinition = filters.find((filterDefinition) => filterDefinition.name === filter.name);
   if (!targetFilterDefinition) {
     throw new Error(`${filter.name}は未定義です`);
   }
-  return targetFilterDefinition.conditions.map((condition) => resolveCondition(resolvedQueries, condition));
+  return targetFilterDefinition.conditions.map((condition) => resolveCondition(resolvedQueries, condition, abstractViewDefinition));
 }
 
 function buildRootViewQuery(resolvedQueries, rootViewDefinition) {
   const columns = rootViewDefinition.columns.map((column) => `${column.originalName} AS ${column.alphabetName} `)
     .join(', ');
-  const joins = (rootViewDefinition.joins || []).map((join) => ` JOIN ${join.source} ON ${join.on} `)
+  const joins = (rootViewDefinition.joins || []).map((join) => `JOIN ${join.source} ON ${join.on} `)
     .join('\n');
-  const conditions = (rootViewDefinition.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition));
+  const conditions = (rootViewDefinition.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition, rootViewDefinition));
   let filterConditions = [];
-  (rootViewDefinition.filters || []).forEach((filter) => filterConditions = [...filterConditions, ...resolveFilter(resolvedQueries, filter)]);
+  (rootViewDefinition.filters || []).forEach((filter) => filterConditions = [...filterConditions, ...resolveFilter(resolvedQueries, filter, rootViewDefinition)]);
   const conditionsAndFilters = [...conditions, ...filterConditions];
   if (rootViewDefinition.dateSuffixEnabled) {
     conditionsAndFilters.push(` _TABLE_SUFFIX BETWEEN '${targetDateRange[0]}' AND '${targetDateRange[1]}' `);
@@ -321,9 +328,9 @@ function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
   // viewはjoinsは未実装
   const columns = viewDefinition.columns.map((column) => `${column.originalName} AS ${column.alphabetName} `)
     .join(', ');
-  const conditions = (viewDefinition.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition));
+  const conditions = (viewDefinition.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition, viewDefinition));
   let filterConditions = [];
-  (viewDefinition.filters || []).forEach((filter) => filterConditions = [...filterConditions, ...resolveFilter(resolvedQueries, filter)]);
+  (viewDefinition.filters || []).forEach((filter) => filterConditions = [...filterConditions, ...resolveFilter(resolvedQueries, filter, viewDefinition)]);
   const conditionsAndFilters = [...conditions, ...filterConditions];
   return `SELECT ${columns} \n FROM ${dependentQuery.resolvedSource} \n WHERE ${conditionsAndFilters.length ? conditionsAndFilters.join(' AND ') : 'TRUE'} `;
 }
@@ -402,7 +409,8 @@ function main() {
 
     let filterConditions = [];
     resultColumn.filters.forEach((filter) => {
-      filterConditions = [...filterConditions, resolveFilter(resolvedQueries, filter)];
+      // TODO: resolveFilterの第三引数に現在のviewの定義を渡す必要がある
+      filterConditions = [...filterConditions, resolveFilter(resolvedQueries, filter, {})];
     });
 
     // いったんCOUNT, transformありの場合だけ実装する
