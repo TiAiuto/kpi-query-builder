@@ -723,9 +723,7 @@ function buildRootViewQuery(resolvedQueries, rootViewDefinition) {
   (rootViewDefinition.filters || []).forEach((filterRef) => {
     const filter = resolveFilter(resolvedQueries, filterRef.name, rootViewDefinition.columns);
     conditionDefs = conditionDefs.concat(filter.conditions || []);
-    if (filter.joins) {
-      joinDefs = joinDefs.concat(filter.joins);
-    }
+    joinDefs = joinDefs.concat(filter.joins || []);
   });
 
   const conditionPhrases = conditionDefs.map((condition) => resolveCondition(resolvedQueries, condition, rootViewDefinition.columns));
@@ -749,9 +747,7 @@ function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
   (viewDefinition.filters || []).forEach((filterRef) => {
     const filter = resolveFilter(resolvedQueries, filterRef.name);
     conditionDefs = conditionDefs.concat(filter.conditions || []);
-    if (filter.joins) {
-      joinDefs = joinDefs.concat(filter.joins);
-    }
+    joinDefs = joinDefs.concat(filter.joins || []);
   });
   const conditionPhrases = conditionDefs.map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
   const joins = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, viewDefinition.alphabetName, viewColumns))
@@ -859,9 +855,7 @@ function main() {
     (resultColumn.filters || []).forEach((filterRef) => {
       const filter = resolveFilter(resolvedQueries, filterRef.name, viewColumns);
       filter.conditions.forEach((condition) => filterConditions.push(resolveCondition(resolvedQueries, condition, viewColumns)));
-      if (filter.joins) {
-        joinDefs = [...joinDefs, ...filter.joins];
-      }
+      joinDefs = joinDefs.concat(filter.joins || []);
     });
     const conditions = (resultColumn.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
     const conditionsAndFilters = [...conditions, ...filterConditions];
