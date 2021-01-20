@@ -371,6 +371,13 @@ const views = [
     alphabetName: 'submit_counseling_case_application',
     source: '個別ケース相談一次相談',
     columnsInheritanceEnabled: true,
+    columns: [
+      {
+        name: 'タイムスタンプ',
+        alphabetName: 'time',
+        originalName: '申込日時'
+      }
+    ],
     filters: [
       {
         name: '個別ケース相談申し込み済み一次相談'
@@ -382,6 +389,13 @@ const views = [
     alphabetName: 'submit_counseling_case_application_second_question',
     source: '個別ケース相談二次相談',
     columnsInheritanceEnabled: true,
+    columns: [
+      {
+        name: 'タイムスタンプ',
+        alphabetName: 'time',
+        originalName: '提出日時'
+      }
+    ],
     filters: [
       {
         name: '個別ケース相談申し込み済み二次相談'
@@ -441,7 +455,7 @@ function appendInheritedColumns(viewDefinition, dependentQuery) {
       columns.push({
         name: column.name,
         alphabetName: column.alphabetName,
-        originalName: column.alphabetName // 依存先クエリで使っている名前がそのまま自クエリの名前になる
+        originalName: column.name // 依存先クエリで使っている名前がそのまま自クエリの名前になる
       });
     });
     return columns;
