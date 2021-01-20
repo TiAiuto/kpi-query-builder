@@ -393,7 +393,8 @@ const filters = [
           }
         ]
       }
-    ], conditions: [
+    ],
+    conditions: [
       {
         type: 'raw',
         // 本当はここで条件の利用に必須のカラムを明示できるといい
@@ -688,12 +689,12 @@ function resolveCondition(resolvedQueries, condition, viewColumns) {
   }
 }
 
-function resolveFilter(resolvedQueries, filter, viewColumns) {
-  const targetFilterDefinition = filters.find((filterDefinition) => filterDefinition.name === filter.name);
+function resolveFilter(resolvedQueries, filterName) {
+  const targetFilterDefinition = filters.find((filterDefinition) => filterDefinition.name === filterName);
   if (!targetFilterDefinition) {
-    throw new Error(`${filter.name}は未定義です`);
+    throw new Error(`${filterName}は未定義です`);
   }
-  return targetFilterDefinition.conditions.map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
+  return targetFilterDefinition;
 }
 
 function buildJoinPhrase(resolvedQueries, joinDefinition, viewAlphabetName, viewColumns) {
@@ -716,15 +717,24 @@ function buildJoinPhrase(resolvedQueries, joinDefinition, viewAlphabetName, view
 function buildRootViewQuery(resolvedQueries, rootViewDefinition) {
   const columns = rootViewDefinition.columns.map((column) => `${column.originalName} AS ${column.alphabetName} `)
     .join(', ');
-  const joins = (rootViewDefinition.joins || []).map((join) => buildJoinPhrase(resolvedQueries, join, rootViewDefinition.alphabetName, columns))
-    .join('\n');
+
+  let joinDefs = rootViewDefinition.joins || [];
+
   const conditions = (rootViewDefinition.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition, rootViewDefinition.columns));
   let filterConditions = [];
-  (rootViewDefinition.filters || []).forEach((filter) => filterConditions = [...filterConditions, ...resolveFilter(resolvedQueries, filter, rootViewDefinition.columns)]);
+  (rootViewDefinition.filters || []).forEach((filterRef) => {
+    const filter = resolveFilter(resolvedQueries, filterRef.name, rootViewDefinition.columns);
+    filter.conditions.forEach((condition) => filterConditions.push(resolveCondition(resolvedQueries, condition, rootViewDefinition.columns)));
+    if (filter.joins) {
+      joinDefs = [...joinDefs, ...filter.joins];
+    }
+  });
   const conditionsAndFilters = [...conditions, ...filterConditions];
   if (rootViewDefinition.dateSuffixEnabled) {
     conditionsAndFilters.push(` _TABLE_SUFFIX BETWEEN '${targetDateRange[0]}' AND '${targetDateRange[1]}' `);
   }
+  const joins = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, rootViewDefinition.alphabetName, columns))
+    .join('\n');
   return `SELECT ${columns} \n FROM ${rootViewDefinition.source} \n ${joins} \n WHERE ${conditionsAndFilters.length ? conditionsAndFilters.join(' AND ') : 'TRUE'} `;
 }
 
@@ -733,12 +743,20 @@ function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
   // viewはjoinsは未実装
   const columns = viewColumns.map((column) => `${resolveColumnByResolvedQuery(dependentQuery, column.originalName)} AS ${column.alphabetName} `)
     .join(', ');
-  const joins = (viewDefinition.joins || []).map((join) => buildJoinPhrase(resolvedQueries, join, viewDefinition.alphabetName, viewColumns))
-    .join('\n');
+
+  let joinDefs = viewDefinition.joins || [];
   const conditions = (viewDefinition.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
   let filterConditions = [];
-  (viewDefinition.filters || []).forEach((filter) => filterConditions = [...filterConditions, ...resolveFilter(resolvedQueries, filter, viewColumns)]);
+  (viewDefinition.filters || []).forEach((filterRef) => {
+    const filter = resolveFilter(resolvedQueries, filterRef.name);
+    filter.conditions.forEach((condition) => filterConditions.push(resolveCondition(resolvedQueries, condition, viewColumns)));
+    if (filter.joins) {
+      joinDefs = [...joinDefs, ...filter.joins];
+    }
+  });
   const conditionsAndFilters = [...conditions, ...filterConditions];
+  const joins = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, viewDefinition.alphabetName, viewColumns))
+    .join('\n');
   return `SELECT ${columns} \n FROM ${dependentQuery.resolvedSource} \n ${joins} \n WHERE ${conditionsAndFilters.length ? conditionsAndFilters.join(' AND ') : 'TRUE'} `;
 }
 
@@ -836,15 +854,21 @@ function main() {
     const resolvedView = resolveQuery(resolvedQueries, resultColumn.source);
     // この集計クエリの内側のクエリが参照できるカラムを指定
     const viewColumns = resolvedView.resolvedColumns; // TODO: auto_generated_unit_name とかも入れてもいいかも
-    const joins = (resultColumn.joins || []).map((join) => buildJoinPhrase(resolvedQueries, join, resolvedView.resolvedSource, viewColumns))
-      .join('\n');
 
+    let joinDefs = resultColumn.joins || [];
     let filterConditions = [];
-    (resultColumn.filters || []).forEach((filter) => {
-      filterConditions = [...filterConditions, resolveFilter(resolvedQueries, filter, viewColumns)];
+    (resultColumn.filters || []).forEach((filterRef) => {
+      const filter = resolveFilter(resolvedQueries, filterRef.name, viewColumns);
+      filter.conditions.forEach((condition) => filterConditions.push(resolveCondition(resolvedQueries, condition, viewColumns)));
+      if (filter.joins) {
+        joinDefs = [...joinDefs, ...filter.joins];
+      }
     });
     const conditions = (resultColumn.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
     const conditionsAndFilters = [...conditions, ...filterConditions];
+
+    const joins = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, resolvedView.resolvedSource, viewColumns))
+      .join('\n');
 
     const aggregatePhrase = buildAggregatePhrase(resultColumn.aggregate.type, findResolvedColumnName(resolvedView, resultColumn.value));
     // TODO: そもそもtransformが必要かどうかで分岐が必要
