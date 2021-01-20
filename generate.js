@@ -155,12 +155,6 @@ const caseApplicationsDailyUu = [
         }
       }
     ],
-    joins: [
-      { // TODO: ここはエイリアス指定に変えたい
-        type: 'raw',
-        raw: 'JOIN plus_contracts_with_user_code ON user_code = contracted_user_code'
-      }
-    ],
     filters: [
       {
         name: '契約後一ヶ月以内'
@@ -180,12 +174,6 @@ const caseApplicationsDailyUu = [
         transform: {
           name: '月抽出'
         }
-      }
-    ],
-    joins: [
-      { // TODO: ここはエイリアス指定に変えたい
-        type: 'raw',
-        raw: 'JOIN plus_contracts_with_user_code ON user_code = contracted_user_code'
       }
     ],
     filters: [
@@ -209,12 +197,6 @@ const caseApplicationsDailyUu = [
         }
       }
     ],
-    joins: [
-      { // TODO: ここはエイリアス指定に変えたい
-        type: 'raw',
-        raw: 'JOIN plus_contracts_with_user_code ON user_code = contracted_user_code'
-      }
-    ],
     filters: [
       {
         name: '契約後一ヶ月以内'
@@ -234,12 +216,6 @@ const caseApplicationsDailyUu = [
         transform: {
           name: '月抽出'
         }
-      }
-    ],
-    joins: [
-      { // TODO: ここはエイリアス指定に変えたい
-        type: 'raw',
-        raw: 'JOIN plus_contracts_with_user_code ON user_code = contracted_user_code'
       }
     ],
     filters: [
@@ -263,12 +239,6 @@ const caseApplicationsDailyUu = [
         }
       }
     ],
-    joins: [
-      { // TODO: ここはエイリアス指定に変えたい
-        type: 'raw',
-        raw: 'JOIN plus_contracts_with_user_code ON user_code = contracted_user_code'
-      }
-    ],
     filters: [
       {
         name: '契約後一ヶ月以内'
@@ -288,12 +258,6 @@ const caseApplicationsDailyUu = [
         transform: {
           name: '月抽出'
         }
-      }
-    ],
-    joins: [
-      { // TODO: ここはエイリアス指定に変えたい
-        type: 'raw',
-        raw: 'JOIN plus_contracts_with_user_code ON user_code = contracted_user_code'
       }
     ],
     filters: [
@@ -317,12 +281,6 @@ const caseApplicationsDailyUu = [
         }
       }
     ],
-    joins: [
-      { // TODO: ここはエイリアス指定に変えたい
-        type: 'raw',
-        raw: 'JOIN plus_contracts_with_user_code ON user_code = contracted_user_code'
-      }
-    ],
     filters: [
       {
         name: '契約後一ヶ月以内'
@@ -342,18 +300,6 @@ const caseApplicationsDailyUu = [
         transform: {
           name: '月抽出'
         }
-      }
-    ],
-    joins: [
-      {
-        type: 'join',
-        target: 'ユーザコード付きPLUS契約',
-        conditions: [
-          {
-            sourceColumnName: 'ユーザコード',
-            targetColumnName: '契約ユーザコード'
-          }
-        ]
       }
     ],
     filters: [
@@ -436,7 +382,18 @@ const filters = [
   },
   {
     name: '契約後一ヶ月以内',
-    conditions: [
+    joins: [
+      {
+        type: 'join',
+        target: 'ユーザコード付きPLUS契約',
+        conditions: [
+          {
+            sourceColumnName: 'ユーザコード',
+            targetColumnName: '契約ユーザコード'
+          }
+        ]
+      }
+    ], conditions: [
       {
         type: 'raw',
         // 本当はここで条件の利用に必須のカラムを明示できるといい
