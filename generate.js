@@ -42,6 +42,21 @@ const resultColumns = [
     ],
   },
   {
+    name: 'ケース相談1次相談新規作成フォーム表示数',
+    alphabetName: 'visit_counseling_first_question_form_pv',
+    source: '[ACTION]ケース相談1次相談新規作成フォーム表示',
+    value: 'ユーザコード',
+    aggregate: 'COUNT',
+    groupBy: [
+      {
+        transform: {
+          name: '日付抽出',
+          columnName: 'アクセス日時タイムスタンプ'
+        }
+      }
+    ],
+  },
+  {
     name: 'ケース相談相談申込数',
     alphabetName: 'counseling_case_applications_count',
     source: '[ACTION]ケース相談相談申込',
@@ -238,7 +253,7 @@ const views = [
   },
   {
     name: '[ACTION]ケース相談詳細ページ表示',
-    alphabetName: 'visit_counseling_top_pv',
+    alphabetName: 'visit_counseling_show',
     source: 'PLUS契約者アクセスログ',
     value: 'ユーザコード',
     columnsInheritanceEnabled: true,
@@ -246,6 +261,19 @@ const views = [
       {
         type: 'raw',
         raw: 'REGEXP_CONTAINS(path, \'^/plus/counseling/\\\\w+?$\')'
+      }
+    ]
+  },
+  {
+    name: '[ACTION]ケース相談1次相談新規作成フォーム表示',
+    alphabetName: 'visit_counseling_first_question_form',
+    source: 'PLUS契約者アクセスログ',
+    value: 'ユーザコード',
+    columnsInheritanceEnabled: true,
+    conditions: [
+      {
+        type: 'raw',
+        raw: 'REGEXP_CONTAINS(path, \'^/plus/counseling/\\\\w+?/form$\')'
       }
     ]
   },
