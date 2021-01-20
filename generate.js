@@ -626,6 +626,28 @@ const views = [
       name: '期間集合生成',
       args: ['日単位', '20200901', '20210119']
     }
+  },
+  {
+    name: 'ケース相談相談TOP表示数',
+    alphabetName: 'counseling_top_uu',
+    type: 'aggregate',
+    source: '[ACTION]個別ケース相談TOP表示',
+    aggregate: {
+      value: 'ユーザコード',
+      type: 'COUNT_DISTINCT',
+      groupBy: [
+        {
+          transform: {
+            name: '月抽出'
+          }
+        }
+      ],
+    },
+    filters: [
+      {
+        name: '契約後一ヶ月以内'
+      }
+    ]
   }
 ];
 
@@ -738,6 +760,59 @@ function generateRoutineView(resolvedQueries, {name, alphabetName, routine}) {
   }
 }
 
+function generateAggregateView(resolvedQueries, viewDefinition) {
+  const sourceResolvedView = resolveQuery(resolvedQueries, viewDefinition.source);
+  // この集計クエリの内側のクエリが参照できるカラムを指定
+  const viewColumns = sourceResolvedView.resolvedColumns; // TODO: 集計viewのauto_generated_unit_name, 集計値も必要なら入れる
+
+  let joinDefs = viewDefinition.joins || [];
+  let conditionDefs = viewDefinition.conditions || [];
+
+  (viewDefinition.filters || []).forEach((filterRef) => {
+    const filter = resolveFilter(resolvedQueries, filterRef.name, viewColumns);
+    conditionDefs = conditionDefs.concat(filter.conditions);
+    joinDefs = joinDefs.concat(filter.joins || []);
+  });
+  const conditionPhrases = conditionDefs.map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
+  const joins = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, sourceResolvedView.resolvedSource, viewColumns))
+    .join('\n');
+
+  const aggregatePhrase = buildAggregatePhrase(viewDefinition.aggregate.type, findResolvedColumnName(sourceResolvedView, viewDefinition.aggregate.value));
+  // TODO: そもそもtransformが必要かどうかで分岐が必要
+  const generatedUnitPhrase = buildTransformPhrase(viewDefinition.aggregate.groupBy[0].transform.name,
+    findResolvedColumnName(sourceResolvedView, viewDefinition.aggregate.groupBy[0].transform.columnName || 'タイムスタンプ'));
+
+  // いったんCOUNT, transformありの場合だけ実装する
+  return {
+    name: viewDefinition.name,
+    resolvedSource: viewDefinition.alphabetName,
+    resolvedColumns: [
+      {
+        name: viewDefinition.name,
+        alphabetName: viewDefinition.alphabetName + '_value',
+        originalName: viewDefinition.alphabetName + '_value'
+      },
+      {
+        name: '集計単位（自動生成）',
+        alphabetName: 'auto_generated_unit_name',
+        originalName: 'auto_generated_unit_name'
+      }
+    ],
+    sql: `SELECT 
+      auto_generated_unit_name, 
+      ${aggregatePhrase} AS ${viewDefinition.alphabetName}_value 
+      FROM (
+      SELECT ${generatedUnitPhrase} AS auto_generated_unit_name, 
+      ${findResolvedColumnName(sourceResolvedView, viewDefinition.aggregate.value)}
+      FROM ${sourceResolvedView.resolvedSource} 
+      ${joins}
+      WHERE ${conditionPhrases.length ? conditionPhrases.join(' AND ') : 'TRUE'}
+      )
+      GROUP BY auto_generated_unit_name
+      ORDER BY auto_generated_unit_name`
+  };
+}
+
 function buildRootViewQuery(resolvedQueries, rootViewDefinition) {
   const columnsToSelect = rootViewDefinition.columns.map((column) => `${column.originalName} AS ${column.alphabetName} `).join(', ');
 
@@ -801,6 +876,10 @@ function resolveQuery(resolvedQueries, name) {
     if (viewDefinition.name === name) {
       if (viewDefinition.type === 'routine') {
         const result = generateRoutineView(resolvedQueries, viewDefinition);
+        resolvedQueries.push(result);
+        return result;
+      } else if (viewDefinition.type === 'aggregate') {
+        const result = generateAggregateView(resolvedQueries, viewDefinition);
         resolvedQueries.push(result);
         return result;
       } else {
@@ -876,8 +955,6 @@ function main() {
       throw new Error(`${resultRow.pattern.name} は未実装`);
     }
   });
-
-  // resolveQuery(resolvedQueries, '列日付基準集合生成クエリ'); // 強制的に読み込む
 
   resultColumns.forEach((resultColumn) => {
     const resolvedView = resolveQuery(resolvedQueries, resultColumn.source);
