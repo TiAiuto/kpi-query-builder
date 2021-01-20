@@ -715,27 +715,26 @@ function buildJoinPhrase(resolvedQueries, joinDefinition, viewAlphabetName, view
 }
 
 function buildRootViewQuery(resolvedQueries, rootViewDefinition) {
-  const columns = rootViewDefinition.columns.map((column) => `${column.originalName} AS ${column.alphabetName} `)
-    .join(', ');
+  const columnsToSelect = rootViewDefinition.columns.map((column) => `${column.originalName} AS ${column.alphabetName} `).join(', ');
 
   let joinDefs = rootViewDefinition.joins || [];
+  let conditionDefs = rootViewDefinition.conditions || [];
 
-  const conditions = (rootViewDefinition.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition, rootViewDefinition.columns));
-  let filterConditions = [];
   (rootViewDefinition.filters || []).forEach((filterRef) => {
     const filter = resolveFilter(resolvedQueries, filterRef.name, rootViewDefinition.columns);
-    filter.conditions.forEach((condition) => filterConditions.push(resolveCondition(resolvedQueries, condition, rootViewDefinition.columns)));
+    conditionDefs = conditionDefs.concat(filter.conditions || []);
     if (filter.joins) {
-      joinDefs = [...joinDefs, ...filter.joins];
+      joinDefs = joinDefs.concat(filter.joins);
     }
   });
-  const conditionsAndFilters = [...conditions, ...filterConditions];
+
+  const conditionPhrases = conditionDefs.map((condition) => resolveCondition(resolvedQueries, condition, rootViewDefinition.columns));
   if (rootViewDefinition.dateSuffixEnabled) {
-    conditionsAndFilters.push(` _TABLE_SUFFIX BETWEEN '${targetDateRange[0]}' AND '${targetDateRange[1]}' `);
+    conditionPhrases.push(` _TABLE_SUFFIX BETWEEN '${targetDateRange[0]}' AND '${targetDateRange[1]}' `);
   }
-  const joins = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, rootViewDefinition.alphabetName, columns))
+  const joins = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, rootViewDefinition.alphabetName, rootViewDefinition.columns))
     .join('\n');
-  return `SELECT ${columns} \n FROM ${rootViewDefinition.source} \n ${joins} \n WHERE ${conditionsAndFilters.length ? conditionsAndFilters.join(' AND ') : 'TRUE'} `;
+  return `SELECT ${columnsToSelect} \n FROM ${rootViewDefinition.source} \n ${joins} \n WHERE ${conditionPhrases.length ? conditionPhrases.join(' AND ') : 'TRUE'} `;
 }
 
 function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
