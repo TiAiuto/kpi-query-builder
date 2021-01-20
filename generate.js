@@ -115,7 +115,22 @@ const resultColumns = [
         }
       }
     ],
-  }
+  },
+  {
+    name: 'ケース相談相談申込数',
+    alphabetName: 'submit_counseling_case_application_second_question_count',
+    source: '[ACTION]ケース相談二次相談申込',
+    value: 'ユーザコード',
+    aggregate: 'COUNT',
+    groupBy: [
+      {
+        transform: {
+          name: '日付抽出',
+          columnName: '提出日時'
+        }
+      }
+    ],
+  },
 ];
 
 const resultRows = [
@@ -280,7 +295,7 @@ const rootViews = [
   },
   {
     name: '個別ケース相談二次相談',
-    alphabetName: 'plus_counseling_first_applictions',
+    alphabetName: 'plus_counseling_second_applictions',
     source: '`h-navi.lo_plusmine_production.counseling_case_additional_question_tickets` second_question_tickets',
     columns: [
       {
@@ -293,7 +308,7 @@ const rootViews = [
         alphabetName: 'submitted_at',
         originalName: 'second_question_tickets.submitted_at',
       },
-    ]
+    ],
   }
 ];
 
@@ -371,7 +386,7 @@ const views = [
   {
     name: '[ACTION]ケース相談二次相談申込',
     alphabetName: 'submit_counseling_case_application_second_question',
-    source: '個別ケース相談申し込み済み二次相談',
+    source: '個別ケース相談二次相談',
     columnsInheritanceEnabled: true,
     filters: [
       {
