@@ -157,8 +157,8 @@ const caseApplicationsDailyUu = [
     ],
     joins: [
       { // TODO: ここはエイリアス指定に変えたい
-        source: 'plus_contracts_with_user_code',
-        on: 'user_code = contracted_user_code'
+        type: 'raw',
+        raw: 'JOIN plus_contracts_with_user_code ON user_code = contracted_user_code'
       }
     ],
     filters: [
@@ -184,8 +184,8 @@ const caseApplicationsDailyUu = [
     ],
     joins: [
       { // TODO: ここはエイリアス指定に変えたい
-        source: 'plus_contracts_with_user_code',
-        on: 'user_code = contracted_user_code'
+        type: 'raw',
+        raw: 'JOIN plus_contracts_with_user_code ON user_code = contracted_user_code'
       }
     ],
     filters: [
@@ -211,8 +211,8 @@ const caseApplicationsDailyUu = [
     ],
     joins: [
       { // TODO: ここはエイリアス指定に変えたい
-        source: 'plus_contracts_with_user_code',
-        on: 'user_code = contracted_user_code'
+        type: 'raw',
+        raw: 'JOIN plus_contracts_with_user_code ON user_code = contracted_user_code'
       }
     ],
     filters: [
@@ -238,8 +238,8 @@ const caseApplicationsDailyUu = [
     ],
     joins: [
       { // TODO: ここはエイリアス指定に変えたい
-        source: 'plus_contracts_with_user_code',
-        on: 'user_code = contracted_user_code'
+        type: 'raw',
+        raw: 'JOIN plus_contracts_with_user_code ON user_code = contracted_user_code'
       }
     ],
     filters: [
@@ -265,8 +265,8 @@ const caseApplicationsDailyUu = [
     ],
     joins: [
       { // TODO: ここはエイリアス指定に変えたい
-        source: 'plus_contracts_with_user_code',
-        on: 'user_code = contracted_user_code'
+        type: 'raw',
+        raw: 'JOIN plus_contracts_with_user_code ON user_code = contracted_user_code'
       }
     ],
     filters: [
@@ -292,8 +292,8 @@ const caseApplicationsDailyUu = [
     ],
     joins: [
       { // TODO: ここはエイリアス指定に変えたい
-        source: 'plus_contracts_with_user_code',
-        on: 'user_code = contracted_user_code'
+        type: 'raw',
+        raw: 'JOIN plus_contracts_with_user_code ON user_code = contracted_user_code'
       }
     ],
     filters: [
@@ -319,8 +319,8 @@ const caseApplicationsDailyUu = [
     ],
     joins: [
       { // TODO: ここはエイリアス指定に変えたい
-        source: 'plus_contracts_with_user_code',
-        on: 'user_code = contracted_user_code'
+        type: 'raw',
+        raw: 'JOIN plus_contracts_with_user_code ON user_code = contracted_user_code'
       }
     ],
     filters: [
@@ -346,8 +346,8 @@ const caseApplicationsDailyUu = [
     ],
     joins: [
       { // TODO: ここはエイリアス指定に変えたい
-        source: 'plus_contracts_with_user_code',
-        on: 'user_code = contracted_user_code'
+        type: 'raw',
+        raw: 'JOIN plus_contracts_with_user_code ON user_code = contracted_user_code'
       }
     ],
     filters: [
@@ -474,8 +474,8 @@ const rootViews = [
     ],
     joins: [
       {
-        source: '`h-navi.lo_production.users` users',
-        on: 'plus_contracts.contractor_user_id = users.id'
+        type: 'raw',
+        raw: 'JOIN `h-navi.lo_production.users` users ON plus_contracts.contractor_user_id = users.id',
       }
     ],
   },
@@ -503,8 +503,8 @@ const rootViews = [
     ],
     joins: [
       {
-        source: '`h-navi.lo_production.users` users',
-        on: 'rack_plus.user_id = users.id'
+        type: 'raw',
+        raw: 'JOIN `h-navi.lo_production.users` users ON rack_plus.user_id = users.id',
       }
     ],
     filters: [
@@ -733,10 +733,19 @@ function resolveFilter(resolvedQueries, filter, viewColumns) {
   return targetFilterDefinition.conditions.map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
 }
 
+function buildJoinPhrase(joinDefinition) {
+  // TODO: ここのjoinで名前解決も要実装
+  if (joinDefinition.type === 'raw') {
+    return joinDefinition.raw;
+  }
+  console.error(joinDefinition);
+  throw new Error(`${joinDefinition.type}は未定義`);
+}
+
 function buildRootViewQuery(resolvedQueries, rootViewDefinition) {
   const columns = rootViewDefinition.columns.map((column) => `${column.originalName} AS ${column.alphabetName} `)
     .join(', ');
-  const joins = (rootViewDefinition.joins || []).map((join) => `JOIN ${join.source} ON ${join.on} `)
+  const joins = (rootViewDefinition.joins || []).map((join) => buildJoinPhrase(join))
     .join('\n');
   const conditions = (rootViewDefinition.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition, rootViewDefinition.columns));
   let filterConditions = [];
@@ -753,8 +762,7 @@ function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
   // viewはjoinsは未実装
   const columns = viewColumns.map((column) => `${resolveColumnByResolvedQuery(dependentQuery, column.originalName)} AS ${column.alphabetName} `)
     .join(', ');
-  // TODO: ここのjoinで名前解決も要実装
-  const joins = (viewDefinition.joins || []).map((join) => `JOIN ${join.source} ON ${join.on} `)
+  const joins = (viewDefinition.joins || []).map((join) => buildJoinPhrase(join))
     .join('\n');
   const conditions = (viewDefinition.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
   let filterConditions = [];
@@ -825,9 +833,6 @@ function buildTransformPhrase(transformType, columnAlphabetName) {
   }
 }
 
-function resolveJoin(joinDefinition) {
-}
-
 function main() {
   const resolvedQueries = [];
   const resultColumnSelect = [];
@@ -858,8 +863,7 @@ function main() {
 
   resultColumns.forEach((resultColumn) => {
     const resolvedView = resolveQuery(resolvedQueries, resultColumn.source);
-    // TODO: ここのjoinで名前解決も要実装
-    const joins = (resultColumn.joins || []).map((join) => `JOIN ${join.source} ON ${join.on} `)
+    const joins = (resultColumn.joins || []).map((join) => buildJoinPhrase(join))
       .join('\n');
 
     let filterConditions = [];
