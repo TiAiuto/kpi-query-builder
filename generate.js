@@ -101,6 +101,15 @@ const filters = [
     ]
   },
   {
+    name: '契約済み契約',
+    conditions: [
+      {
+        type: 'raw',
+        raw: 'usage_start_date IS NOT NULL'
+      }
+    ]
+  },
+  {
     name: 'ケース相談TOP表示',
     conditions: [
       {
@@ -170,10 +179,9 @@ const rootViews = [
         originalName: 'users.id',
       },
     ],
-    conditions: [
+    filters: [
       {
-        type: 'raw',
-        raw: 'plus_contracts.usage_start_date IS NOT NULL'
+        name: '契約済み契約'
       }
     ],
     joins: [
