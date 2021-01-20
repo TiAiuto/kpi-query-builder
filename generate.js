@@ -335,8 +335,18 @@ const filters = [
         valueSetType: 'selectColumn',
         selectColumn: {
           source: 'ユーザコード付きPLUS契約',
-          columnName: 'ユーザコード'
+          columnName: '契約ユーザコード'
         }
+      }
+    ]
+  },
+  {
+    name: '契約後一ヶ月以内',
+    conditions: [
+      {
+        type: 'raw',
+        // 本当はここで条件の利用に必須のカラムを明示できるといい
+        raw: 'time BETWEEN usage_start_date_timestamp AND TIMESTAMP_ADD(usage_start_date_timestamp, INTERVAL 31 DAY)'
       }
     ]
   }
@@ -359,13 +369,13 @@ const rootViews = [
         originalName: 'usage_end_date'
       },
       {
-        name: 'ユーザコード',
-        alphabetName: 'user_code',
+        name: '契約ユーザコード',
+        alphabetName: 'contracted_user_code',
         originalName: 'users.code',
       },
       {
-        name: 'ユーザID',
-        alphabetName: 'user_id',
+        name: '契約ユーザID',
+        alphabetName: 'contracted_user_id',
         originalName: 'users.id',
       },
     ],
@@ -472,6 +482,17 @@ const views = [
       {
         type: 'raw',
         raw: 'REGEXP_CONTAINS(path, \'^/plus/counseling$\')'
+      }
+    ],
+    joins: [
+      { // TODO: ここはエイリアス指定に変えたい
+        source: 'plus_contracts_with_user_code',
+        on: 'user_code = contracted_user_code'
+      }
+    ],
+    filters: [
+      {
+        name: '契約後一ヶ月以内'
       }
     ]
   },
@@ -616,7 +637,7 @@ function resolveCondition(resolvedQueries, condition, viewColumns) {
     if (condition.valueSetType === 'selectColumn') {
       const sourceResolvedQuery = resolveQuery(resolvedQueries, condition.selectColumn.source);
       let inCondition = '';
-      inCondition += `${resolveColumnByViewColumns(viewColumns, condition.selectColumn.columnName)} IN (`;
+      inCondition += `${resolveColumnByViewColumns(viewColumns, condition.columnName)} IN (`;
       inCondition += `SELECT ${resolveColumnByResolvedQuery(sourceResolvedQuery, condition.selectColumn.columnName)} `;
       inCondition += `FROM ${sourceResolvedQuery.resolvedSource}`;
       inCondition += ') ';
@@ -655,11 +676,14 @@ function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
   // viewはjoinsは未実装
   const columns = viewColumns.map((column) => `${resolveColumnByResolvedQuery(dependentQuery, column.originalName)} AS ${column.alphabetName} `)
     .join(', ');
+  // TODO: ここのjoinで名前解決も要実装
+  const joins = (viewDefinition.joins || []).map((join) => `JOIN ${join.source} ON ${join.on} `)
+    .join('\n');
   const conditions = (viewDefinition.conditions || []).map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
   let filterConditions = [];
   (viewDefinition.filters || []).forEach((filter) => filterConditions = [...filterConditions, ...resolveFilter(resolvedQueries, filter, viewColumns)]);
   const conditionsAndFilters = [...conditions, ...filterConditions];
-  return `SELECT ${columns} \n FROM ${dependentQuery.resolvedSource} \n WHERE ${conditionsAndFilters.length ? conditionsAndFilters.join(' AND ') : 'TRUE'} `;
+  return `SELECT ${columns} \n FROM ${dependentQuery.resolvedSource} \n ${joins} \n WHERE ${conditionsAndFilters.length ? conditionsAndFilters.join(' AND ') : 'TRUE'} `;
 }
 
 function resolveQuery(resolvedQueries, name) {
