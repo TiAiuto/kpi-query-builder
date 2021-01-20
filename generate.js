@@ -756,6 +756,7 @@ function main() {
     });
 
     const aggregatePhrase = buildAggregatePhrase(resultColumn.aggregate.type, findResolvedColumnName(resolvedView, resultColumn.value));
+    // TODO: そもそもtransformが必要かどうかで分岐が必要
     const generatedUnitPhrase = buildGeneratedUnitPhrase(resultColumn.groupBy[0].transform.name, findResolvedColumnName(resolvedView, resultColumn.groupBy[0].transform.columnName || 'タイムスタンプ'));
 
     // いったんCOUNT, transformありの場合だけ実装する
