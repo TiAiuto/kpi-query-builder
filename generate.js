@@ -611,6 +611,8 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
   }
 
   const aggregatePhrase = buildAggregatePhrase(viewDefinition.aggregate.type, innerValueColumnAlphabetName);
+  const outerValueColumnName = viewDefinition.name + '集計値';
+  const outerValueColumnAlphabetName = viewDefinition.alphabetName + '_value';
 
   return {
     name: viewDefinition.name,
@@ -618,17 +620,16 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
     resolvedColumns: [
       {
         name: outerGroupByColumnName,
-        alphabetName: outerGroupByColumnAlphabetName,
-        originalName: innerGroupByColumnAlphabetName
+        alphabetName: outerGroupByColumnAlphabetName
       },
       {
-        name: viewDefinition.name + '集計値',
-        alphabetName: viewDefinition.alphabetName + '_value',
+        name: outerValueColumnName,
+        alphabetName: outerValueColumnAlphabetName,
       },
     ],
     sql: `SELECT 
       ${innerGroupByColumnAlphabetName} AS ${outerGroupByColumnAlphabetName}, 
-      ${aggregatePhrase} AS ${viewDefinition.alphabetName}_value 
+      ${aggregatePhrase} AS ${outerValueColumnAlphabetName}
       FROM (
         ${innerQuery}
       )
