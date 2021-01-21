@@ -416,9 +416,9 @@ function resolveColumnByViewColumns(viewColumns, columnName) {
   throw new Error(`${columnName}は未定義`);
 }
 
-function findColumnByViewColumns(viewColumns, columnName) {
+function findColumnByViewColumns(viewColumns, columnName, source = undefined) {
   for (let columnDef of viewColumns) {
-    if (columnDef.name === columnName) {
+    if (columnDef.name === columnName && (!source || columnDef.source === source)) {
       return columnDef;
     }
   }
@@ -564,7 +564,6 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
       {
         name: viewDefinition.name,
         alphabetName: viewDefinition.alphabetName + '_value',
-        originalName: viewDefinition.alphabetName + '_value'
       },
     ],
     sql: `SELECT 
@@ -597,9 +596,10 @@ function buildRootViewQuery(resolvedQueries, rootViewDefinition, tableDateRange)
   const joinPhrases = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, rootViewDefinition.alphabetName, viewColumns))
     .join('\n');
 
-  const columnsToSelect = rootViewDefinition.columns.map((column) => `${column.originalName} AS ${column.alphabetName} `).join(', ');
+  const columnDefsToSelect = rootViewDefinition.columns;
+  const selectColumnPhrases = columnDefsToSelect.map((column) => `${column.originalName} AS ${column.alphabetName} `);
 
-  return `SELECT ${columnsToSelect} \n FROM ${rootViewDefinition.source} \n ${joinPhrases} \n WHERE ${conditionPhrases.length ? conditionPhrases.join(' AND ') : 'TRUE'} `;
+  return `SELECT ${selectColumnPhrases.join(', ')} \n FROM ${rootViewDefinition.source} \n ${joinPhrases} \n WHERE ${conditionPhrases.length ? conditionPhrases.join(' AND ') : 'TRUE'} `;
 }
 
 function addViewAvailableColumns(viewAvailableColumns, sourceQuery) {
@@ -639,21 +639,15 @@ function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
   const joinPhrases = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, dependentQuery.resolvedSource, viewAvailableColumns))
     .join('\n');
 
-  const columnsToSelect = appendInheritedColumns(viewDefinition, dependentQuery);
+  const columnDefsToSelect = appendInheritedColumns(viewDefinition, dependentQuery);
   const selectColumnPhrases = [];
-  columnsToSelect.forEach((columnDef) => {
+  columnDefsToSelect.forEach((columnDef) => {
     if (columnDef.type === 'raw') {
       selectColumnPhrases.push(columnDef.raw);
     } else {
-      if (columnDef.source) {
-        // source指定しなくても全体から検索してほしい
-        const columnResolvedSource = resolveQuery(resolvedQueries, columnDef.source);
-        selectColumnPhrases.push(`${columnResolvedSource.resolvedSource}.${resolveColumnByResolvedQuery(columnResolvedSource, columnDef.name)}`);
-      } else {
-        // originalNameが未定義の場合は元のカラム定義を継承する
-        const sourceColumnDef = findColumnByViewColumns(viewAvailableColumns, columnDef.originalName || columnDef.name);
-        selectColumnPhrases.push(`${resolveColumnByViewColumns(viewAvailableColumns, columnDef.originalName || columnDef.name)} AS ${columnDef.alphabetName || sourceColumnDef.alphabetName} `);
-      }
+      // originalNameが未定義の場合は元のカラム定義を継承する
+      const sourceColumnDef = findColumnByViewColumns(viewAvailableColumns, columnDef.originalName || columnDef.name, columnDef.source);
+      selectColumnPhrases.push(`${sourceColumnDef.alphabetName} AS ${columnDef.alphabetName || sourceColumnDef.alphabetName} `);
     }
   });
 
