@@ -470,7 +470,7 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
   };
 }
 
-function buildRootViewQuery(resolvedQueries, rootViewDefinition) {
+function buildRootViewQuery(resolvedQueries, rootViewDefinition, tableDateRange) {
   const viewColumns = rootViewDefinition.columns; // TODO: ここにjoin先のカラムも含める必要がある？
 
   let joinDefs = rootViewDefinition.joins || [];
@@ -484,7 +484,7 @@ function buildRootViewQuery(resolvedQueries, rootViewDefinition) {
 
   const conditionPhrases = conditionDefs.map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
   if (rootViewDefinition.dateSuffixEnabled) {
-    conditionPhrases.push(` _TABLE_SUFFIX BETWEEN '${targetDateRange[0]}' AND '${targetDateRange[1]}' `);
+    conditionPhrases.push(` _TABLE_SUFFIX BETWEEN '${tableDateRange[0]}' AND '${tableDateRange[1]}' `);
   }
   const joinPhrases = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, rootViewDefinition.alphabetName, viewColumns))
     .join('\n');
@@ -535,7 +535,7 @@ function resolveQuery(resolvedQueries, name) {
         name,
         resolvedSource: rootViewDefinition.alphabetName,
         resolvedColumns: rootViewDefinition.columns,
-        sql: buildRootViewQuery(resolvedQueries, rootViewDefinition)
+        sql: buildRootViewQuery(resolvedQueries, rootViewDefinition, targetDateRange) // ここの引数どこから渡す？
       };
       resolvedQueries.push(result);
       return result;
@@ -634,8 +634,6 @@ function main() {
     },
   ];
 
-  // 以下の内容は動的に生成することになりそう
-
   const reportActionUnitType = '月'; // or 日
   const reportActionType = 'pv'; // or uu
   const reportActionFilters = [
@@ -643,6 +641,8 @@ function main() {
       name: '契約後一ヶ月以内'
     }
   ];
+
+  // 以下の内容は動的に生成することになりそう
 
   const baseUnitValueView = {
     name: '列日付基準集合生成クエリ',
