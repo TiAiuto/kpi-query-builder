@@ -416,6 +416,15 @@ function resolveColumnByViewColumns(viewColumns, columnName) {
   throw new Error(`${columnName}は未定義`);
 }
 
+function findColumnByViewColumns(viewColumns, columnName) {
+  for (let columnDef of viewColumns) {
+    if (columnDef.name === columnName) {
+      return columnDef;
+    }
+  }
+  throw new Error(`${columnName}は未定義`);
+}
+
 // TODO: このロジックはクラスに移せそう
 function resolveColumnByResolvedQuery(resolvedQuery, columnName) {
   for (let resolvedColumn of resolvedQuery.resolvedColumns) {
@@ -517,26 +526,30 @@ function generateRoutineView(resolvedQueries, {name, alphabetName, routine}) {
 
 function generateAggregateView(resolvedQueries, viewDefinition) {
   const sourceResolvedView = resolveQuery(resolvedQueries, viewDefinition.source);
-  // この集計クエリの内側のクエリが参照できるカラムを指定
-  const viewColumns = sourceResolvedView.resolvedColumns; // TODO: 集計viewのauto_generated_unit_name, 集計値も必要なら入れる
-  // TODO: viewColumnsにjoin先のcolumnも入れる必要があるかも
-
-  let joinDefs = viewDefinition.joins || [];
-  let conditionDefs = viewDefinition.conditions || [];
-
-  (viewDefinition.filters || []).forEach((filterRef) => {
-    const filter = resolveFilter(resolvedQueries, filterRef.name, viewColumns);
-    conditionDefs = conditionDefs.concat(filter.conditions);
-    joinDefs = joinDefs.concat(filter.joins || []);
-  });
-  const conditionPhrases = conditionDefs.map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
-  const joinPhrases = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, sourceResolvedView.resolvedSource, viewColumns))
-    .join('\n');
-
   const aggregatePhrase = buildAggregatePhrase(viewDefinition.aggregate.type, findResolvedColumnName(sourceResolvedView, viewDefinition.aggregate.value));
   // TODO: そもそもtransformが必要かどうかで分岐が必要
   const generatedUnitPhrase = buildTransformPhrase(viewDefinition.aggregate.groupBy[0].transform.name,
     findResolvedColumnName(sourceResolvedView, viewDefinition.aggregate.groupBy[0].transform.columnName || 'タイムスタンプ'));
+
+  const innerQuery = buildViewQuery(resolvedQueries, {
+    name: 'Aggregate内側クエリ用',
+    alphabetName: 'for_aggregate_inner_query',
+    source: viewDefinition.source,
+    filters: viewDefinition.filters,
+    joins: viewDefinition.joins,
+    conditions: viewDefinition.conditions,
+    columns: [
+      {
+        name: '集計単位（自動生成）',
+        alphabetName: 'auto_generated_unit_name',
+        type: 'raw',
+        raw: `${generatedUnitPhrase} AS auto_generated_unit_name`
+      },
+      {
+        name: viewDefinition.aggregate.value
+      }
+    ]
+  }, sourceResolvedView);
 
   // いったんCOUNT, transformありの場合だけ実装する
   return {
@@ -558,11 +571,7 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
       auto_generated_unit_name, 
       ${aggregatePhrase} AS ${viewDefinition.alphabetName}_value 
       FROM (
-      SELECT ${generatedUnitPhrase} AS auto_generated_unit_name, 
-      ${findResolvedColumnName(sourceResolvedView, viewDefinition.aggregate.value)}
-      FROM ${sourceResolvedView.resolvedSource} 
-      ${joinPhrases}
-      WHERE ${conditionPhrases.length ? conditionPhrases.join(' AND ') : 'TRUE'}
+        ${innerQuery}
       )
       GROUP BY auto_generated_unit_name
       ORDER BY auto_generated_unit_name`
@@ -593,11 +602,32 @@ function buildRootViewQuery(resolvedQueries, rootViewDefinition, tableDateRange)
   return `SELECT ${columnsToSelect} \n FROM ${rootViewDefinition.source} \n ${joinPhrases} \n WHERE ${conditionPhrases.length ? conditionPhrases.join(' AND ') : 'TRUE'} `;
 }
 
-function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
-// TODO: 本当はここで自身, 継承したcolumnsとjoinしたcolumnsの名前空間の区別が必要
-  const viewColumns = appendInheritedColumns(viewDefinition, dependentQuery);
+function addViewAvailableColumns(viewAvailableColumns, sourceQuery) {
+  sourceQuery.resolvedColumns.forEach((resolvedColumn) => {
+    viewAvailableColumns.push({
+      source: sourceQuery.name,
+      name: resolvedColumn.name,
+      alphabetName: resolvedColumn.alphabetName
+    });
+  });
+}
 
+function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
+  const viewAvailableColumns = [];
+  addViewAvailableColumns(viewAvailableColumns, dependentQuery);
+
+  // このviewが持つcolumnsを確定するため先にjoinを確定する必要がある
   let joinDefs = viewDefinition.joins || [];
+  (viewDefinition.filters || []).forEach((filterRef) => {
+    joinDefs = joinDefs.concat(filterRef.joins || []);
+  });
+  joinDefs.forEach((joinDef) => {
+    if (joinDef.type !== 'raw') {
+      const joinTargetQuery = resolveQuery(resolvedQueries, joinDef.target);
+      addViewAvailableColumns(viewAvailableColumns, joinTargetQuery);
+    }
+  });
+
   let conditionDefs = viewDefinition.conditions || [];
 
   (viewDefinition.filters || []).forEach((filterRef) => {
@@ -605,17 +635,25 @@ function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
     conditionDefs = conditionDefs.concat(filter.conditions);
     joinDefs = joinDefs.concat(filter.joins || []);
   });
-  const conditionPhrases = conditionDefs.map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
-  const joinPhrases = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, dependentQuery.resolvedSource, viewColumns))
+  const conditionPhrases = conditionDefs.map((condition) => resolveCondition(resolvedQueries, condition, viewAvailableColumns));
+  const joinPhrases = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, dependentQuery.resolvedSource, viewAvailableColumns))
     .join('\n');
 
+  const columnsToSelect = appendInheritedColumns(viewDefinition, dependentQuery);
   const selectColumnPhrases = [];
-  viewColumns.forEach((columnDef) => {
-    if (columnDef.source) {
-      const columnResolvedSource = resolveQuery(resolvedQueries, columnDef.source);
-      selectColumnPhrases.push(`${columnResolvedSource.resolvedSource}.${resolveColumnByResolvedQuery(columnResolvedSource, columnDef.name)}`);
+  columnsToSelect.forEach((columnDef) => {
+    if (columnDef.type === 'raw') {
+      selectColumnPhrases.push(columnDef.raw);
     } else {
-      selectColumnPhrases.push(`${resolveColumnByResolvedQuery(dependentQuery, columnDef.originalName)} AS ${columnDef.alphabetName} `);
+      if (columnDef.source) {
+        // source指定しなくても全体から検索してほしい
+        const columnResolvedSource = resolveQuery(resolvedQueries, columnDef.source);
+        selectColumnPhrases.push(`${columnResolvedSource.resolvedSource}.${resolveColumnByResolvedQuery(columnResolvedSource, columnDef.name)}`);
+      } else {
+        // originalNameが未定義の場合は元のカラム定義を継承する
+        const sourceColumnDef = findColumnByViewColumns(viewAvailableColumns, columnDef.originalName || columnDef.name);
+        selectColumnPhrases.push(`${resolveColumnByViewColumns(viewAvailableColumns, columnDef.originalName || columnDef.name)} AS ${columnDef.alphabetName || sourceColumnDef.alphabetName} `);
+      }
     }
   });
 
@@ -813,7 +851,7 @@ function main() {
     }
   }
 
-  function findView(name){
+  function findView(name) {
     const view = views.find((item) => item.name === name);
     if (view) {
       return view;
