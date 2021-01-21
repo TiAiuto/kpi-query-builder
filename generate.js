@@ -305,6 +305,42 @@ const views = [
       }
     ],
   },
+  {
+    name: '[ACTION]勉強会TOP表示',
+    alphabetName: 'visit_study_meeting_top',
+    source: 'PLUS契約者アクセスログ',
+    columnsInheritanceEnabled: true,
+    conditions: [
+      {
+        type: 'raw',
+        raw: 'REGEXP_CONTAINS(path, \'^/plus/study_meeting$\')'
+      }
+    ],
+  },
+  {
+    name: '[ACTION]勉強会詳細表示',
+    alphabetName: 'visit_study_meeting_defail',
+    source: 'PLUS契約者アクセスログ',
+    columnsInheritanceEnabled: true,
+    conditions: [
+      {
+        type: 'raw',
+        raw: 'REGEXP_CONTAINS(path, \'^/plus/study_meeting/\\\\w+?$\')'
+      }
+    ],
+  },
+  {
+    name: '[ACTION]勉強会申込詳細表示',
+    alphabetName: 'visit_mypage_study_meeting_application_defail',
+    source: 'PLUS契約者アクセスログ',
+    columnsInheritanceEnabled: true,
+    conditions: [
+      {
+        type: 'raw',
+        raw: 'REGEXP_CONTAINS(path, \'^/plus/mypage/study_meeting_applications/\\\\w+?\')'
+      }
+    ],
+  },
 ];
 
 // TODO: このロジックはクラスに移せそう
@@ -607,7 +643,7 @@ function main() {
   // 数値を見たいview
   // [ACTION] って付いてるのじゃないと動かない
   // TODO: interface縛りたい（「特定のカラムを持っていること」)
-  const targetActions = [
+  const counselingTargetActions = [
     {
       source: '[ACTION]個別ケース相談TOP表示'
     },
@@ -634,12 +670,26 @@ function main() {
     },
   ];
 
+  const studyMeetingTargetActions = [
+    {
+      source: '[ACTION]勉強会TOP表示'
+    },
+    {
+      source: '[ACTION]勉強会詳細表示'
+    },
+    {
+      source: '[ACTION]勉強会申込詳細表示'
+    }
+  ];
+
+  const targetActions = studyMeetingTargetActions;
+
   const reportActionUnitType = '月'; // or 日
   const reportActionType = 'pv'; // or uu
   const reportActionFilters = [
-    {
-      name: '契約後一ヶ月以内'
-    }
+    // {
+    //   name: '契約後一ヶ月以内'
+    // }
   ];
 
   // 以下の内容は動的に生成することになりそう
