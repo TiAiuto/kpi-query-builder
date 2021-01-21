@@ -633,7 +633,8 @@ function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
   // このviewが持つcolumnsを確定するため先にjoinを確定する必要がある
   let joinDefs = viewDefinition.joins || [];
   (viewDefinition.filters || []).forEach((filterRef) => {
-    joinDefs = joinDefs.concat(filterRef.joins || []);
+    const filterDef = resolveFilter(resolvedQueries, filterRef.name);
+    joinDefs = joinDefs.concat(filterDef.joins || []);
   });
   joinDefs.forEach((joinDef) => {
     if (joinDef.type !== 'raw') {
@@ -642,16 +643,15 @@ function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
     }
   });
 
-  let conditionDefs = viewDefinition.conditions || [];
-
-  (viewDefinition.filters || []).forEach((filterRef) => {
-    const filter = resolveFilter(resolvedQueries, filterRef.name);
-    conditionDefs = conditionDefs.concat(filter.conditions);
-    joinDefs = joinDefs.concat(filter.joins || []);
-  });
-  const conditionPhrases = conditionDefs.map((condition) => resolveCondition(resolvedQueries, condition, viewAvailableColumns));
   const joinPhrases = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, dependentQuery.resolvedSource, viewAvailableColumns))
     .join('\n');
+
+  let conditionDefs = viewDefinition.conditions || [];
+  (viewDefinition.filters || []).forEach((filterRef) => {
+    const filterDef = resolveFilter(resolvedQueries, filterRef.name);
+    conditionDefs = conditionDefs.concat(filterDef.conditions);
+  });
+  const conditionPhrases = conditionDefs.map((condition) => resolveCondition(resolvedQueries, condition, viewAvailableColumns));
 
   const columnDefsToSelect = appendInheritedColumns(viewDefinition, dependentQuery);
   const selectColumnPhrases = [];
