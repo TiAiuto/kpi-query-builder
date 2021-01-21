@@ -39,6 +39,15 @@ const filters = [
     ]
   },
   {
+    name: 'オンライン勉強会参加済み申込',
+    conditions: [
+      {
+        type: 'raw',
+        raw: 'attended_at IS NOT NULL'
+      }
+    ]
+  },
+  {
     name: 'PLUS契約ユーザ（解約済み含む）',
     conditions: [
       {
@@ -182,7 +191,29 @@ const rootViews = [
         originalName: 'second_question_tickets.submitted_at',
       },
     ],
-  }
+  },
+  {
+    name: 'オンライン勉強会申込',
+    alphabetName: 'plus_study_meeting_applications',
+    source: '`h-navi.lo_production.plus_study_meeting_applications` study_meeting_applications',
+    columns: [
+      {
+        name: 'ユーザコード',
+        alphabetName: 'user_code',
+        originalName: 'study_meeting_applications.user_code',
+      },
+      {
+        name: '申込日時',
+        alphabetName: 'application_datetime',
+        originalName: 'study_meeting_applications.application_datetime',
+      },
+      {
+        name: '参加日時',
+        alphabetName: 'attended_at',
+        originalName: 'study_meeting_applications.attended_at',
+      },
+    ]
+  },
 ];
 
 const views = [
@@ -340,6 +371,38 @@ const views = [
         raw: 'REGEXP_CONTAINS(path, \'^/plus/mypage/study_meeting_applications/\\\\w+?\')'
       }
     ],
+  },
+  {
+    name: '[ACTION]勉強会申込',
+    alphabetName: 'submit_study_meeting_application',
+    source: 'オンライン勉強会申込',
+    columnsInheritanceEnabled: true,
+    columns: [
+      {
+        name: 'タイムスタンプ',
+        alphabetName: 'time',
+        originalName: '申込日時'
+      }
+    ],
+  },
+  {
+    name: '[ACTION]勉強会参加',
+    alphabetName: 'attend_study_meeting',
+    source: 'オンライン勉強会申込',
+    columnsInheritanceEnabled: true,
+    onlyLastAction: true,
+    columns: [
+      {
+        name: 'タイムスタンプ',
+        alphabetName: 'time',
+        originalName: '申込日時'
+      }
+    ],
+    filters: [
+      {
+        name: 'オンライン勉強会参加済み申込'
+      }
+    ]
   },
 ];
 
@@ -678,8 +741,14 @@ function main() {
       source: '[ACTION]勉強会詳細表示'
     },
     {
+      source: '[ACTION]勉強会申込'
+    },
+    {
       source: '[ACTION]勉強会申込詳細表示'
-    }
+    },
+    {
+      source: '[ACTION]勉強会参加'
+    },
   ];
 
   const targetActions = studyMeetingTargetActions;
@@ -687,9 +756,9 @@ function main() {
   const reportActionUnitType = '月'; // or 日
   const reportActionType = 'pv'; // or uu
   const reportActionFilters = [
-    // {
-    //   name: '契約後一ヶ月以内'
-    // }
+    {
+      name: '契約後一ヶ月以内'
+    }
   ];
 
   // 以下の内容は動的に生成することになりそう
@@ -708,7 +777,11 @@ function main() {
 
   function generateAggregateViewName(targetActionView, reportActionType) {
     if (reportActionType === 'pv') {
-      return `${targetActionView.name}_表示数`;
+      if (targetActionView.onlyLastAction) {
+        return `${targetActionView.name}_UU数_表示数利用不可`;
+      } else {
+        return `${targetActionView.name}_表示数`;
+      }
     } else if (reportActionType === 'uu') {
       return `${targetActionView.name}_UU数`;
     } else {
@@ -718,9 +791,13 @@ function main() {
 
   function generateAggregateViewAlphabetName(targetActionView, reportActionType) {
     if (reportActionType === 'pv') {
-      return `${targetActionView.resolvedSource}_pv_count`;
+      if (targetActionView.onlyLastAction) {
+        return `${targetActionView.alphabetName}_uu_count_pv_not_available`;
+      } else {
+        return `${targetActionView.alphabetName}_pv_count`;
+      }
     } else if (reportActionType === 'uu') {
-      return `${targetActionView.resolvedSource}_uu_count`;
+      return `${targetActionView.alphabetName}_uu_count`;
     } else {
       throw new Error(`${reportActionType}は未実装`);
     }
@@ -736,9 +813,17 @@ function main() {
     }
   }
 
+  function findView(name){
+    const view = views.find((item) => item.name === name);
+    if (view) {
+      return view;
+    }
+    throw new Error(`${name}は未定義`);
+  }
+
   const viewsForReport = [];
   targetActions.forEach((targetAction) => {
-    const targetActionView = resolveQuery(resolvedQueries, targetAction.source);
+    const targetActionView = findView(targetAction.source);
     viewsForReport.push({
       name: generateAggregateViewName(targetActionView, reportActionType),
       alphabetName: generateAggregateViewAlphabetName(targetActionView, reportActionType),
