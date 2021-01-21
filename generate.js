@@ -546,8 +546,8 @@ function generateRoutineView(resolvedQueries, {name, alphabetName, routine}) {
 function generateAggregateView(resolvedQueries, viewDefinition) {
   const sourceResolvedView = resolveQuery(resolvedQueries, viewDefinition.source);
   // TODO: そもそもtransformが必要かどうかで分岐が必要
-  const generatedUnitPhrase = buildTransformPhrase(viewDefinition.aggregate.groupBy[0].transform.name,
-    findResolvedColumnName(sourceResolvedView, viewDefinition.aggregate.groupBy[0].transform.columnName || 'タイムスタンプ'));
+  const generatedUnitPhrase = buildTransformPhrase(viewDefinition.aggregate.groupBy[0].transform.pattern.name,
+    findResolvedColumnName(sourceResolvedView, viewDefinition.aggregate.groupBy[0].transform.value));
 
   const innerQuery = buildViewQuery(resolvedQueries, {
     name: 'Aggregate内側クエリ用',
@@ -942,7 +942,14 @@ function main() {
         groupBy: [
           {
             transform: {
-              name: `${reportActionUnitType}抽出`
+              value: 'タイムスタンプ',
+              pattern: {
+                name: `${reportActionUnitType}抽出`,
+              },
+              output: {
+                name: '集計単位（自動生成）',
+                alphabetName: 'auto_generated_unit_name'
+              }
             }
           }
         ],
