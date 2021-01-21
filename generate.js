@@ -738,12 +738,19 @@ function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
     } else {
       // originalNameが未定義の場合は元のカラム定義を継承する
       // 重複する定義が見つかった場合は継承元を最優先で使う
-      let sourceColumnDef = findColumnByViewColumnDefs(viewAvailableColumns, columnDef.originalName || columnDef.name, columnDef.source, dependentQuery.name);
+      const sourceColumnDef = findColumnByViewColumnDefs(viewAvailableColumns, columnDef.originalName || columnDef.name, columnDef.source, dependentQuery.name);
       selectColumnPhrases.push(`${sourceColumnDef.sourceAlphabetName}.${sourceColumnDef.alphabetName} AS ${columnDef.alphabetName || sourceColumnDef.alphabetName} `);
     }
   });
 
-  return `SELECT ${selectColumnPhrases.join(', ')} \n FROM ${dependentQuery.resolvedSource} \n ${joinPhrases} \n WHERE ${conditionPhrases.length ? conditionPhrases.join(' AND ') : 'TRUE'} `;
+  const orderByPhrases = [];
+  (viewDefinition.orderBy || []).forEach((orderByDef) => {
+    const orderColumnDef = findColumnByViewColumnDefs(viewAvailableColumns, orderByDef.name, orderByDef.source, dependentQuery.name);
+    const descWord = orderByDef.desc ? ' DESC' : '';
+    orderByPhrases.push(`${orderColumnDef.sourceAlphabetName}.${orderColumnDef.alphabetName} ${descWord}`);
+  });
+
+  return `SELECT ${selectColumnPhrases.join(', ')} \n FROM ${dependentQuery.resolvedSource} \n ${joinPhrases} \n WHERE ${conditionPhrases.length ? conditionPhrases.join(' AND ') : 'TRUE'} ORDER BY ${orderByPhrases.length ? orderByPhrases.join(', ') : '1'} `;
 }
 
 function resolveQuery(resolvedQueries, name) {
@@ -878,11 +885,11 @@ function main() {
   const targetActions = studyMeetingTargetActions;
 
   const reportActionUnitType = '月'; // or 日
-  const reportActionType = 'pv'; // or uu
+  const reportActionType = 'uu'; // or uu
   const reportActionFilters = [
-    {
-      name: '契約後一ヶ月以内'
-    }
+    // {
+    //   name: '契約後一ヶ月以内'
+    // }
   ];
 
   // 以下の内容は動的に生成することになりそう
@@ -1028,6 +1035,12 @@ function main() {
       {
         source: '各月末時点PLUSユーザ数集計',
         name: '各月末時点PLUSユーザ数集計集計値'
+      }
+    ],
+    orderBy: [
+      {
+        source: '列日付基準集合生成クエリ',
+        name: '集計単位（自動生成）'
       }
     ]
   };
