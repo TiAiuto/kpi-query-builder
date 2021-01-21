@@ -303,15 +303,6 @@ const caseApplicationsDailyUu = [
   },
 ];
 
-const resultColumns = caseApplicationsDailyUu;
-
-const resultRows = [
-  {
-    pattern: {
-      name: '月抽出'
-    },
-  }
-];
 
 const filters = [
   {
@@ -912,25 +903,58 @@ function buildTransformPhrase(transformType, columnAlphabetName) {
 function main() {
   const resolvedQueries = [];
 
-  // 以下の内容は動的に生成することになりそう
   const baseUnitValueView = {
     name: '列日付基準集合生成クエリ',
     alphabetName: 'row_base_unit_value',
     type: 'routine',
     routine: {
       name: '期間集合生成',
-      args: ['月単位', '20200901', '20210119']
+      args: ['月単位', '20200901', '20210119'] // ここの引数は可変
     }
   };
   views.push(baseUnitValueView);
-  resolveQuery(resolvedQueries, '列日付基準集合生成クエリ')
+  resolveQuery(resolvedQueries, '列日付基準集合生成クエリ');
 
-  const viewsForReport = [
+  // 数値を見たいview
+  // [ACTION] って付いてるのじゃないと動かない
+  // TODO: interface縛りたい（「特定のカラムを持っていること」)
+  const targetActions = [
     {
-      name: 'ケース相談相談TOP表示数',
-      alphabetName: 'counseling_top_uu',
+      source: '[ACTION]個別ケース相談TOP表示'
+    },
+    {
+      source: '[ACTION]ケース相談詳細ページ表示'
+    },
+    {
+      source: '[ACTION]ケース相談1次相談新規作成フォーム表示'
+    },
+    {
+      source: '[ACTION]ケース相談1次相談編集フォーム表示'
+    },
+    {
+      source: '[ACTION]ケース相談一次相談申込'
+    },
+    {
+      source: '[ACTION]ケース相談相談詳細ページ表示'
+    },
+    {
+      source: '[ACTION]ケース相談二次相談編集ページ表示'
+    },
+    {
+      source: '[ACTION]ケース相談二次相談申込'
+    },
+  ];
+
+  // 以下の内容は動的に生成することになりそう
+
+  const viewsForReport = [];
+  targetActions.forEach((targetAction) => {
+    const targetActionView = resolveQuery(resolvedQueries, targetAction.source);
+    viewsForReport.push({
+      name: targetActionView.name + '_表示数',
+      alphabetName: targetActionView.resolvedSource + '_pv_count',
+      source: targetAction.source,
       type: 'aggregate',
-      source: '[ACTION]個別ケース相談TOP表示',
       aggregate: {
         value: 'ユーザコード',
         type: 'COUNT_DISTINCT',
@@ -947,10 +971,10 @@ function main() {
           name: '契約後一ヶ月以内'
         }
       ]
-    }
-  ];
+    });
+  });
 
-  const documentView = {
+  const reportBodyView = {
     type: 'default',
     name: 'レポート本体',
     alphabetName: 'report_body',
@@ -962,11 +986,11 @@ function main() {
   viewsForReport.forEach((reportView) => {
     views.push(reportView);
     const resolvedReportView = resolveQuery(resolvedQueries, reportView.name);
-    documentView.columns.push({
+    reportBodyView.columns.push({
       ...resolvedReportView.resolvedColumns[1],
       source: reportView.name
     }); // 集計基準値の次に集計値が入っている
-    documentView.joins.push({
+    reportBodyView.joins.push({
       type: 'left_join',
       target: reportView.name,
       conditions: [
@@ -978,7 +1002,7 @@ function main() {
     });
   });
 
-  views.push(documentView);
+  views.push(reportBodyView);
   resolveQuery(resolvedQueries, 'レポート本体');
 
   const withQueries = resolvedQueries.map((resolvedQuery) => `${resolvedQuery.resolvedSource} AS (${resolvedQuery.sql})`);
