@@ -554,7 +554,7 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
   const groupBy = viewDefinition.aggregate.groupBy[0];
   const innerGroupByColumnAlphabetName = 'aggregate_inner_group_by_value';
   const innerValueColumnAlphabetName = 'aggregate_inner_value';
-  let innerQuery, outerGroupByColumnAlphabetName;
+  let innerQuery, outerGroupByColumnName, outerGroupByColumnAlphabetName;
 
   if (groupBy.type === 'value') {
     // ここでjoinsが解決できるならinner queryにする必要はない
@@ -578,6 +578,7 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
     }, sourceResolvedView);
 
     // ↓join先のカラムでgroupByするとき解決できないので要修正
+    outerGroupByColumnName = groupBy.value;
     outerGroupByColumnAlphabetName = resolveColumnByResolvedQuery(sourceResolvedView, groupBy.value);
   } else if (groupBy.type === 'transform') {
     const generatedUnitPhrase = buildTransformPhrase(groupBy.transform.pattern.name,
@@ -603,7 +604,8 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
       ]
     }, sourceResolvedView);
 
-    outerGroupByColumnAlphabetName = groupBy.transform.output.name;
+    outerGroupByColumnName = groupBy.transform.output.name;
+    outerGroupByColumnAlphabetName = groupBy.transform.output.alphabetName;
   } else {
     throw new Error(`${groupBy.type}は未定義`);
   }
@@ -615,8 +617,8 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
     resolvedSource: viewDefinition.alphabetName,
     resolvedColumns: [
       {
-        name: outerGroupByColumnAlphabetName,
-        alphabetName: innerGroupByColumnAlphabetName,
+        name: outerGroupByColumnName,
+        alphabetName: outerGroupByColumnAlphabetName,
         originalName: innerGroupByColumnAlphabetName
       },
       {
@@ -625,7 +627,7 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
       },
     ],
     sql: `SELECT 
-      ${innerGroupByColumnAlphabetName}, 
+      ${innerGroupByColumnAlphabetName} AS ${outerGroupByColumnAlphabetName}, 
       ${aggregatePhrase} AS ${viewDefinition.alphabetName}_value 
       FROM (
         ${innerQuery}
@@ -904,7 +906,11 @@ function main() {
       {
         type: 'raw',
         target: 'ユーザコード付きPLUS契約',
-        raw: 'JOIN plus_contracts_with_user_code ON usage_start_date_timestamp <= unit_value'
+        raw: 'JOIN plus_contracts_with_user_code ON ' +
+          'DATE(usage_start_date_timestamp, "Asia/Tokyo") <= DATE_SUB(DATE_ADD(DATE_TRUNC(PARSE_DATE("%Y-%m", unit_value), MONTH), INTERVAL 1 MONTH), INTERVAL 1 DAY) AND ' +
+          '(usage_end_date_timestamp IS NULL OR ' +
+          'DATE_SUB(DATE_ADD(DATE_TRUNC(PARSE_DATE("%Y-%m", unit_value), MONTH), INTERVAL 1 MONTH), INTERVAL 1 DAY) < DATE(usage_end_date_timestamp, "Asia/Tokyo") ' +
+          ')'
       }
     ],
     aggregate: {
