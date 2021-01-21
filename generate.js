@@ -545,7 +545,6 @@ function generateRoutineView(resolvedQueries, {name, alphabetName, routine}) {
 
 function generateAggregateView(resolvedQueries, viewDefinition) {
   const sourceResolvedView = resolveQuery(resolvedQueries, viewDefinition.source);
-  const aggregatePhrase = buildAggregatePhrase(viewDefinition.aggregate.type, findResolvedColumnName(sourceResolvedView, viewDefinition.aggregate.value));
   // TODO: そもそもtransformが必要かどうかで分岐が必要
   const generatedUnitPhrase = buildTransformPhrase(viewDefinition.aggregate.groupBy[0].transform.name,
     findResolvedColumnName(sourceResolvedView, viewDefinition.aggregate.groupBy[0].transform.columnName || 'タイムスタンプ'));
@@ -570,6 +569,7 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
     ]
   }, sourceResolvedView);
 
+  const aggregatePhrase = buildAggregatePhrase(viewDefinition.aggregate.type, findResolvedColumnName(sourceResolvedView, viewDefinition.aggregate.value));
   // いったんCOUNT, transformありの場合だけ実装する
   return {
     name: viewDefinition.name,
@@ -673,10 +673,9 @@ function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
     joinDefs = joinDefs.concat(filterDef.joins || []);
   });
   joinDefs.forEach((joinDef) => {
-    if (joinDef.type !== 'raw') {
-      const joinTargetQuery = resolveQuery(resolvedQueries, joinDef.target);
-      addViewAvailableColumns(viewAvailableColumns, joinTargetQuery);
-    }
+    // type: rawの場合もtargetは明示すること
+    const joinTargetQuery = resolveQuery(resolvedQueries, joinDef.target);
+    addViewAvailableColumns(viewAvailableColumns, joinTargetQuery);
   });
 
   const joinPhrases = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, dependentQuery.resolvedSource, viewAvailableColumns))
@@ -856,7 +855,32 @@ function main() {
     }
   };
   views.push(baseUnitValueView);
-  resolveQuery(resolvedQueries, '列日付基準集合生成クエリ');
+
+  const endOfMonthPlusUsersView = {
+    name: '各月末時点PLUSユーザ数集計',
+    alphabetName: 'plus_users_count_at_each_end_of_month',
+    source: '列日付基準集合生成クエリ',
+    type: 'aggregate',
+    joins: [
+      {
+        type: 'raw',
+        target: 'ユーザコード付きPLUS契約',
+        raw: 'JOIN plus_contracts_with_user_code ON usage_start_date_timestamp <= unit_value'
+      }
+    ],
+    aggregate: {
+      value: '契約ユーザコード',
+      groupBy: [
+        {
+          type: 'value',
+          value: '集計単位（自動生成）'
+        }
+      ]
+    }
+  };
+  // views.push(endOfMonthPlusUsersView);
+  // resolveQuery(resolvedQueries, '各月末時点PLUSユーザ数集計');
+
 
   function generateAggregateViewName(targetActionView, reportActionType) {
     if (reportActionType === 'pv') {
