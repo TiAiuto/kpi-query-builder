@@ -544,60 +544,112 @@ function generateRoutineView(resolvedQueries, {name, alphabetName, routine}) {
 }
 
 function generateAggregateView(resolvedQueries, viewDefinition) {
-  const sourceResolvedView = resolveQuery(resolvedQueries, viewDefinition.source);
-  // TODO: そもそもtransformが必要かどうかで分岐が必要
+  // TODO: そのうちaggregateを複数指定したくなるかも
   if (viewDefinition.aggregate.groupBy.length > 1) {
     throw new Error('groupByの複数指定は未実装');
   }
 
-  const generatedUnitPhrase = buildTransformPhrase(viewDefinition.aggregate.groupBy[0].transform.pattern.name,
-    findResolvedColumnName(sourceResolvedView, viewDefinition.aggregate.groupBy[0].transform.value));
+  const sourceResolvedView = resolveQuery(resolvedQueries, viewDefinition.source);
 
-  const innerQuery = buildViewQuery(resolvedQueries, {
-    name: 'Aggregate内側クエリ用',
-    alphabetName: 'for_aggregate_inner_query',
-    source: viewDefinition.source,
-    filters: viewDefinition.filters,
-    joins: viewDefinition.joins,
-    conditions: viewDefinition.conditions,
-    columns: [
-      {
-        name: viewDefinition.aggregate.groupBy[0].transform.output.name,
-        alphabetName: viewDefinition.aggregate.groupBy[0].transform.output.alphabetName,
-        type: 'raw',
-        raw: `${generatedUnitPhrase} AS ${viewDefinition.aggregate.groupBy[0].transform.output.alphabetName}`
-      },
-      {
-        name: viewDefinition.aggregate.value
-      }
-    ]
-  }, sourceResolvedView);
+  const groupBy = viewDefinition.aggregate.groupBy[0];
+  if (groupBy.type === 'value') {
+    const innerQuery = buildViewQuery(resolvedQueries, {
+      name: 'Aggregate内側クエリ用',
+      alphabetName: 'for_aggregate_inner_query',
+      source: viewDefinition.source,
+      filters: viewDefinition.filters,
+      joins: viewDefinition.joins,
+      conditions: viewDefinition.conditions,
+      columns: [
+        {
+          name: groupBy.value,
+          alphabetName: 'aggregate_inner_group_by_value'
+        },
+        {
+          name: viewDefinition.aggregate.value,
+          alphabetName: 'aggregate_inner_value'
+        }
+      ]
+    }, sourceResolvedView);
 
-  const aggregatePhrase = buildAggregatePhrase(viewDefinition.aggregate.type, findResolvedColumnName(sourceResolvedView, viewDefinition.aggregate.value));
-  // いったんCOUNT, transformありの場合だけ実装する
-  return {
-    name: viewDefinition.name,
-    resolvedSource: viewDefinition.alphabetName,
-    resolvedColumns: [
-      {
-        name: viewDefinition.aggregate.groupBy[0].transform.output.name,
-        alphabetName: viewDefinition.aggregate.groupBy[0].transform.output.alphabetName,
-        originalName: viewDefinition.aggregate.groupBy[0].transform.output.alphabetName
-      },
-      {
-        name: viewDefinition.name,
-        alphabetName: viewDefinition.alphabetName + '_value',
-      },
-    ],
-    sql: `SELECT 
-      auto_generated_unit_name, 
+    const aggregatePhrase = buildAggregatePhrase(viewDefinition.aggregate.type, 'aggregate_inner_value');
+    const groupByColumnAlphabetName = 'aggregate_inner_group_by_value';
+
+    return {
+      name: viewDefinition.name,
+      resolvedSource: viewDefinition.alphabetName,
+      resolvedColumns: [
+        {
+          name: groupBy.value,
+          alphabetName: groupByColumnAlphabetName,
+          originalName: groupByColumnAlphabetName
+        },
+        {
+          name: viewDefinition.name,
+          alphabetName: viewDefinition.alphabetName + '_value',
+        },
+      ],
+      sql: `SELECT 
+      ${groupByColumnAlphabetName}, 
       ${aggregatePhrase} AS ${viewDefinition.alphabetName}_value 
       FROM (
         ${innerQuery}
       )
-      GROUP BY auto_generated_unit_name
-      ORDER BY auto_generated_unit_name`
-  };
+      GROUP BY ${groupByColumnAlphabetName}
+      ORDER BY ${groupByColumnAlphabetName}`
+    };
+  } else if (groupBy.type === 'transform') {
+    const generatedUnitPhrase = buildTransformPhrase(groupBy.transform.pattern.name,
+      findResolvedColumnName(sourceResolvedView, groupBy.transform.value));
+
+    const innerQuery = buildViewQuery(resolvedQueries, {
+      name: 'Aggregate内側クエリ用',
+      alphabetName: 'for_aggregate_inner_query',
+      source: viewDefinition.source,
+      filters: viewDefinition.filters,
+      joins: viewDefinition.joins,
+      conditions: viewDefinition.conditions,
+      columns: [
+        {
+          name: groupBy.transform.output.name,
+          type: 'raw',
+          raw: `${generatedUnitPhrase} AS aggregate_inner_group_by_value`
+        },
+        {
+          name: viewDefinition.aggregate.value,
+          alphabetName: 'aggregate_inner_value'
+        }
+      ]
+    }, sourceResolvedView);
+
+    const aggregatePhrase = buildAggregatePhrase(viewDefinition.aggregate.type, 'aggregate_inner_value');
+    const groupByColumnAlphabetName = 'aggregate_inner_group_by_value';
+
+    return {
+      name: viewDefinition.name,
+      resolvedSource: viewDefinition.alphabetName,
+      resolvedColumns: [
+        {
+          name: groupBy.transform.output.name,
+          alphabetName: 'aggregate_inner_group_by_value',
+          originalName: 'aggregate_inner_group_by_value'
+        },
+        {
+          name: viewDefinition.name,
+          alphabetName: viewDefinition.alphabetName + '_value',
+        },
+      ],
+      sql: `SELECT 
+      ${groupByColumnAlphabetName}, 
+      ${aggregatePhrase} AS ${viewDefinition.alphabetName}_value 
+      FROM (
+        ${innerQuery}
+      )
+      GROUP BY ${groupByColumnAlphabetName}
+      ORDER BY ${groupByColumnAlphabetName}`
+    };
+  }
+  throw new Error(`${groupBy.type}は未定義`);
 }
 
 function addRootViewAvailableColumns(viewAvailableColumns, rootViewDefinition) {
@@ -873,6 +925,7 @@ function main() {
       }
     ],
     aggregate: {
+      type: 'COUNT',
       value: '契約ユーザコード',
       groupBy: [
         {
@@ -945,6 +998,7 @@ function main() {
         type: generateAggregateViewAggreateType(targetActionView, reportActionType),
         groupBy: [
           {
+            type: 'transform',
             transform: {
               value: 'タイムスタンプ',
               pattern: {
