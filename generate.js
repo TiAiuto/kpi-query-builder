@@ -552,8 +552,12 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
   const sourceResolvedView = resolveQuery(resolvedQueries, viewDefinition.source);
 
   const groupBy = viewDefinition.aggregate.groupBy[0];
+  const innerGroupByColumnAlphabetName = 'aggregate_inner_group_by_value';
+  const innerValueColumnAlphabetName = 'aggregate_inner_value';
+  let innerQuery;
+
   if (groupBy.type === 'value') {
-    const innerQuery = buildViewQuery(resolvedQueries, {
+    innerQuery = buildViewQuery(resolvedQueries, {
       name: 'Aggregate内側クエリ用',
       alphabetName: 'for_aggregate_inner_query',
       source: viewDefinition.source,
@@ -563,46 +567,20 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
       columns: [
         {
           name: groupBy.value,
-          alphabetName: 'aggregate_inner_group_by_value'
+          alphabetName: innerGroupByColumnAlphabetName
         },
         {
           name: viewDefinition.aggregate.value,
-          alphabetName: 'aggregate_inner_value'
+          alphabetName: innerValueColumnAlphabetName
         }
       ]
     }, sourceResolvedView);
 
-    const aggregatePhrase = buildAggregatePhrase(viewDefinition.aggregate.type, 'aggregate_inner_value');
-    const groupByColumnAlphabetName = 'aggregate_inner_group_by_value';
-
-    return {
-      name: viewDefinition.name,
-      resolvedSource: viewDefinition.alphabetName,
-      resolvedColumns: [
-        {
-          name: groupBy.value,
-          alphabetName: groupByColumnAlphabetName,
-          originalName: groupByColumnAlphabetName
-        },
-        {
-          name: viewDefinition.name,
-          alphabetName: viewDefinition.alphabetName + '_value',
-        },
-      ],
-      sql: `SELECT 
-      ${groupByColumnAlphabetName}, 
-      ${aggregatePhrase} AS ${viewDefinition.alphabetName}_value 
-      FROM (
-        ${innerQuery}
-      )
-      GROUP BY ${groupByColumnAlphabetName}
-      ORDER BY ${groupByColumnAlphabetName}`
-    };
   } else if (groupBy.type === 'transform') {
     const generatedUnitPhrase = buildTransformPhrase(groupBy.transform.pattern.name,
       findResolvedColumnName(sourceResolvedView, groupBy.transform.value));
 
-    const innerQuery = buildViewQuery(resolvedQueries, {
+    innerQuery = buildViewQuery(resolvedQueries, {
       name: 'Aggregate内側クエリ用',
       alphabetName: 'for_aggregate_inner_query',
       source: viewDefinition.source,
@@ -613,7 +591,7 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
         {
           name: groupBy.transform.output.name,
           type: 'raw',
-          raw: `${generatedUnitPhrase} AS aggregate_inner_group_by_value`
+          raw: `${generatedUnitPhrase} AS ${innerGroupByColumnAlphabetName}`
         },
         {
           name: viewDefinition.aggregate.value,
@@ -621,35 +599,35 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
         }
       ]
     }, sourceResolvedView);
+  } else {
+    throw new Error(`${groupBy.type}は未定義`);
+  }
 
-    const aggregatePhrase = buildAggregatePhrase(viewDefinition.aggregate.type, 'aggregate_inner_value');
-    const groupByColumnAlphabetName = 'aggregate_inner_group_by_value';
+  const aggregatePhrase = buildAggregatePhrase(viewDefinition.aggregate.type, innerValueColumnAlphabetName);
 
-    return {
-      name: viewDefinition.name,
-      resolvedSource: viewDefinition.alphabetName,
-      resolvedColumns: [
-        {
-          name: groupBy.transform.output.name,
-          alphabetName: 'aggregate_inner_group_by_value',
-          originalName: 'aggregate_inner_group_by_value'
-        },
-        {
-          name: viewDefinition.name,
-          alphabetName: viewDefinition.alphabetName + '_value',
-        },
-      ],
-      sql: `SELECT 
-      ${groupByColumnAlphabetName}, 
+  return {
+    name: viewDefinition.name,
+    resolvedSource: viewDefinition.alphabetName,
+    resolvedColumns: [
+      {
+        name: groupBy.transform.output.name,
+        alphabetName: innerGroupByColumnAlphabetName,
+        originalName: innerGroupByColumnAlphabetName
+      },
+      {
+        name: viewDefinition.name,
+        alphabetName: viewDefinition.alphabetName + '_value',
+      },
+    ],
+    sql: `SELECT 
+      ${innerGroupByColumnAlphabetName}, 
       ${aggregatePhrase} AS ${viewDefinition.alphabetName}_value 
       FROM (
         ${innerQuery}
       )
-      GROUP BY ${groupByColumnAlphabetName}
-      ORDER BY ${groupByColumnAlphabetName}`
-    };
-  }
-  throw new Error(`${groupBy.type}は未定義`);
+      GROUP BY ${innerGroupByColumnAlphabetName}
+      ORDER BY ${innerGroupByColumnAlphabetName}`
+  };
 }
 
 function addRootViewAvailableColumns(viewAvailableColumns, rootViewDefinition) {
