@@ -602,6 +602,8 @@ function buildTransformPhrase(transformType, columnAlphabetName) {
 function main() {
   const resolvedQueries = [];
 
+  // このへんはPVとUUの集計用の「レポート」
+
   // 数値を見たいview
   // [ACTION] って付いてるのじゃないと動かない
   // TODO: interface縛りたい（「特定のカラムを持っていること」)
