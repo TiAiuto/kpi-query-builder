@@ -416,11 +416,25 @@ function resolveColumnByViewColumns(viewColumns, columnName) {
   throw new Error(`${columnName}は未定義`);
 }
 
-function findColumnByViewColumns(viewColumns, columnName, source = undefined) {
-  for (let columnDef of viewColumns) {
+function findColumnByViewColumnDefs(viewColumnDefs, columnName, source, defaultSource) {
+  const matchedDefs = viewColumnDefs.filter((columnDef) => {
     if (columnDef.name === columnName && (!source || columnDef.source === source)) {
-      return columnDef;
+      return true;
     }
+  });
+  if (matchedDefs.length === 1) {
+    return matchedDefs[0];
+  }
+  if (matchedDefs.length === 0 || !defaultSource) {
+    throw new Error(`${columnName}は未定義`);
+  }
+  const defaultSourceDef = viewColumnDefs.find((columnDef) => {
+    if (columnDef.name === columnName && columnDef.source === defaultSource) {
+      return true;
+    }
+  });
+  if (defaultSourceDef) {
+    return defaultSourceDef;
   }
   throw new Error(`${columnName}は未定義`);
 }
@@ -646,7 +660,8 @@ function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
       selectColumnPhrases.push(columnDef.raw);
     } else {
       // originalNameが未定義の場合は元のカラム定義を継承する
-      const sourceColumnDef = findColumnByViewColumns(viewAvailableColumns, columnDef.originalName || columnDef.name, columnDef.source);
+      // 重複する定義が見つかった場合は継承元を最優先で使う
+      let sourceColumnDef = findColumnByViewColumnDefs(viewAvailableColumns, columnDef.originalName || columnDef.name, columnDef.source, dependentQuery.name);
       selectColumnPhrases.push(`${sourceColumnDef.alphabetName} AS ${columnDef.alphabetName || sourceColumnDef.alphabetName} `);
     }
   });
