@@ -89,7 +89,8 @@ const rootViews = [
   {
     name: 'ユーザコード付きPLUS契約',
     alphabetName: 'plus_contracts_with_user_code',
-    source: '`h-navi.lo_production.plus_contracts` plus_contracts',
+    source: '`h-navi.lo_production.plus_contracts`',
+    sourceAlias: 'plus_contracts',
     columns: [
       {
         name: '利用開始日タイムスタンプ',
@@ -127,7 +128,8 @@ const rootViews = [
   {
     name: 'PLUSユーザコード付きアクセスログ',
     alphabetName: 'plus_users_logs_with_user_code',
-    source: '`h-navi.lo_applog_transform.action_rack_plus_*` rack_plus',
+    source: '`h-navi.lo_applog_transform.action_rack_plus_*`',
+    sourceAlias: 'rack_plus',
     dateSuffixEnabled: true,
     columns: [
       {
@@ -161,7 +163,8 @@ const rootViews = [
   {
     name: '個別ケース相談一次相談',
     alphabetName: 'plus_counseling_first_applictions',
-    source: '`h-navi.lo_plusmine_production.counseling_case_application_tickets` application_tickets',
+    source: '`h-navi.lo_plusmine_production.counseling_case_application_tickets`',
+    sourceAlias: 'application_tickets',
     columns: [
       {
         name: 'ユーザコード',
@@ -178,7 +181,8 @@ const rootViews = [
   {
     name: '個別ケース相談二次相談',
     alphabetName: 'plus_counseling_second_applictions',
-    source: '`h-navi.lo_plusmine_production.counseling_case_additional_question_tickets` second_question_tickets',
+    source: '`h-navi.lo_plusmine_production.counseling_case_additional_question_tickets`',
+    sourceAlias: 'second_question_tickets',
     columns: [
       {
         name: 'ユーザコード',
@@ -195,7 +199,8 @@ const rootViews = [
   {
     name: 'オンライン勉強会申込',
     alphabetName: 'plus_study_meeting_applications',
-    source: '`h-navi.lo_production.plus_study_meeting_applications` study_meeting_applications',
+    source: '`h-navi.lo_production.plus_study_meeting_applications`',
+    sourceAlias: 'study_meeting_applications',
     columns: [
       {
         name: 'ユーザコード',
@@ -591,35 +596,66 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
   };
 }
 
+function addRootViewAvailableColumns(viewAvailableColumns, rootViewDefinition) {
+  rootViewDefinition.columns.forEach(({name, alphabetName}) => {
+    viewAvailableColumns.push({
+      source: rootViewDefinition.name,
+      sourceAlphabetName: rootViewDefinition.sourceAlias,
+      name,
+      alphabetName
+    });
+  })
+}
+
 function buildRootViewQuery(resolvedQueries, rootViewDefinition, tableDateRange) {
-  const viewColumns = rootViewDefinition.columns; // TODO: ここにjoin先のカラムも含める必要がある？
+  // root viewはrawで対処することが多いのでviewAvailableColumnsはいらないかも
+  const viewAvailableColumns = [];
+  addRootViewAvailableColumns(viewAvailableColumns, rootViewDefinition);
 
   let joinDefs = rootViewDefinition.joins || [];
-  let conditionDefs = rootViewDefinition.conditions || [];
-
   (rootViewDefinition.filters || []).forEach((filterRef) => {
-    const filter = resolveFilter(resolvedQueries, filterRef.name, viewColumns);
-    conditionDefs = conditionDefs.concat(filter.conditions);
+    const filter = resolveFilter(resolvedQueries, filterRef.name);
     joinDefs = joinDefs.concat(filter.joins || []);
   });
+  joinDefs.forEach((joinDef) => {
+    if (joinDef.type !== 'raw') {
+      const joinTargetQuery = resolveQuery(resolvedQueries, joinDef.target);
+      addViewAvailableColumns(viewAvailableColumns, joinTargetQuery);
+    }
+  });
 
-  const conditionPhrases = conditionDefs.map((condition) => resolveCondition(resolvedQueries, condition, viewColumns));
+  const joinPhrases = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, rootViewDefinition.alphabetName, viewAvailableColumns))
+    .join('\n');
+
+  let conditionDefs = rootViewDefinition.conditions || [];
+  (rootViewDefinition.filters || []).forEach((filterRef) => {
+    const filter = resolveFilter(resolvedQueries, filterRef.name);
+    conditionDefs = conditionDefs.concat(filter.conditions);
+  });
+
+  const conditionPhrases = conditionDefs.map((condition) => resolveCondition(resolvedQueries, condition, viewAvailableColumns));
   if (rootViewDefinition.dateSuffixEnabled) {
     conditionPhrases.push(` _TABLE_SUFFIX BETWEEN '${tableDateRange[0]}' AND '${tableDateRange[1]}' `);
   }
-  const joinPhrases = joinDefs.map((join) => buildJoinPhrase(resolvedQueries, join, rootViewDefinition.alphabetName, viewColumns))
-    .join('\n');
 
   const columnDefsToSelect = rootViewDefinition.columns;
-  const selectColumnPhrases = columnDefsToSelect.map((column) => `${column.originalName} AS ${column.alphabetName} `);
+  const selectColumnPhrases = [];
+  columnDefsToSelect.forEach((columnDef) => {
+    if (columnDef.type === 'raw') {
+      selectColumnPhrases.push(columnDef.raw);
+    } else {
+      selectColumnPhrases.push(`${columnDef.originalName} AS ${columnDef.alphabetName} `);
+    }
+  });
 
-  return `SELECT ${selectColumnPhrases.join(', ')} \n FROM ${rootViewDefinition.source} \n ${joinPhrases} \n WHERE ${conditionPhrases.length ? conditionPhrases.join(' AND ') : 'TRUE'} `;
+  return `SELECT ${selectColumnPhrases.join(', ')} \n FROM ${rootViewDefinition.source} ${rootViewDefinition.sourceAlias} \n ${joinPhrases} \n WHERE ${conditionPhrases.length ? conditionPhrases.join(' AND ') : 'TRUE'} `;
 }
 
 function addViewAvailableColumns(viewAvailableColumns, sourceQuery) {
   sourceQuery.resolvedColumns.forEach((resolvedColumn) => {
     viewAvailableColumns.push({
       source: sourceQuery.name,
+      sourceAlphabetName: sourceQuery.resolvedSource,
       name: resolvedColumn.name,
       alphabetName: resolvedColumn.alphabetName
     });
