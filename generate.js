@@ -893,27 +893,17 @@ function buildAggregatePhrase(aggregateType, columnAlphabetName) {
 }
 
 function buildTransformPhrase(transformType, columnAlphabetName) {
-  if (transformType === '日付抽出') {
+  if (transformType === '日抽出') {
     return `FORMAT_TIMESTAMP('%Y-%m-%d', ${columnAlphabetName}, 'Asia/Tokyo')`;
   } else if (transformType === '月抽出') {
     return `FORMAT_TIMESTAMP('%Y-%m', ${columnAlphabetName}, 'Asia/Tokyo')`;
+  } else {
+    throw new Error(`${transformType}は未実装`);
   }
 }
 
 function main() {
   const resolvedQueries = [];
-
-  const baseUnitValueView = {
-    name: '列日付基準集合生成クエリ',
-    alphabetName: 'row_base_unit_value',
-    type: 'routine',
-    routine: {
-      name: '期間集合生成',
-      args: ['月単位', '20200901', '20210119'] // ここの引数は可変
-    }
-  };
-  views.push(baseUnitValueView);
-  resolveQuery(resolvedQueries, '列日付基準集合生成クエリ');
 
   // 数値を見たいview
   // [ACTION] って付いてるのじゃないと動かない
@@ -947,30 +937,76 @@ function main() {
 
   // 以下の内容は動的に生成することになりそう
 
+  const reportActionUnitType = '月'; // or 日
+  const reportActionType = 'pv'; // or uu
+  const reportActionFilters = [
+    {
+      name: '契約後一ヶ月以内'
+    }
+  ];
+
+  const baseUnitValueView = {
+    name: '列日付基準集合生成クエリ',
+    alphabetName: 'row_base_unit_value',
+    type: 'routine',
+    routine: {
+      name: '期間集合生成',
+      args: [`${reportActionUnitType}単位`, '20200901', '20210119'] // ここの引数は可変
+    }
+  };
+  views.push(baseUnitValueView);
+  resolveQuery(resolvedQueries, '列日付基準集合生成クエリ');
+
+  function generateAggregateViewName(targetActionView, reportActionType) {
+    if (reportActionType === 'pv') {
+      return `${targetActionView.name}_表示数`;
+    } else if (reportActionType === 'uu') {
+      return `${targetActionView.name}_UU数`;
+    } else {
+      throw new Error(`${reportActionType}は未実装`);
+    }
+  }
+
+  function generateAggregateViewAlphabetName(targetActionView, reportActionType) {
+    if (reportActionType === 'pv') {
+      return `${targetActionView.resolvedSource}_pv_count`;
+    } else if (reportActionType === 'uu') {
+      return `${targetActionView.resolvedSource}_uu_count`;
+    } else {
+      throw new Error(`${reportActionType}は未実装`);
+    }
+  }
+
+  function generateAggregateViewAggreateType(targetActionView, reportActionType) {
+    if (reportActionType === 'pv') {
+      return 'COUNT';
+    } else if (reportActionType === 'uu') {
+      return 'COUNT_DISTINCT';
+    } else {
+      throw new Error(`${reportActionType}は未実装`);
+    }
+  }
+
   const viewsForReport = [];
   targetActions.forEach((targetAction) => {
     const targetActionView = resolveQuery(resolvedQueries, targetAction.source);
     viewsForReport.push({
-      name: targetActionView.name + '_表示数',
-      alphabetName: targetActionView.resolvedSource + '_pv_count',
+      name: generateAggregateViewName(targetActionView, reportActionType),
+      alphabetName: generateAggregateViewAlphabetName(targetActionView, reportActionType),
       source: targetAction.source,
       type: 'aggregate',
       aggregate: {
         value: 'ユーザコード',
-        type: 'COUNT_DISTINCT',
+        type: generateAggregateViewAggreateType(targetActionView, reportActionType),
         groupBy: [
           {
             transform: {
-              name: '月抽出'
+              name: `${reportActionUnitType}抽出`
             }
           }
         ],
       },
-      filters: [
-        {
-          name: '契約後一ヶ月以内'
-        }
-      ]
+      filters: reportActionFilters
     });
   });
 
