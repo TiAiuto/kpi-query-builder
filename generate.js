@@ -554,9 +554,10 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
   const groupBy = viewDefinition.aggregate.groupBy[0];
   const innerGroupByColumnAlphabetName = 'aggregate_inner_group_by_value';
   const innerValueColumnAlphabetName = 'aggregate_inner_value';
-  let innerQuery;
+  let innerQuery, outerGroupByColumnAlphabetName;
 
   if (groupBy.type === 'value') {
+    // ここでjoinsが解決できるならinner queryにする必要はない
     innerQuery = buildViewQuery(resolvedQueries, {
       name: 'Aggregate内側クエリ用',
       alphabetName: 'for_aggregate_inner_query',
@@ -576,6 +577,8 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
       ]
     }, sourceResolvedView);
 
+    // ↓join先のカラムでgroupByするとき解決できないので要修正
+    outerGroupByColumnAlphabetName = resolveColumnByResolvedQuery(sourceResolvedView, groupBy.value);
   } else if (groupBy.type === 'transform') {
     const generatedUnitPhrase = buildTransformPhrase(groupBy.transform.pattern.name,
       findResolvedColumnName(sourceResolvedView, groupBy.transform.value));
@@ -599,6 +602,8 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
         }
       ]
     }, sourceResolvedView);
+
+    outerGroupByColumnAlphabetName = groupBy.transform.output.name;
   } else {
     throw new Error(`${groupBy.type}は未定義`);
   }
@@ -610,7 +615,7 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
     resolvedSource: viewDefinition.alphabetName,
     resolvedColumns: [
       {
-        name: groupBy.transform.output.name,
+        name: outerGroupByColumnAlphabetName,
         alphabetName: innerGroupByColumnAlphabetName,
         originalName: innerGroupByColumnAlphabetName
       },
@@ -913,8 +918,8 @@ function main() {
       ]
     }
   };
-  // views.push(endOfMonthPlusUsersView);
-  // resolveQuery(resolvedQueries, '各月末時点PLUSユーザ数集計');
+  views.push(endOfMonthPlusUsersView);
+  resolveQuery(resolvedQueries, '各月末時点PLUSユーザ数集計');
 
 
   function generateAggregateViewName(targetActionView, reportActionType) {
