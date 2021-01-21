@@ -622,7 +622,7 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
         originalName: innerGroupByColumnAlphabetName
       },
       {
-        name: viewDefinition.name,
+        name: viewDefinition.name + '集計値',
         alphabetName: viewDefinition.alphabetName + '_value',
       },
     ],
@@ -738,7 +738,7 @@ function buildViewQuery(resolvedQueries, viewDefinition, dependentQuery) {
       // originalNameが未定義の場合は元のカラム定義を継承する
       // 重複する定義が見つかった場合は継承元を最優先で使う
       let sourceColumnDef = findColumnByViewColumnDefs(viewAvailableColumns, columnDef.originalName || columnDef.name, columnDef.source, dependentQuery.name);
-      selectColumnPhrases.push(`${sourceColumnDef.alphabetName} AS ${columnDef.alphabetName || sourceColumnDef.alphabetName} `);
+      selectColumnPhrases.push(`${sourceColumnDef.sourceAlphabetName}.${sourceColumnDef.alphabetName} AS ${columnDef.alphabetName || sourceColumnDef.alphabetName} `);
     }
   });
 
@@ -909,7 +909,7 @@ function main() {
         raw: 'JOIN plus_contracts_with_user_code ON ' +
           'DATE(usage_start_date_timestamp, "Asia/Tokyo") <= DATE_SUB(DATE_ADD(DATE_TRUNC(PARSE_DATE("%Y-%m", unit_value), MONTH), INTERVAL 1 MONTH), INTERVAL 1 DAY) AND ' +
           '(usage_end_date_timestamp IS NULL OR ' +
-          'DATE_SUB(DATE_ADD(DATE_TRUNC(PARSE_DATE("%Y-%m", unit_value), MONTH), INTERVAL 1 MONTH), INTERVAL 1 DAY) < DATE(usage_end_date_timestamp, "Asia/Tokyo") ' +
+          'DATE_SUB(DATE_ADD(DATE_TRUNC(PARSE_DATE("%Y-%m", unit_value), MONTH), INTERVAL 1 MONTH), INTERVAL 1 DAY) <= DATE(usage_end_date_timestamp, "Asia/Tokyo") ' +
           ')'
       }
     ],
@@ -1011,9 +1011,26 @@ function main() {
     alphabetName: 'report_body',
     source: '列日付基準集合生成クエリ',
     columnsInheritanceEnabled: true,
-    joins: [],
-    columns: []
+    joins: [
+      {
+        type: 'join',
+        target: '各月末時点PLUSユーザ数集計',
+        conditions: [
+          {
+            sourceColumnName: '集計単位（自動生成）',
+            targetColumnName: '集計単位（自動生成）'
+          }
+        ]
+      }
+    ],
+    columns: [
+      {
+        source: '各月末時点PLUSユーザ数集計',
+        name: '各月末時点PLUSユーザ数集計集計値'
+      }
+    ]
   };
+
   viewsForReport.forEach((reportView) => {
     views.push(reportView);
     const resolvedReportView = resolveQuery(resolvedQueries, reportView.name);
