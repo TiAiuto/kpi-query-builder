@@ -546,6 +546,10 @@ function generateRoutineView(resolvedQueries, {name, alphabetName, routine}) {
 function generateAggregateView(resolvedQueries, viewDefinition) {
   const sourceResolvedView = resolveQuery(resolvedQueries, viewDefinition.source);
   // TODO: そもそもtransformが必要かどうかで分岐が必要
+  if (viewDefinition.aggregate.groupBy.length > 1) {
+    throw new Error('groupByの複数指定は未実装');
+  }
+
   const generatedUnitPhrase = buildTransformPhrase(viewDefinition.aggregate.groupBy[0].transform.pattern.name,
     findResolvedColumnName(sourceResolvedView, viewDefinition.aggregate.groupBy[0].transform.value));
 
@@ -558,10 +562,10 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
     conditions: viewDefinition.conditions,
     columns: [
       {
-        name: '集計単位（自動生成）',
-        alphabetName: 'auto_generated_unit_name',
+        name: viewDefinition.aggregate.groupBy[0].transform.output.name,
+        alphabetName: viewDefinition.aggregate.groupBy[0].transform.output.alphabetName,
         type: 'raw',
-        raw: `${generatedUnitPhrase} AS auto_generated_unit_name`
+        raw: `${generatedUnitPhrase} AS ${viewDefinition.aggregate.groupBy[0].transform.output.alphabetName}`
       },
       {
         name: viewDefinition.aggregate.value
@@ -576,9 +580,9 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
     resolvedSource: viewDefinition.alphabetName,
     resolvedColumns: [
       {
-        name: '集計単位（自動生成）',
-        alphabetName: 'auto_generated_unit_name',
-        originalName: 'auto_generated_unit_name'
+        name: viewDefinition.aggregate.groupBy[0].transform.output.name,
+        alphabetName: viewDefinition.aggregate.groupBy[0].transform.output.alphabetName,
+        originalName: viewDefinition.aggregate.groupBy[0].transform.output.alphabetName
       },
       {
         name: viewDefinition.name,
