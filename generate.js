@@ -522,17 +522,30 @@ function generateRoutineView(resolvedQueries, {name, alphabetName, routine}) {
         {
           name: '集計単位（自動生成）',
           alphabetName: 'unit_value',
-          originalName: 'unit_value' // 本当は空でもいい
+        },
+        {
+          name: '始端日付',
+          alphabetName: 'date_range_begin',
+        },
+        {
+          name: '終端日付',
+          alphabetName: 'date_range_end',
         }
       ]
     };
     const [rangeType, dateRangeBegin, dateRangeEnd] = routine.args;
     let sql = null;
     if (rangeType === '日単位') {
-      resolvedQuery.sql = `SELECT FORMAT_DATE('%Y-%m-%d', unit_raw_value) as unit_value FROM UNNEST(GENERATE_DATE_ARRAY(PARSE_DATE("%Y%m%d", "${dateRangeBegin}"), 
+      resolvedQuery.sql = `SELECT FORMAT_DATE('%Y-%m-%d', unit_raw_value) as unit_value, 
+        unit_raw_value AS date_range_begin, 
+        unit_raw_value AS date_range_end
+        FROM UNNEST(GENERATE_DATE_ARRAY(PARSE_DATE("%Y%m%d", "${dateRangeBegin}"), 
           PARSE_DATE("%Y%m%d", "${dateRangeEnd}"))) AS unit_raw_value`
     } else if (rangeType === '月単位') {
-      resolvedQuery.sql = `SELECT DISTINCT FORMAT_DATE('%Y-%m', unit_raw_value) as unit_value FROM UNNEST(GENERATE_DATE_ARRAY(PARSE_DATE("%Y%m%d", "${dateRangeBegin}"), 
+      resolvedQuery.sql = `SELECT DISTINCT FORMAT_DATE('%Y-%m', unit_raw_value) AS unit_value, 
+        DATE_TRUNC(unit_raw_value, MONTH) AS date_range_begin, 
+        DATE_SUB(DATE_ADD(DATE_TRUNC(unit_raw_value, MONTH), INTERVAL 1 MONTH), INTERVAL 1 DAY) AS date_range_end 
+        FROM UNNEST(GENERATE_DATE_ARRAY(PARSE_DATE("%Y%m%d", "${dateRangeBegin}"), 
           PARSE_DATE("%Y%m%d", "${dateRangeEnd}"))) AS unit_raw_value`
     } else {
       throw new Error(`${rangeType}は未定義`);
