@@ -551,7 +551,8 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
 
   const sourceResolvedView = resolveQuery(resolvedQueries, viewDefinition.source);
 
-  const groupBy = viewDefinition.aggregate.groupBy[0];
+  const aggregateDef = viewDefinition.aggregate;
+  const groupBy = aggregateDef.groupBy[0];
   const innerGroupByColumnAlphabetName = 'aggregate_inner_group_by_value';
   const innerValueColumnAlphabetName = 'aggregate_inner_value';
   let innerQuery, outerGroupByColumnName, outerGroupByColumnAlphabetName;
@@ -571,7 +572,7 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
           alphabetName: innerGroupByColumnAlphabetName
         },
         {
-          name: viewDefinition.aggregate.value,
+          name: aggregateDef.value,
           alphabetName: innerValueColumnAlphabetName
         }
       ]
@@ -598,7 +599,7 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
           raw: `${generatedUnitPhrase} AS ${innerGroupByColumnAlphabetName}`
         },
         {
-          name: viewDefinition.aggregate.value,
+          name: aggregateDef.value,
           alphabetName: 'aggregate_inner_value'
         }
       ]
@@ -610,9 +611,9 @@ function generateAggregateView(resolvedQueries, viewDefinition) {
     throw new Error(`${groupBy.type}は未定義`);
   }
 
-  const aggregatePhrase = buildAggregatePhrase(viewDefinition.aggregate.type, innerValueColumnAlphabetName);
-  const outerValueColumnName = viewDefinition.name + '集計値';
-  const outerValueColumnAlphabetName = viewDefinition.alphabetName + '_value';
+  const aggregatePhrase = buildAggregatePhrase(aggregateDef.type, innerValueColumnAlphabetName);
+  const outerValueColumnName = aggregateDef.output.name;
+  const outerValueColumnAlphabetName = aggregateDef.output.alphabetName;
 
   return {
     name: viewDefinition.name,
@@ -924,6 +925,10 @@ function main() {
     aggregate: {
       type: 'COUNT',
       value: '契約ユーザコード',
+      output: {
+        name: '各月末時点PLUSユーザ数集計集計値',
+        alphabetName: 'plus_users_count_at_each_end_of_month_value'
+      },
       groupBy: [
         {
           type: 'value',
@@ -993,6 +998,10 @@ function main() {
       aggregate: {
         value: 'ユーザコード',
         type: generateAggregateViewAggreateType(targetActionView, reportActionType),
+        output: {
+          name: `${targetActionView.name}集計値`,
+          alphabetName: `${targetActionView.alphabetName}_value`,
+        },
         groupBy: [
           {
             type: 'transform',
