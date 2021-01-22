@@ -929,10 +929,8 @@ function main() {
         type: 'raw',
         target: 'ユーザコード付きPLUS契約',
         raw: 'JOIN plus_contracts_with_user_code ON ' +
-          'DATE(usage_start_date_timestamp, "Asia/Tokyo") <= DATE_SUB(DATE_ADD(DATE_TRUNC(PARSE_DATE("%Y-%m", unit_value), MONTH), INTERVAL 1 MONTH), INTERVAL 1 DAY) AND ' +
-          '(usage_end_date_timestamp IS NULL OR ' +
-          'DATE_SUB(DATE_ADD(DATE_TRUNC(PARSE_DATE("%Y-%m", unit_value), MONTH), INTERVAL 1 MONTH), INTERVAL 1 DAY) <= DATE(usage_end_date_timestamp, "Asia/Tokyo") ' +
-          ')'
+          'DATE(usage_start_date_timestamp, "Asia/Tokyo") <= date_range_end AND ' +
+          '(usage_end_date_timestamp IS NULL OR date_range_end <= DATE(usage_end_date_timestamp, "Asia/Tokyo"))'
       }
     ],
     aggregate: {
