@@ -1,5 +1,5 @@
 // これは引数で渡せるようにしたほうがよさそう
-const targetDateRange = ['20200901', '20210119'];
+const targetDateRange = ['20200901', '20210202'];
 
 const filters = [
   {
@@ -541,6 +541,13 @@ function generateRoutineView(resolvedQueries, {name, alphabetName, routine}) {
         unit_raw_value AS date_range_end
         FROM UNNEST(GENERATE_DATE_ARRAY(PARSE_DATE("%Y%m%d", "${dateRangeBegin}"), 
           PARSE_DATE("%Y%m%d", "${dateRangeEnd}"))) AS unit_raw_value`
+    } else if (rangeType === '週単位') {
+      // TODO: (MONDAY)は可変にしてもよさそう
+      resolvedQuery.sql = `SELECT DISTINCT FORMAT_DATE('%Y-%m-%dW', DATE_TRUNC(unit_raw_value, WEEK(MONDAY))) AS unit_value, 
+        DATE_TRUNC(unit_raw_value, WEEK(MONDAY)) AS date_range_begin, 
+        DATE_SUB(DATE_ADD(DATE_TRUNC(unit_raw_value, WEEK(MONDAY)), INTERVAL 1 WEEK), INTERVAL 1 DAY) AS date_range_end 
+        FROM UNNEST(GENERATE_DATE_ARRAY(PARSE_DATE("%Y%m%d", "${dateRangeBegin}"), 
+          PARSE_DATE("%Y%m%d", "${dateRangeEnd}"))) AS unit_raw_value`
     } else if (rangeType === '月単位') {
       resolvedQuery.sql = `SELECT DISTINCT FORMAT_DATE('%Y-%m', unit_raw_value) AS unit_value, 
         DATE_TRUNC(unit_raw_value, MONTH) AS date_range_begin, 
@@ -836,6 +843,9 @@ function buildAggregatePhrase(aggregateType, columnAlphabetName) {
 function buildTransformPhrase(transformType, columnAlphabetName) {
   if (transformType === '日抽出') {
     return `FORMAT_TIMESTAMP('%Y-%m-%d', ${columnAlphabetName}, 'Asia/Tokyo')`;
+  } else if (transformType === '週抽出') {
+    // (MONDAY) は可変にしてもよさそう
+    return `FORMAT_TIMESTAMP('%Y-%m-%dW', TIMESTAMP_TRUNC(${columnAlphabetName}, WEEK(MONDAY)), 'Asia/Tokyo')`;
   } else if (transformType === '月抽出') {
     return `FORMAT_TIMESTAMP('%Y-%m', ${columnAlphabetName}, 'Asia/Tokyo')`;
   } else {
@@ -898,7 +908,7 @@ function main() {
 
   const targetActions = counselingTargetActions;
 
-  const reportActionUnitType = '月'; // or 日
+  const reportActionUnitType = '週'; // or 日
   const reportActionType = 'uu'; // or uu
   const reportActionFilters = [
     {
@@ -914,7 +924,7 @@ function main() {
     type: 'routine',
     routine: {
       name: '期間集合生成',
-      args: [`${reportActionUnitType}単位`, '20200901', '20210119'] // ここの引数は可変
+      args: [`${reportActionUnitType}単位`, '20200901', '20210202'] // ここの引数は可変
     }
   };
   views.push(baseUnitValueView);
