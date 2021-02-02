@@ -852,30 +852,30 @@ function main() {
   // [ACTION] って付いてるのじゃないと動かない
   // TODO: interface縛りたい（「特定のカラムを持っていること」)
   const counselingTargetActions = [
-    {
-      source: '[ACTION]個別ケース相談TOP表示'
-    },
-    {
-      source: '[ACTION]ケース相談詳細ページ表示'
-    },
-    {
-      source: '[ACTION]ケース相談1次相談新規作成フォーム表示'
-    },
-    {
-      source: '[ACTION]ケース相談1次相談編集フォーム表示'
-    },
+    // {
+    //   source: '[ACTION]個別ケース相談TOP表示'
+    // },
+    // {
+    //   source: '[ACTION]ケース相談詳細ページ表示'
+    // },
+    // {
+    //   source: '[ACTION]ケース相談1次相談新規作成フォーム表示'
+    // },
+    // {
+    //   source: '[ACTION]ケース相談1次相談編集フォーム表示'
+    // },
     {
       source: '[ACTION]ケース相談一次相談申込'
     },
-    {
-      source: '[ACTION]ケース相談相談詳細ページ表示'
-    },
-    {
-      source: '[ACTION]ケース相談二次相談編集ページ表示'
-    },
-    {
-      source: '[ACTION]ケース相談二次相談申込'
-    },
+    // {
+    //   source: '[ACTION]ケース相談相談詳細ページ表示'
+    // },
+    // {
+    //   source: '[ACTION]ケース相談二次相談編集ページ表示'
+    // },
+    // {
+    //   source: '[ACTION]ケース相談二次相談申込'
+    // },
   ];
 
   const studyMeetingTargetActions = [
@@ -896,14 +896,14 @@ function main() {
     },
   ];
 
-  const targetActions = studyMeetingTargetActions;
+  const targetActions = counselingTargetActions;
 
   const reportActionUnitType = '月'; // or 日
   const reportActionType = 'uu'; // or uu
   const reportActionFilters = [
-    // {
-    //   name: '契約後一ヶ月以内'
-    // }
+    {
+      name: '契約後一ヶ月以内'
+    }
   ];
 
   // 以下の内容は動的に生成することになりそう
@@ -920,7 +920,7 @@ function main() {
   views.push(baseUnitValueView);
 
   const endOfMonthPlusUsersView = {
-    name: '各月末時点PLUSユーザ数集計',
+    name: '各期間末時点PLUSユーザ数集計',
     alphabetName: 'plus_users_count_at_each_end_of_month',
     source: '列日付基準集合生成クエリ',
     type: 'aggregate',
@@ -937,7 +937,7 @@ function main() {
       type: 'COUNT',
       value: '契約ユーザコード',
       output: {
-        name: '各月末時点PLUSユーザ数集計集計値',
+        name: '各期間末時点PLUSユーザ数集計集計値',
         alphabetName: 'plus_users_count_at_each_end_of_month_value'
       },
       groupBy: [
@@ -949,7 +949,7 @@ function main() {
     }
   };
   views.push(endOfMonthPlusUsersView);
-  resolveQuery(resolvedQueries, '各月末時点PLUSユーザ数集計');
+  resolveQuery(resolvedQueries, '各期間末時点PLUSユーザ数集計');
 
 
   function generateAggregateViewName(targetActionView, reportActionType) {
@@ -1042,7 +1042,7 @@ function main() {
     joins: [
       {
         type: 'join',
-        target: '各月末時点PLUSユーザ数集計',
+        target: '各期間末時点PLUSユーザ数集計',
         conditions: [
           {
             sourceColumnName: '集計単位（自動生成）',
@@ -1053,8 +1053,8 @@ function main() {
     ],
     columns: [
       {
-        source: '各月末時点PLUSユーザ数集計',
-        name: '各月末時点PLUSユーザ数集計集計値'
+        source: '各期間末時点PLUSユーザ数集計',
+        name: '各期間末時点PLUSユーザ数集計集計値'
       }
     ],
     orderBy: [
