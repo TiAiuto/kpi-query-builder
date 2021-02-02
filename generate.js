@@ -1087,7 +1087,7 @@ function main() {
   views.push(reportBodyView);
   resolveQuery(resolvedQueries, 'レポート本体');
 
-  const withQueries = resolvedQueries.map((resolvedQuery) => `${resolvedQuery.resolvedSource} AS (${resolvedQuery.sql})`);
+  const withQueries = resolvedQueries.map((resolvedQuery) => `--- ${resolvedQuery.name} \n ${resolvedQuery.resolvedSource} AS (${resolvedQuery.sql})`);
   console.log('WITH ' + withQueries.join(', \n'));
   console.log('SELECT * FROM report_body;');
 }
