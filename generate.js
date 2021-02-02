@@ -246,6 +246,24 @@ const views = [
     ],
   },
   {
+    name: '[ACTION]PLUS利用開始',
+    alphabetName: 'start_plus_contract',
+    source: 'ユーザコード付きPLUS契約',
+    columnsInheritanceEnabled: false,
+    columns: [
+      {
+        name: 'タイムスタンプ',
+        alphabetName: 'time',
+        originalName: '利用開始日タイムスタンプ'
+      },
+      {
+        name: 'ユーザコード',
+        alphabetName: 'user_code',
+        originalName: '契約ユーザコード',
+      },
+    ]
+  },
+  {
     name: '[ACTION]ケース相談詳細ページ表示',
     alphabetName: 'visit_counseling_show',
     source: 'PLUS契約者アクセスログ',
@@ -874,6 +892,9 @@ function main() {
     // {
     //   source: '[ACTION]ケース相談1次相談編集フォーム表示'
     // },
+    {
+      source: '[ACTION]PLUS利用開始'
+    },
     {
       source: '[ACTION]ケース相談一次相談申込'
     },
