@@ -15,7 +15,6 @@ export class RootView extends View {
     columns,
     filters,
     conditions,
-    orders,
     physicalSource,
     physicalSourceAlias,
     dateSuffixEnabled,
@@ -37,7 +36,7 @@ export class RootView extends View {
       columns,
       filters: filters || [],
       conditions: conditions || [],
-      orders: orders || [],
+      orders: [], // root viewに並び順を指定する用途は想定していない
     });
     this.physicalSource = physicalSource;
     this.physicalSourceAlias = physicalSourceAlias;
