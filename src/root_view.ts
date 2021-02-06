@@ -1,8 +1,4 @@
-import { Condition } from "./condition";
-import { Filter } from "./filter";
-import { Join } from "./join";
-import { View } from "./view";
-import { ViewColumn } from "./view_column";
+import { View, ViewArgs } from "./view";
 
 export class RootView extends View {
   physicalSource: string;
@@ -19,13 +15,7 @@ export class RootView extends View {
     physicalSource,
     physicalSourceAlias,
     dateSuffixEnabled,
-  }: {
-    name: string;
-    alphabetName: string;
-    columns: ViewColumn[];
-    filters?: Filter[];
-    conditions?: Condition[];
-    joins?: Join[];
+  }: Exclude<ViewArgs, "orders"> & {
     physicalSource: string;
     physicalSourceAlias: string;
     dateSuffixEnabled: boolean;
@@ -35,9 +25,9 @@ export class RootView extends View {
       name,
       alphabetName,
       columns,
-      filters: filters || [],
-      conditions: conditions || [],
-      joins: joins || [],
+      filters: filters,
+      conditions: conditions,
+      joins: joins,
       orders: [], // root viewに並び順を指定する用途は想定していない
     });
     this.physicalSource = physicalSource;

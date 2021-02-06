@@ -4,6 +4,16 @@ import { Join } from "./join";
 import { Order } from "./order";
 import { ViewColumn } from "./view_column";
 
+export type ViewArgs = {
+  name: string;
+  alphabetName: string;
+  columns?: ViewColumn[];
+  filters?: Filter[];
+  conditions?: Condition[];
+  joins?: Join[];
+  orders?: Order[];
+};
+
 export abstract class View {
   type: string;
   name: string;
@@ -23,23 +33,16 @@ export abstract class View {
     conditions,
     joins,
     orders,
-  }: {
+  }: ViewArgs & {
     type: string;
-    name: string;
-    alphabetName: string;
-    columns: ViewColumn[];
-    filters: Filter[];
-    conditions: Condition[];
-    joins: Join[];
-    orders: Order[];
   }) {
     this.type = type;
     this.name = name;
     this.alphabetName = alphabetName;
-    this.columns = columns;
-    this.filters = filters;
-    this.conditions = conditions;
-    this.joins = joins;
-    this.orders = orders;
+    this.columns = columns || [];
+    this.filters = filters || [];
+    this.conditions = conditions || [];
+    this.joins = joins || [];
+    this.orders = orders || [];
   }
 }
