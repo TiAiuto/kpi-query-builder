@@ -1,13 +1,13 @@
 import { Aggregate } from "./aggregate";
-import { View, ViewArgs } from "./view";
+import { ReferenceView, ReferenceViewArgs } from "./reference_view";
 
-export class AggregateView extends View {
+export class AggregateView extends ReferenceView {
   aggregates: Aggregate[];
 
   constructor({
     aggregates,
     ...args
-  }: Exclude<ViewArgs, "orders"> & { aggregates: Aggregate[] }) {
+  }: Exclude<ReferenceViewArgs, "orders"> & { aggregates: Aggregate[] }) {
     super({
       ...args,
       type: "aggregate",

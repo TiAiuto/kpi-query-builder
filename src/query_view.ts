@@ -1,7 +1,7 @@
-import { View, ViewArgs } from "./view";
+import { ReferenceView, ReferenceViewArgs } from "./reference_view";
 
-export class QueryView extends View {
-  constructor(args: ViewArgs) {
+export class QueryView extends ReferenceView {
+  constructor(args: ReferenceViewArgs) {
     super({ type: "query", ...args });
   }
 }

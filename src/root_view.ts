@@ -1,6 +1,6 @@
-import { View, ViewArgs } from "./view";
+import { ReferenceView, ReferenceViewArgs } from "./reference_view";
 
-export class RootView extends View {
+export class RootView extends ReferenceView {
   physicalSource: string;
   physicalSourceAlias: string;
   dateSuffixEnabled: boolean;
@@ -10,7 +10,7 @@ export class RootView extends View {
     physicalSourceAlias,
     dateSuffixEnabled,
     ...args
-  }: Exclude<ViewArgs, "orders"> & {
+  }: Exclude<ReferenceViewArgs, "orders"> & {
     physicalSource: string;
     physicalSourceAlias: string;
     dateSuffixEnabled: boolean;
