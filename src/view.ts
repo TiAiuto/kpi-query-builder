@@ -2,12 +2,12 @@ import { Condition } from "./condition";
 import { Filter } from "./filter";
 import { Join } from "./join";
 import { Order } from "./order";
-import { ViewColumn } from "./view_column";
+import { TransformedValue } from "./transformed_value";
 
 export type ViewArgs = {
   name: string;
   alphabetName: string;
-  columns?: ViewColumn[];
+  columns?: TransformedValue[];
   filters?: Filter[];
   conditions?: Condition[];
   joins?: Join[];
@@ -18,7 +18,7 @@ export abstract class View {
   type: string;
   name: string;
   alphabetName: string;
-  columns: ViewColumn[];
+  columns: TransformedValue[];
   filters: Filter[];
   conditions: Condition[];
   joins: Join[];

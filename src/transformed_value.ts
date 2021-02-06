@@ -1,26 +1,23 @@
 import { SourceColumn } from "./source_column";
 import { TransformedColumn } from "./transformed_column";
+import { Value } from "./value";
 
-export class ViewColumn implements TransformedColumn, SourceColumn {
+export class TransformedValue implements TransformedColumn {
   name: string;
   alphabetName: string;
-  sourceColumnName: string;
-  source?: string | null;
+  value: Value;
 
   constructor({
     name,
     alphabetName,
-    sourceColumnName,
-    source,
+    value
   }: {
     name: string;
     alphabetName: string;
-    sourceColumnName: string;
-    source?: string | null;
+    value: Value;
   }) {
     this.name = name;
     this.alphabetName = alphabetName;
-    this.sourceColumnName = sourceColumnName;
-    this.source = source;
+    this.value = value;
   }
 }
