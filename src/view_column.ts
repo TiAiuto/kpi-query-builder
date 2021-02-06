@@ -1,4 +1,6 @@
-export class ViewColumn {
+import { TransformedColumn } from "./transformed_column";
+
+export class ViewColumn implements TransformedColumn {
   name: string;
   alphabetName: string;
   originalName: string;

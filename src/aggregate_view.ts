@@ -11,6 +11,7 @@ export class AggregateView extends View {
     super({
       ...args,
       type: "aggregate",
+      orders: [],
     });
     this.aggregates = aggregates;
   }
