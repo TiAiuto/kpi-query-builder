@@ -1,12 +1,13 @@
+import { SourceColumn } from "./source_column";
 import { ValueSet } from "./value_set";
 
-export class SelectValueSet extends ValueSet {
+export class SelectValueSet extends ValueSet implements SourceColumn {
   source: string;
-  columnName: string;
+  sourceColumnName: string;
 
-  constructor({ source, columnName }: { source: string; columnName: string }) {
+  constructor({ source, sourceColumnName }: { source: string; sourceColumnName: string }) {
     super({ type: "select" });
     this.source = source;
-    this.columnName = columnName;
+    this.sourceColumnName = sourceColumnName;
   }
 }

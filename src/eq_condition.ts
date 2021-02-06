@@ -2,28 +2,28 @@ import { Condition } from "./condition";
 
 export class EqCondition extends Condition {
   oneSource?: string | null;
-  oneColumnName: string;
+  oneSourceColumnName: string;
 
   otherSource?: string | null;
-  otherColumnName: string;
+  otherSourceColumnName: string;
 
   constructor({
     oneSource,
-    oneColumnName,
+    oneSourceColumnName,
     otherSource,
-    otherColumnName,
+    otherSourceColumnName,
   }: {
     oneSource?: string | null;
-    oneColumnName: string;
+    oneSourceColumnName: string;
     otherSource?: string | null;
-    otherColumnName: string;
+    otherSourceColumnName: string;
   }) {
     super({ type: "eq" });
 
     this.oneSource = oneSource;
-    this.oneColumnName = oneColumnName;
+    this.oneSourceColumnName = oneSourceColumnName;
 
     this.otherSource = otherSource;
-    this.otherColumnName = otherColumnName;
+    this.otherSourceColumnName = otherSourceColumnName;
   }
 }
