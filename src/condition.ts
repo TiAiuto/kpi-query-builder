@@ -1,5 +1,3 @@
-export type ConditionType = "raw";
-
 export abstract class Condition {
   type: string;
 
