@@ -1,3 +1,4 @@
+import { Condition } from "./condition";
 import { Filter } from "./filter";
 import { View } from "./view";
 import { ViewColumn } from "./view_column";
@@ -12,6 +13,7 @@ export class RootView extends View {
     alphabetName,
     columns,
     filters,
+    conditions,
     physicalSource,
     physicalSourceAlias,
     dateSuffixEnabled,
@@ -20,6 +22,7 @@ export class RootView extends View {
     alphabetName: string;
     columns: ViewColumn[];
     filters?: Filter[];
+    conditions?: Condition[];
     physicalSource: string;
     physicalSourceAlias: string;
     dateSuffixEnabled: boolean;
@@ -30,6 +33,7 @@ export class RootView extends View {
       alphabetName,
       columns,
       filters: filters || [],
+      conditions: conditions || [],
     });
     this.physicalSource = physicalSource;
     this.physicalSourceAlias = physicalSourceAlias;
