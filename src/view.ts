@@ -1,17 +1,9 @@
-import { Condition } from "./condition";
-import { Filter } from "./filter";
-import { Join } from "./join";
-import { Order } from "./order";
 import { TransformedValue } from "./transformed_value";
 
 export type ViewArgs = {
   name: string;
   alphabetName: string;
-  columns?: TransformedValue[];
-  filters?: Filter[];
-  conditions?: Condition[];
-  joins?: Join[];
-  orders?: Order[];
+  columns: TransformedValue[];
 };
 
 export abstract class View {
@@ -19,30 +11,18 @@ export abstract class View {
   name: string;
   alphabetName: string;
   columns: TransformedValue[];
-  filters: Filter[];
-  conditions: Condition[];
-  joins: Join[];
-  orders: Order[];
 
   constructor({
     type,
     name,
     alphabetName,
     columns,
-    filters,
-    conditions,
-    joins,
-    orders,
   }: ViewArgs & {
     type: string;
   }) {
     this.type = type;
     this.name = name;
     this.alphabetName = alphabetName;
-    this.columns = columns || [];
-    this.filters = filters || [];
-    this.conditions = conditions || [];
-    this.joins = joins || [];
-    this.orders = orders || [];
+    this.columns = columns;
   }
 }
