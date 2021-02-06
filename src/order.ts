@@ -1,4 +1,5 @@
-export class OrderBy {
+// クラス名はlodashのインタフェースを参考にした
+export class Order {
   source?: string | null;
   columnName: string;
   sortOrder: string;
@@ -12,8 +13,8 @@ export class OrderBy {
     columnName: string;
     sortOrder?: string | null;
   }) {
-      this.source = source;
-      this.columnName = columnName;
-      this.sortOrder = sortOrder || 'asc';
+    this.source = source;
+    this.columnName = columnName;
+    this.sortOrder = sortOrder || "asc";
   }
 }
