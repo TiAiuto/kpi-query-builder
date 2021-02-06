@@ -1,6 +1,6 @@
 import { Condition } from "./condition";
 import { Filter } from "./filter";
-import { Order } from "./order";
+import { Join } from "./join";
 import { View } from "./view";
 import { ViewColumn } from "./view_column";
 
@@ -15,6 +15,7 @@ export class RootView extends View {
     columns,
     filters,
     conditions,
+    joins,
     physicalSource,
     physicalSourceAlias,
     dateSuffixEnabled,
@@ -24,7 +25,7 @@ export class RootView extends View {
     columns: ViewColumn[];
     filters?: Filter[];
     conditions?: Condition[];
-    orders?: Order[];
+    joins?: Join[];
     physicalSource: string;
     physicalSourceAlias: string;
     dateSuffixEnabled: boolean;
@@ -36,6 +37,7 @@ export class RootView extends View {
       columns,
       filters: filters || [],
       conditions: conditions || [],
+      joins: joins || [],
       orders: [], // root viewに並び順を指定する用途は想定していない
     });
     this.physicalSource = physicalSource;

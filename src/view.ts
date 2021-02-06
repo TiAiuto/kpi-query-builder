@@ -1,5 +1,6 @@
 import { Condition } from "./condition";
 import { Filter } from "./filter";
+import { Join } from "./join";
 import { Order } from "./order";
 import { ViewColumn } from "./view_column";
 
@@ -10,6 +11,7 @@ export abstract class View {
   columns: ViewColumn[];
   filters: Filter[];
   conditions: Condition[];
+  joins: Join[];
   orders: Order[];
 
   constructor({
@@ -19,7 +21,8 @@ export abstract class View {
     columns,
     filters,
     conditions,
-    orders
+    joins,
+    orders,
   }: {
     type: string;
     name: string;
@@ -27,6 +30,7 @@ export abstract class View {
     columns: ViewColumn[];
     filters: Filter[];
     conditions: Condition[];
+    joins: Join[];
     orders: Order[];
   }) {
     this.type = type;
@@ -35,6 +39,7 @@ export abstract class View {
     this.columns = columns;
     this.filters = filters;
     this.conditions = conditions;
+    this.joins = joins;
     this.orders = orders;
   }
 }
