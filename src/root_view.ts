@@ -6,28 +6,18 @@ export class RootView extends View {
   dateSuffixEnabled: boolean;
 
   constructor({
-    name,
-    alphabetName,
-    columns,
-    filters,
-    conditions,
-    joins,
     physicalSource,
     physicalSourceAlias,
     dateSuffixEnabled,
+    ...args
   }: Exclude<ViewArgs, "orders"> & {
     physicalSource: string;
     physicalSourceAlias: string;
     dateSuffixEnabled: boolean;
   }) {
     super({
+      ...args,
       type: "root",
-      name,
-      alphabetName,
-      columns,
-      filters: filters,
-      conditions: conditions,
-      joins: joins,
       orders: [], // root viewに並び順を指定する用途は想定していない
     });
     this.physicalSource = physicalSource;
