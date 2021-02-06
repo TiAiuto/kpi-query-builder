@@ -2,7 +2,7 @@ import { SourceColumn } from "./source_column";
 
 // クラス名はlodashのインタフェースを参考にした
 export class Order implements SourceColumn {
-  source?: string | null;
+  source?: string;
   sourceColumnName: string;
   sortOrder: string;
 
@@ -10,10 +10,8 @@ export class Order implements SourceColumn {
     source,
     sourceColumnName,
     sortOrder,
-  }: {
-    source?: string | null;
-    sourceColumnName: string;
-    sortOrder?: string | null;
+  }: SourceColumn & {
+    sortOrder?: string;
   }) {
     this.source = source;
     this.sourceColumnName = sourceColumnName;

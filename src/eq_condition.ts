@@ -1,10 +1,10 @@
 import { Condition } from "./condition";
 
 export class EqCondition extends Condition {
-  oneSource?: string | null;
+  oneSource?: string;
   oneSourceColumnName: string;
 
-  otherSource?: string | null;
+  otherSource?: string;
   otherSourceColumnName: string;
 
   constructor({
@@ -13,9 +13,9 @@ export class EqCondition extends Condition {
     otherSource,
     otherSourceColumnName,
   }: {
-    oneSource?: string | null;
+    oneSource?: string;
     oneSourceColumnName: string;
-    otherSource?: string | null;
+    otherSource?: string;
     otherSourceColumnName: string;
   }) {
     super({ type: "eq" });

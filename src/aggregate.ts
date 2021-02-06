@@ -4,7 +4,7 @@ import { TransformedColumn } from "./transformed_column";
 
 export class Aggregate implements SourceColumn {
   type: string;
-  source?: string | null;
+  source?: string;
   sourceColumnName: string;
   output: TransformedColumn;
   groups: Group[];
@@ -15,10 +15,8 @@ export class Aggregate implements SourceColumn {
     sourceColumnName,
     output,
     groups,
-  }: {
+  }: SourceColumn & {
     type: string;
-    source?: string | null;
-    sourceColumnName: string;
     output: TransformedColumn;
     groups: Group[];
   }) {

@@ -1,4 +1,4 @@
 export interface SourceColumn {
-  source?: string | null;
+  source?: string;
   sourceColumnName: string;
 }
