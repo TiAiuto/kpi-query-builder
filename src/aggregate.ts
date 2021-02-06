@@ -1,26 +1,27 @@
+import { AggregatePattern } from "./aggregate_pattern";
 import { Group } from "./group";
 import { SourceColumn } from "./source_column";
 import { TransformedColumn } from "./transformed_column";
 
 export class Aggregate implements SourceColumn {
-  type: string;
+  pattern: AggregatePattern;
   source?: string;
   sourceColumnName: string;
   output: TransformedColumn;
   groups: Group[];
 
   constructor({
-    type,
+    pattern,
     source,
     sourceColumnName,
     output,
     groups,
   }: SourceColumn & {
-    type: string;
+    pattern: AggregatePattern;
     output: TransformedColumn;
     groups: Group[];
   }) {
-    this.type = type;
+    this.pattern = pattern;
     this.source = source;
     this.sourceColumnName = sourceColumnName;
     this.output = output;
