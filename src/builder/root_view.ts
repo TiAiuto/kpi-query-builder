@@ -1,4 +1,6 @@
 import { ReferenceView, ReferenceViewArgs } from "./reference_view";
+import { ResolvedView } from "./resolved_view";
+import { ViewResolver } from "./view_resolver";
 
 export class RootView extends ReferenceView {
   physicalSource: string;
@@ -23,5 +25,9 @@ export class RootView extends ReferenceView {
     this.physicalSource = physicalSource;
     this.physicalSourceAlias = physicalSourceAlias;
     this.dateSuffixEnabled = dateSuffixEnabled;
+  }
+
+  build(resolver: ViewResolver): ResolvedView {
+    throw new Error("Method not implemented.");
   }
 }

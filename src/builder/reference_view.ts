@@ -11,7 +11,7 @@ export type ReferenceViewArgs = ViewArgs & {
   orders?: Order[];
 };
 
-export class ReferenceView extends View {
+export abstract class ReferenceView extends View {
   filters: Filter[];
   conditions: Condition[];
   joins: Join[];

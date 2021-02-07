@@ -1,4 +1,6 @@
 import { ReferenceView, ReferenceViewArgs } from "./reference_view";
+import { ResolvedView } from "./resolved_view";
+import { ViewResolver } from "./view_resolver";
 
 export class QueryView extends ReferenceView {
   columnsInheritanceEnabled: boolean;
@@ -9,5 +11,9 @@ export class QueryView extends ReferenceView {
   }: ReferenceViewArgs & { columnsInheritanceEnabled: boolean }) {
     super({ type: "query", ...args });
     this.columnsInheritanceEnabled = columnsInheritanceEnabled;
+  }
+
+  build(resolver: ViewResolver): ResolvedView {
+    throw new Error("Method not implemented.");
   }
 }
