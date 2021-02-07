@@ -13,7 +13,7 @@ export class QueryView extends ReferenceView {
     this.columnsInheritanceEnabled = columnsInheritanceEnabled;
   }
 
-  build(resolver: ViewResolver): ResolvedView {
+  resolve(resolver: ViewResolver): ResolvedView {
     throw new Error("Method not implemented.");
   }
 }

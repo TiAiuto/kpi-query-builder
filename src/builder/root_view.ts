@@ -27,7 +27,7 @@ export class RootView extends ReferenceView {
     this.dateSuffixEnabled = dateSuffixEnabled;
   }
 
-  build(resolver: ViewResolver): ResolvedView {
+  resolve(resolver: ViewResolver): ResolvedView {
     throw new Error("Method not implemented.");
   }
 }

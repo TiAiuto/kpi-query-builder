@@ -11,7 +11,7 @@ export class RoutineView extends View {
     this.pattern = pattern;
   }
   
-  build(resolver: ViewResolver): ResolvedView {
+  resolve(resolver: ViewResolver): ResolvedView {
     throw new Error("Method not implemented.");
   }
 }

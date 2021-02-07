@@ -28,5 +28,5 @@ export abstract class View {
     this.columns = columns;
   }
 
-  abstract build(resolver: ViewResolver): ResolvedView;
+  abstract resolve(resolver: ViewResolver): ResolvedView;
 }
