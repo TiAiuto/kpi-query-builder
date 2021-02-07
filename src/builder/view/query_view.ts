@@ -19,18 +19,34 @@ export class QueryView extends ReferenceView {
   }
 
   private buildResolvedColumns(
+    dependentView: ResolvedView,
     context: PhraseResolutionContext
   ): ResolvedColumn[] {
-    return this.columns.map((column) => {
+    const resolvedColumns: ResolvedColumn[] = [];
+    this.columns.forEach((column) => {
       const resolvedColumn = context.findColumnByValue(column.value);
-      return new ResolvedColumn({
-        publicSource: this.name,
-        publicName: column.name,
-        physicalName: column.alphabetName,
-        physicalSource: resolvedColumn.physicalSource,
-        physicalSourceColumnName: resolvedColumn.physicalSourceColumnName,
-      });
+      resolvedColumns.push(
+        new ResolvedColumn({
+          publicSource: this.name,
+          publicName: column.name,
+          physicalName: column.alphabetName,
+          physicalSource: resolvedColumn.physicalSource,
+          physicalSourceColumnName: resolvedColumn.physicalSourceColumnName,
+        })
+      );
     });
+    if (this.columnsInheritanceEnabled) {
+      dependentView.resolvedColumns.forEach((dependentResolvedColumn) => {
+        resolvedColumns.push(new ResolvedColumn({
+          publicSource: this.name,
+          publicName: dependentResolvedColumn.publicName,
+          physicalName: dependentResolvedColumn.physicalName,
+          physicalSource: this.alphabetName,
+          physicalSourceColumnName: dependentResolvedColumn.physicalName,
+        }));
+      });
+    }
+    return resolvedColumns;
   }
 
   private buildResolvedReference(resolver: ViewResolver): ResolvedReference {
@@ -66,7 +82,10 @@ export class QueryView extends ReferenceView {
     );
 
     return new ResolvedReference({
-      resolvedColumns: this.buildResolvedColumns(phraseResolutionContext),
+      resolvedColumns: this.buildResolvedColumns(
+        dependentView,
+        phraseResolutionContext
+      ),
       physicalSource: dependentView.physicalName,
       joinPhrases,
       conditionPhrases,
