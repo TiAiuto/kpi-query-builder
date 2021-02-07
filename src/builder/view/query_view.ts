@@ -41,9 +41,9 @@ export class QueryView extends ReferenceView {
       }
     });
 
-    const joinPhrases = jointJoins.map((join) => join.toSQL(resolver));
+    const joinPhrases = jointJoins.map((join) => join.toSQL(resolver, availableColumns));
     const conditionPhrases = jointConditions.map((condition) =>
-      condition.toSQL(resolver)
+      condition.toSQL(resolver, availableColumns)
     );
 
     return new ResolvedReference({
