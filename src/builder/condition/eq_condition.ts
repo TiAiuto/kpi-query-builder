@@ -1,3 +1,4 @@
+import { ResolvedColumn } from "../resolved_column";
 import { ViewResolver } from "../view_resolver";
 import { Condition } from "./condition";
 
@@ -28,7 +29,7 @@ export class EqCondition extends Condition {
     this.otherSourceColumnName = otherSourceColumnName;
   }
 
-  toSQL(resolver: ViewResolver): string {
+  toSQL(resolver: ViewResolver, availableColumns: ResolvedColumn[]): string {
     throw new Error("Method not implemented.");
   }
 

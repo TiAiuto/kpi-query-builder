@@ -1,3 +1,4 @@
+import { ResolvedColumn } from "../resolved_column";
 import { ViewResolver } from "../view_resolver";
 import { Condition } from "./condition";
 
@@ -9,7 +10,7 @@ export class RawCondition extends Condition {
     this.raw = raw;
   }
 
-  toSQL(resolver: ViewResolver): string {
+  toSQL(resolver: ViewResolver, availableColumns: ResolvedColumn[]): string {
     return this.raw;
   }
   

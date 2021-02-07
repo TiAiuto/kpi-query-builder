@@ -1,3 +1,4 @@
+import { ResolvedColumn } from "../resolved_column";
 import { ViewResolver } from "../view_resolver";
 
 export abstract class Condition {
@@ -7,6 +8,6 @@ export abstract class Condition {
     this.type = type;
   }
 
-  abstract toSQL(resolver: ViewResolver): string
+  abstract toSQL(resolver: ViewResolver, availableColumns: ResolvedColumn[]): string
   abstract toSQLForRoot(resolver: ViewResolver): string
 }

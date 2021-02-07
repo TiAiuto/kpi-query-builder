@@ -1,3 +1,5 @@
+import { InnerJoin } from "../join/inner_join";
+import { OrdinaryJoin } from "../join/ordinary_join";
 import { ResolvedColumn } from "../resolved_column";
 import { ResolvedReference } from "../resolved_reference";
 import { ResolvedView } from "../resolved_view";
@@ -14,9 +16,8 @@ export class QueryView extends ReferenceView {
     super({ type: "query", ...args });
     this.columnsInheritanceEnabled = columnsInheritanceEnabled;
   }
-  
+
   private buildResolvedColumns(resolver: ViewResolver): ResolvedColumn[] {
-    
     throw new Error("実装中");
   }
 
@@ -29,18 +30,29 @@ export class QueryView extends ReferenceView {
       jointJoins.push(...filter.joins);
     });
 
-    const dependentQuery = resolver.resolve(this.source);
-    
+    const dependentView = resolver.resolve(this.source);
+    const availableColumns: ResolvedColumn[] = [
+      ...dependentView.resolvedColumns,
+    ];
+    jointJoins.forEach((join) => {
+      if (join instanceof OrdinaryJoin) {
+        const joinDependentView = resolver.resolve(join.target);
+        availableColumns.push(...joinDependentView.resolvedColumns);
+      }
+    });
+
     const joinPhrases = jointJoins.map((join) => join.toSQL(resolver));
-    const conditionPhrases = jointConditions.map((condition) => condition.toSQL(resolver));
+    const conditionPhrases = jointConditions.map((condition) =>
+      condition.toSQL(resolver)
+    );
 
     return new ResolvedReference({
       resolvedColumns: this.buildResolvedColumns(resolver),
-      physicalSource: dependentQuery.physicalName,
+      physicalSource: dependentView.physicalName,
       joinPhrases,
       conditionPhrases,
       groupPhrases: [],
-      orderPhrases: [] // TODO: orderは後で
+      orderPhrases: [], // TODO: orderは後で
     });
   }
 
@@ -51,7 +63,7 @@ export class QueryView extends ReferenceView {
       publicName: this.name,
       physicalName: this.alphabetName,
       resolvedColumns: resolvedReference.resolvedColumns,
-      sql: resolvedReference.toSQL()
+      sql: resolvedReference.toSQL(),
     });
   }
 }
