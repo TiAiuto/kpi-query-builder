@@ -42,6 +42,7 @@ export class QueryView extends ReferenceView {
       }
     });
     const phraseResolutionContext = new PhraseResolutionContext({
+      currentView: this,
       resolver,
       availableColumns,
     });
