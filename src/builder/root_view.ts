@@ -1,3 +1,6 @@
+import { Condition } from "./condition";
+import { FilterUsage } from "./filter_usage";
+import { Join } from "./join";
 import { RawCondition } from "./raw_condition";
 import { RawJoin } from "./raw_join";
 import { RawResoledColumn } from "./raw_resolved_column";
@@ -5,19 +8,29 @@ import { RawValue } from "./raw_value";
 import { ReferenceView, ReferenceViewArgs } from "./reference_view";
 import { ResoledReference } from "./resolved_reference";
 import { ResolvedView } from "./resolved_view";
+import { View, ViewArgs } from "./view";
 import { ViewResolver } from "./view_resolver";
 
-export class RootView extends ReferenceView {
+export class RootView extends View {
+  filterUsages: FilterUsage[];
+  conditions: Condition[];
+  joins: Join[];
   physicalSource: string;
   physicalSourceAlias: string;
   dateSuffixEnabled: boolean;
 
   constructor({
+    filterUsages,
+    conditions,
+    joins,
     physicalSource,
     physicalSourceAlias,
     dateSuffixEnabled,
     ...args
-  }: Exclude<ReferenceViewArgs, "orders"> & {
+  }: ViewArgs & {
+    filterUsages?: FilterUsage[];
+    conditions?: Condition[];
+    joins?: Join[];
     physicalSource: string;
     physicalSourceAlias: string;
     dateSuffixEnabled: boolean;
@@ -25,8 +38,10 @@ export class RootView extends ReferenceView {
     super({
       ...args,
       type: "root",
-      orders: [], // root viewに並び順を指定する用途は想定していない
     });
+    this.filterUsages = filterUsages || [];
+    this.conditions = conditions || [];
+    this.joins = joins || [];
     this.physicalSource = physicalSource;
     this.physicalSourceAlias = physicalSourceAlias;
     this.dateSuffixEnabled = dateSuffixEnabled;
@@ -44,10 +59,10 @@ export class RootView extends ReferenceView {
     const resolvedColumns = this.columns.map((column) => {
       if (column.value instanceof RawValue) {
         return new RawResoledColumn({
-          publicName: column.name, 
-          physicalName: column.alphabetName, 
+          publicName: column.name,
+          physicalName: column.alphabetName,
           raw: column.value.toSQL()
-        });  
+        });
       } else {
         throw new Error('Raw Value以外のcolumn指定は未対応');
       }
@@ -69,16 +84,12 @@ export class RootView extends ReferenceView {
       }
     });
 
-    if (this.orders.length) {
-      throw new Error('Root Viewではordersは未対応');
-    }
-
     const resolvedReference = new ResoledReference({
-      resolvedColumns: resolvedColumns, 
-      physicalSource: this.physicalSource, 
-      physicalSourceAlias: this.physicalSourceAlias, 
-      joinPhrases, 
-      conditionPhrases, 
+      resolvedColumns: resolvedColumns,
+      physicalSource: this.physicalSource,
+      physicalSourceAlias: this.physicalSourceAlias,
+      joinPhrases,
+      conditionPhrases,
       groupPhrases: [],
       orderPhrases: []
     });
