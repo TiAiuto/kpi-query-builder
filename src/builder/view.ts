@@ -1,4 +1,6 @@
+import { ResolvedView } from "./resolved_view";
 import { TransformedValue } from "./transformed_value";
+import { ViewResolver } from "./view_resolver";
 
 export type ViewArgs = {
   name: string;
@@ -25,4 +27,6 @@ export abstract class View {
     this.alphabetName = alphabetName;
     this.columns = columns;
   }
+
+  abstract build(resolver: ViewResolver): ResolvedView;
 }
