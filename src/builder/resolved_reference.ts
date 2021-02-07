@@ -36,6 +36,22 @@ export class ResoledReference {
   }
 
   toSQL(): string {
-    throw new Error('未実装');
+    let sql = 'SELECT ';
+    sql += this.resolvedColumns.map((item) => item.toSQL()).join(', ');
+    sql += 'FROM ';
+    sql += `${this.physicalSource} `;
+    if (this.physicalSourceAlias) {
+      sql += `${this.physicalSourceAlias} `;
+    }
+    if (this.conditionsPhrases.length) {
+      sql += `WHERE ${this.conditionsPhrases.join('AND ')}`;
+    }
+    if (this.groupPhrases.length) {
+      sql += `GROUP BY ${this.groupPhrases.join(', ')}`;
+    }
+    if (this.orderPhrases.length) {
+      sql += `ORDER BY ${this.orderPhrases.join(', ')}`;
+    }
+    return sql;
   }
 }
