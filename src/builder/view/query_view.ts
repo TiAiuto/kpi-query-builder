@@ -28,10 +28,10 @@ export class QueryView extends ReferenceView {
       jointJoins.push(...filter.joins);
     });
 
+    const dependentQuery = resolver.resolve(this.source);
+    
     const joinPhrases = jointJoins.map((join) => join.toSQL(resolver));
     const conditionPhrases = jointConditions.map((condition) => condition.toSQL(resolver));
-
-    const dependentQuery = resolver.resolve(this.source);
 
     return new ResolvedReference({
       resolvedColumns: this.buildResolvedColumns(resolver),
@@ -49,7 +49,7 @@ export class QueryView extends ReferenceView {
     return new ResolvedView({
       publicName: this.name,
       physicalName: this.alphabetName,
-      columns: resolvedReference.resolvedColumns,
+      resolvedColumns: resolvedReference.resolvedColumns,
       sql: resolvedReference.toSQL()
     });
   }

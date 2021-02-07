@@ -61,8 +61,6 @@ export class RootView extends View {
   }
 
   private buildResolvedReference(resolver: ViewResolver): ResolvedReference {
-    // rootではraw以外のjoin, conditionは使わない想定
-
     const jointConditions = [...this.conditions];
     const jointJoins = [...this.joins];
     this.filterUsages.forEach((filterUsage) => {
@@ -71,6 +69,7 @@ export class RootView extends View {
       jointJoins.push(...filter.joins);
     });
 
+    // rootではraw以外のjoin, conditionは使わない想定
     const joinPhrases = jointJoins.map((join) => join.toSQLForRoot(resolver));
     const conditionPhrases = jointConditions.map((condition) =>
       condition.toSQLForRoot(resolver)
@@ -93,7 +92,7 @@ export class RootView extends View {
     return new ResolvedView({
       publicName: this.name,
       physicalName: this.alphabetName,
-      columns: resolvedReference.resolvedColumns,
+      resolvedColumns: resolvedReference.resolvedColumns,
       sql: resolvedReference.toSQL(),
     });
   }
