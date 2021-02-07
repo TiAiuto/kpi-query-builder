@@ -22,7 +22,7 @@ export class ViewResolver {
     }
 
     const view = this.findView(name);
-    const resolvedView = view.build(this);
+    const resolvedView = view.resolve(this);
     this.resolvedViews.push(resolvedView);
     return resolvedView;
   }

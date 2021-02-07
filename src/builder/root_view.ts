@@ -1,6 +1,7 @@
 import { RawCondition } from "./raw_condition";
 import { RawJoin } from "./raw_join";
 import { RawResoledColumn } from "./raw_resolved_column";
+import { RawValue } from "./raw_value";
 import { ReferenceView, ReferenceViewArgs } from "./reference_view";
 import { ResolvedColumn } from "./resolved_column";
 import { ResoledReference } from "./resolved_reference";
@@ -36,20 +37,21 @@ export class RootView extends ReferenceView {
   resolve(resolver: ViewResolver): ResolvedView {
     const jointConditions = [...this.conditions];
     const jointJoins = [...this.joins];
-    this.filters.forEach((filter) => {
+    this.filterUsages.forEach((filterUsage) => {
+      const filter = resolver.findFilter(filterUsage.name);
       jointConditions.push(...filter.conditions);
       jointJoins.push(...filter.joins);
     });
 
     const resolvedColumns = this.columns.map((column) => {
-      if (column.value instanceof SelectValue) {
+      if (column.value instanceof RawValue) {
         return new RawResoledColumn({
           publicName: column.name, 
           physicalName: column.alphabetName, 
           raw: column.value.toSQL()
         });  
       } else {
-        throw new Error('Select Value以外のcolumn指定は未対応');
+        throw new Error('Raw Value以外のcolumn指定は未対応');
       }
     });
 
@@ -69,7 +71,7 @@ export class RootView extends ReferenceView {
       }
     });
 
-    if (this.orders) {
+    if (this.orders.length) {
       throw new Error('Root Viewではordersは未対応');
     }
 
