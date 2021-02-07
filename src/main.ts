@@ -3,7 +3,7 @@ import { FilterUsage } from "./builder/filter_usage";
 import { InCondition } from "./builder/condition/in_condition";
 import { RawValue } from "./builder/value/raw_value";
 import { RootView } from "./builder/view/root_view";
-import { ValueWrapper } from "./builder/value_wrapper";
+import { ValueSurface } from "./builder/value_surface";
 import { ViewResolver } from "./builder/view_resolver";
 import { RawJoin } from "./builder/join/raw_join";
 import { QueryView } from "./builder/view/query_view";
@@ -39,22 +39,22 @@ function main() {
         physicalSourceAlias: 'plus_contracts',
         dateSuffixEnabled: false,
         columns: [
-          new ValueWrapper({
+          new ValueSurface({
             name: '利用開始日タイムスタンプ',
             alphabetName: 'usage_start_date_timestamp',
             value: new RawValue({ raw: 'usage_start_date' })
           }),
-          new ValueWrapper({
+          new ValueSurface({
             name: '利用終了日タイムスタンプ',
             alphabetName: 'usage_end_date_timestamp',
             value: new RawValue({ raw: 'usage_end_date' })
           }),
-          new ValueWrapper({
+          new ValueSurface({
             name: '契約ユーザコード',
             alphabetName: 'contracted_user_code',
             value: new RawValue({ raw: 'users.code' })
           }),
-          new ValueWrapper({
+          new ValueSurface({
             name: '契約ユーザID',
             alphabetName: 'contracted_user_id',
             value: new RawValue({ raw: 'users.id' })
@@ -74,17 +74,17 @@ function main() {
         physicalSourceAlias: 'rack_plus',
         dateSuffixEnabled: true,
         columns: [
-          new ValueWrapper({
+          new ValueSurface({
             name: 'ユーザコード',
             alphabetName: 'user_code',
             value: new RawValue({ raw: 'users.code' })
           }),
-          new ValueWrapper({
+          new ValueSurface({
             name: 'path',
             alphabetName: 'path',
             value: new RawValue({ raw: 'rack_plus.path' })
           }),
-          new ValueWrapper({
+          new ValueSurface({
             name: 'タイムスタンプ',
             alphabetName: 'time',
             value: new RawValue({ raw: 'TIMESTAMP_SECONDS(rack_plus.time)' })

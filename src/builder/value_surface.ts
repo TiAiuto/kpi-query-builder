@@ -1,7 +1,7 @@
 import { TransformedColumn } from "./transformed_column";
 import { Value } from "./value/value";
 
-export class ValueWrapper implements TransformedColumn {
+export class ValueSurface implements TransformedColumn {
   name: string;
   alphabetName: string;
   value: Value;

@@ -2,12 +2,12 @@ import { Condition } from "../condition/condition";
 import { FilterUsage } from "../filter_usage";
 import { Join } from "../join/join";
 import { Order } from "../order";
-import { ValueWrapper } from "../value_wrapper";
+import { ValueSurface } from "../value_surface";
 import { View, ViewArgs } from "./view";
 
 export type ReferenceViewArgs = Omit<ViewArgs, 'columns'> & {
   source: string;
-  columns?: ValueWrapper[],
+  columns?: ValueSurface[],
   filterUsages?: FilterUsage[];
   conditions?: Condition[];
   joins?: Join[];
