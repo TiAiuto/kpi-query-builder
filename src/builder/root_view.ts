@@ -3,10 +3,8 @@ import { RawJoin } from "./raw_join";
 import { RawResoledColumn } from "./raw_resolved_column";
 import { RawValue } from "./raw_value";
 import { ReferenceView, ReferenceViewArgs } from "./reference_view";
-import { ResolvedColumn } from "./resolved_column";
 import { ResoledReference } from "./resolved_reference";
 import { ResolvedView } from "./resolved_view";
-import { SelectValue } from "./select_value";
 import { ViewResolver } from "./view_resolver";
 
 export class RootView extends ReferenceView {
