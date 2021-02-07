@@ -19,15 +19,32 @@ export class QueryView extends ReferenceView {
   }
 
   private resolveInheritedAsOwnColumn(
-    dependentResolvedColumn: ResolvedColumn
-  ): ResolvedColumn {
-    return new ReferenceResolvedColumn({
-      publicSource: this.name,
-      publicName: dependentResolvedColumn.publicName,
-      physicalName: dependentResolvedColumn.physicalName,
-      physicalSource: this.alphabetName,
-      physicalSourceValue: dependentResolvedColumn.physicalName,
+    dependentView: ResolvedView
+  ): ResolvedColumn[] {
+    return dependentView.resolvedColumns.map((dependentResolvedColumn) => {
+      return new ReferenceResolvedColumn({
+        publicSource: this.name,
+        publicName: dependentResolvedColumn.publicName,
+        physicalName: dependentResolvedColumn.physicalName,
+        physicalSource: dependentView.physicalName,
+        physicalSourceValue: dependentResolvedColumn.physicalName,
+      });
     });
+  }
+
+  private resolveAvailableColumns(
+    dependentQuery: ResolvedView
+  ): ResolvedColumn[] {
+    return dependentQuery.resolvedColumns.map(
+      (column) =>
+        new ReferenceResolvedColumn({
+          publicSource: dependentQuery.publicName,
+          publicName: column.publicName,
+          physicalName: column.physicalName, // この値は使われない想定だが正しい値を入れておく
+          physicalSource: dependentQuery.physicalName,
+          physicalSourceValue: column.physicalName,
+        })
+    );
   }
 
   private buildResolvedColumns(
@@ -48,11 +65,7 @@ export class QueryView extends ReferenceView {
       );
     });
     if (this.columnsInheritanceEnabled) {
-      resolvedColumns.push(
-        ...dependentView.resolvedColumns.map((column) =>
-          this.resolveInheritedAsOwnColumn(column)
-        )
-      );
+      resolvedColumns.push(...this.resolveInheritedAsOwnColumn(dependentView));
     }
     return resolvedColumns;
   }
@@ -68,12 +81,14 @@ export class QueryView extends ReferenceView {
 
     const dependentView = resolver.resolve(this.source);
     const availableColumns: ResolvedColumn[] = [
-      ...dependentView.resolvedColumns,
+      ...this.resolveAvailableColumns(dependentView),
     ];
     jointJoins.forEach((join) => {
       if (join instanceof OrdinaryJoin) {
         const joinDependentView = resolver.resolve(join.target);
-        availableColumns.push(...joinDependentView.resolvedColumns);
+        availableColumns.push(
+          ...this.resolveAvailableColumns(joinDependentView)
+        );
       }
     });
     const phraseResolutionContext = new PhraseResolutionContext({

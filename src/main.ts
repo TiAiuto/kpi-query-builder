@@ -9,6 +9,7 @@ import { RawJoin } from "./builder/join/raw_join";
 import { QueryView } from "./builder/view/query_view";
 import { RawCondition } from "./builder/condition/raw_condition";
 import { SelectValueSet } from "./builder/value_set/select_value_set";
+import { SelectValue } from "./builder/value/select_value";
 
 function main() {
   const resolver = new ViewResolver({
@@ -95,6 +96,14 @@ function main() {
         name: "PLUS契約者アクセスログ",
         alphabetName: "plus_contracted_users_logs",
         source: "PLUSユーザコード付きアクセスログ",
+        // columns: [
+        //   // テスト
+        //   new ValueSurface({
+        //     name: "新しい名前のユーザコード",
+        //     alphabetName: "user_code_alias",
+        //     value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+        //   }),
+        // ],
         columnsInheritanceEnabled: true,
         filterUsages: [
           new FilterUsage({
