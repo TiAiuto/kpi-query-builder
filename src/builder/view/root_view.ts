@@ -49,14 +49,15 @@ export class RootView extends View {
     return this.columns.map((column) => {
       if (column.value instanceof RawValue) {
         return new RawResoledColumn({
+          publicSource: this.name,
           publicName: column.name,
           physicalName: column.alphabetName,
-          raw: column.value.toSQL()
+          raw: column.value.toSQL(),
         });
       } else {
-        throw new Error('Raw Value以外のcolumn指定は未対応');
+        throw new Error("Raw Value以外のcolumn指定は未対応");
       }
-    })
+    });
   }
 
   private buildResolvedReference(resolver: ViewResolver): ResolvedReference {
@@ -71,7 +72,9 @@ export class RootView extends View {
     });
 
     const joinPhrases = jointJoins.map((join) => join.toSQLForRoot(resolver));
-    const conditionPhrases = jointConditions.map((condition) => condition.toSQLForRoot(resolver));
+    const conditionPhrases = jointConditions.map((condition) =>
+      condition.toSQLForRoot(resolver)
+    );
 
     return new ResolvedReference({
       resolvedColumns: this.buildResolvedColumns(),
@@ -80,7 +83,7 @@ export class RootView extends View {
       joinPhrases,
       conditionPhrases,
       groupPhrases: [],
-      orderPhrases: []
+      orderPhrases: [],
     });
   }
 
@@ -91,7 +94,7 @@ export class RootView extends View {
       publicName: this.name,
       physicalName: this.alphabetName,
       columns: resolvedReference.resolvedColumns,
-      sql: resolvedReference.toSQL()
+      sql: resolvedReference.toSQL(),
     });
   }
 }
