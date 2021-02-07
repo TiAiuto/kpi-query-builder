@@ -1,12 +1,12 @@
 import { SourceColumn } from "../source_column";
-import { TransformedValue } from "../transformed_value";
+import { ValueWrapper } from "../value_wrapper";
 import { TransformPattern } from "../transform_pattern";
 import { Value } from "./value";
 
 export class ConvertValue extends Value implements SourceColumn {
   source?: string;
   sourceColumnName: string;
-  output: TransformedValue;
+  output: ValueWrapper;
   pattern: TransformPattern;
 
   constructor({
@@ -14,7 +14,7 @@ export class ConvertValue extends Value implements SourceColumn {
     sourceColumnName,
     output,
     pattern,
-  }: SourceColumn & { output: TransformedValue; pattern: TransformPattern }) {
+  }: SourceColumn & { output: ValueWrapper; pattern: TransformPattern }) {
     super({ type: "transform" });
     this.source = source;
     this.sourceColumnName = sourceColumnName;

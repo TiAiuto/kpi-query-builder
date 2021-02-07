@@ -1,18 +1,18 @@
 import { ResolvedView } from "../resolved_view";
-import { TransformedValue } from "../transformed_value";
+import { ValueWrapper } from "../value_wrapper";
 import { ViewResolver } from "../view_resolver";
 
 export type ViewArgs = {
   name: string;
   alphabetName: string;
-  columns: TransformedValue[];
+  columns: ValueWrapper[];
 };
 
 export abstract class View {
   type: string;
   name: string;
   alphabetName: string;
-  columns: TransformedValue[];
+  columns: ValueWrapper[];
 
   constructor({
     type,
