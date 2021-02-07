@@ -104,7 +104,7 @@ function main() {
       })
     ],
   });
-  resolver.resolve('PLUS契約者アクセスログ');
-  console.log(resolver.resolvedViews);
+  console.log(resolver.resolve('ユーザコード付きPLUS契約'));
+  console.log(resolver.resolve('PLUS契約者アクセスログ'));
 }
 main();
