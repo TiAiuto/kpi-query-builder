@@ -60,6 +60,8 @@ export class RootView extends View {
   }
 
   private buildResolvedReference(resolver: ViewResolver): ResolvedReference {
+    // rootではraw以外のjoin, conditionは使わない想定
+
     const jointConditions = [...this.conditions];
     const jointJoins = [...this.joins];
     this.filterUsages.forEach((filterUsage) => {
