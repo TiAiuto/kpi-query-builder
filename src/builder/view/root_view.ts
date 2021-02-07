@@ -70,8 +70,8 @@ export class RootView extends View {
       jointJoins.push(...filter.joins);
     });
 
-    const joinPhrases = jointJoins.map((join) => join.toSQL(resolver));
-    const conditionPhrases = jointConditions.map((condition) => condition.toSQL(resolver));
+    const joinPhrases = jointJoins.map((join) => join.toSQLForRoot(resolver));
+    const conditionPhrases = jointConditions.map((condition) => condition.toSQLForRoot(resolver));
 
     return new ResolvedReference({
       resolvedColumns: this.buildResolvedColumns(),

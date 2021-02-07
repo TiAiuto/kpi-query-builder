@@ -21,4 +21,8 @@ export class InnerJoin extends Join {
   toSQL(resolver: ViewResolver): string {
     throw new Error("Method not implemented.");
   }
+  
+  toSQLForRoot(resolver: ViewResolver): string {
+    throw new Error("Method not implemented.");
+  }
 }

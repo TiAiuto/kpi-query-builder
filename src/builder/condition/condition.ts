@@ -8,4 +8,5 @@ export abstract class Condition {
   }
 
   abstract toSQL(resolver: ViewResolver): string
+  abstract toSQLForRoot(resolver: ViewResolver): string
 }

@@ -13,4 +13,8 @@ export class InCondition extends Condition {
   toSQL(resolver: ViewResolver): string {
     throw new Error("Method not implemented.");
   }
+
+  toSQLForRoot(resolver: ViewResolver): string {
+    throw new Error("Method not implemented.");
+  }
 }

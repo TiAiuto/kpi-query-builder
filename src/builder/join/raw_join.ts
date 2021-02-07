@@ -12,4 +12,8 @@ export class RawJoin extends Join {
   toSQL(resolver: ViewResolver): string {
     return this.raw;
   }
+  
+  toSQLForRoot(resolver: ViewResolver): string {
+    return this.raw;
+  }
 }

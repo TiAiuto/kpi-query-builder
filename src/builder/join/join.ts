@@ -8,4 +8,5 @@ export abstract class Join {
   }
 
   abstract toSQL(resolver: ViewResolver): string
+  abstract toSQLForRoot(resolver: ViewResolver): string
 }

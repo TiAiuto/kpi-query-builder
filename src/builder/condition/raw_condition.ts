@@ -12,4 +12,8 @@ export class RawCondition extends Condition {
   toSQL(resolver: ViewResolver): string {
     return this.raw;
   }
+  
+  toSQLForRoot(resolver: ViewResolver): string {
+    return this.raw;
+  }
 }
