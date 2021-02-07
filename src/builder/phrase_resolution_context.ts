@@ -1,4 +1,6 @@
 import { ResolvedColumn } from "./resolved_column";
+import { SelectValue } from "./value/select_value";
+import { Value } from "./value/value";
 import { View } from "./view/view";
 import { ViewResolver } from "./view_resolver";
 
@@ -45,5 +47,12 @@ export class PhraseResolutionContext {
     throw new Error(
       `${sourceColumnName}に該当するカラムが複数あるため特定できません`
     );
+  }
+
+  findColumnByValue(value: Value): ResolvedColumn {
+    if (value instanceof SelectValue) {
+      return this.findColumnByName(value.sourceColumnName, value.source);
+    }
+    throw new Error(`${value}は解決できません`);
   }
 }

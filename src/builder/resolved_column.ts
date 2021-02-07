@@ -25,7 +25,11 @@ export class ResolvedColumn {
     this.physicalSourceColumnName = physicalSourceColumnName;
   }
 
+  toValueSQL(): string {
+    return `${this.physicalSource}.${this.physicalSourceColumnName}`;
+  }
+
   toSelectSQL(): string {
-    return `${this.physicalSource}.${this.physicalSourceColumnName} AS ${this.physicalName}`;
+    return `${this.toValueSQL()} AS ${this.physicalName}`;
   }
 }

@@ -18,8 +18,19 @@ export class QueryView extends ReferenceView {
     this.columnsInheritanceEnabled = columnsInheritanceEnabled;
   }
 
-  private buildResolvedColumns(resolver: ViewResolver): ResolvedColumn[] {
-    throw new Error("実装中");
+  private buildResolvedColumns(
+    context: PhraseResolutionContext
+  ): ResolvedColumn[] {
+    return this.columns.map((column) => {
+      const resolvedColumn = context.findColumnByValue(column.value);
+      return new ResolvedColumn({
+        publicSource: this.name,
+        publicName: column.name,
+        physicalName: column.alphabetName,
+        physicalSource: resolvedColumn.physicalSource,
+        physicalSourceColumnName: resolvedColumn.physicalSourceColumnName,
+      });
+    });
   }
 
   private buildResolvedReference(resolver: ViewResolver): ResolvedReference {
@@ -55,7 +66,7 @@ export class QueryView extends ReferenceView {
     );
 
     return new ResolvedReference({
-      resolvedColumns: this.buildResolvedColumns(resolver),
+      resolvedColumns: this.buildResolvedColumns(phraseResolutionContext),
       physicalSource: dependentView.physicalName,
       joinPhrases,
       conditionPhrases,
