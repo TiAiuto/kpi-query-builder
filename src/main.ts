@@ -1,14 +1,14 @@
 import { Filter } from "./builder/filter";
 import { FilterUsage } from "./builder/filter_usage";
 import { InCondition } from "./builder/in_condition";
-import { QueryView } from "./builder/query_view";
 import { RawCondition } from "./builder/raw_condition";
-import { RawJoin } from "./builder/raw_join";
 import { RawValue } from "./builder/raw_value";
-import { RootView } from "./builder/root_view";
+import { RootView } from "./builder/view/root_view";
 import { SelectValueSet } from "./builder/select_value_set";
 import { TransformedValue } from "./builder/transformed_value";
 import { ViewResolver } from "./builder/view_resolver";
+import { RawJoin } from "./builder/join/raw_join";
+import { QueryView } from "./builder/view/query_view";
 
 function main() {
   const resolver = new ViewResolver({

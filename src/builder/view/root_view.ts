@@ -1,13 +1,13 @@
-import { Condition } from "./condition";
-import { FilterUsage } from "./filter_usage";
-import { Join } from "./join/join";
-import { RawResoledColumn } from "./raw_resolved_column";
-import { RawValue } from "./raw_value";
-import { ResolvedColumn } from "./resolved_column";
-import { ResoledReference } from "./resolved_reference";
-import { ResolvedView } from "./resolved_view";
-import { View, ViewArgs } from "./view";
-import { ViewResolver } from "./view_resolver";
+import { Condition } from "../condition";
+import { FilterUsage } from "../filter_usage";
+import { Join } from "../join/join";
+import { RawResoledColumn } from "../raw_resolved_column";
+import { RawValue } from "../raw_value";
+import { ResolvedColumn } from "../resolved_column";
+import { ResoledReference } from "../resolved_reference";
+import { ResolvedView } from "../resolved_view";
+import { View, ViewArgs } from "../view";
+import { ViewResolver } from "../view_resolver";
 
 export class RootView extends View {
   filterUsages: FilterUsage[];

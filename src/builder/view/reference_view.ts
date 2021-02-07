@@ -1,9 +1,9 @@
-import { Condition } from "./condition";
-import { FilterUsage } from "./filter_usage";
-import { Join } from "./join/join";
-import { Order } from "./order";
-import { TransformedValue } from "./transformed_value";
-import { View, ViewArgs } from "./view";
+import { Condition } from "../condition";
+import { FilterUsage } from "../filter_usage";
+import { Join } from "../join/join";
+import { Order } from "../order";
+import { TransformedValue } from "../transformed_value";
+import { View, ViewArgs } from "../view";
 
 export type ReferenceViewArgs = Omit<ViewArgs, 'columns'> & {
   source: string;
