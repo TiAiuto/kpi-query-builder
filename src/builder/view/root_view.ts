@@ -70,9 +70,9 @@ export class RootView extends View {
     });
 
     // rootではraw以外のjoin, conditionは使わない想定
-    const joinPhrases = jointJoins.map((join) => join.toSQLForRoot(resolver));
+    const joinPhrases = jointJoins.map((join) => join.toSQLForRoot());
     const conditionPhrases = jointConditions.map((condition) =>
-      condition.toSQLForRoot(resolver)
+      condition.toSQLForRoot()
     );
 
     return new ResolvedReference({

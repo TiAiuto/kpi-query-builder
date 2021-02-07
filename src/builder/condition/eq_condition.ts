@@ -1,5 +1,4 @@
-import { ResolvedColumn } from "../resolved_column";
-import { ViewResolver } from "../view_resolver";
+import { PhraseResolutionContext } from "../phrase_resolution_context";
 import { Condition } from "./condition";
 
 export class EqCondition extends Condition {
@@ -29,11 +28,11 @@ export class EqCondition extends Condition {
     this.otherSourceColumnName = otherSourceColumnName;
   }
 
-  toSQL(resolver: ViewResolver, availableColumns: ResolvedColumn[]): string {
+  toSQL(context: PhraseResolutionContext): string {
     throw new Error("Method not implemented.");
   }
 
-  toSQLForRoot(resolver: ViewResolver): string {
+  toSQLForRoot(): string {
     throw new Error("Method not implemented.");
   }
 }

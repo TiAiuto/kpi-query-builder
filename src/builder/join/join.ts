@@ -1,5 +1,4 @@
-import { ResolvedColumn } from "../resolved_column";
-import { ViewResolver } from "../view_resolver";
+import { PhraseResolutionContext } from "../phrase_resolution_context";
 
 export abstract class Join {
   type: string;
@@ -8,6 +7,6 @@ export abstract class Join {
     this.type = type;
   }
 
-  abstract toSQL(resolver: ViewResolver, availableColumns: ResolvedColumn[]): string
-  abstract toSQLForRoot(resolver: ViewResolver): string
+  abstract toSQL(context: PhraseResolutionContext): string;
+  abstract toSQLForRoot(): string;
 }

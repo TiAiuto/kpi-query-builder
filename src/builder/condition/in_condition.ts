@@ -1,21 +1,33 @@
 import { Condition } from "./condition";
-import { ViewResolver } from "../view_resolver";
 import { ValueSet } from "../value_set/value_set";
-import { ResolvedColumn } from "../resolved_column";
+import { SourceColumn } from "../source_column";
+import { PhraseResolutionContext } from "../phrase_resolution_context";
 
-export class InCondition extends Condition {
+export class InCondition extends Condition implements SourceColumn {
+  source?: string;
+  sourceColumnName: string;
   valueSet: ValueSet;
 
-  constructor({ valueSet }: { valueSet: ValueSet }) {
+  constructor({
+    source, 
+    sourceColumnName, 
+    valueSet,
+  }: {
+    valueSet: ValueSet;
+    source?: string;
+    sourceColumnName: string;
+  }) {
     super({ type: "in" });
+    this.source = source;
+    this.sourceColumnName = sourceColumnName;
     this.valueSet = valueSet;
   }
 
-  toSQL(resolver: ViewResolver, availableColumns: ResolvedColumn[]): string {
+  toSQL(context: PhraseResolutionContext): string {
     throw new Error("Method not implemented.");
   }
 
-  toSQLForRoot(resolver: ViewResolver): string {
+  toSQLForRoot(): string {
     throw new Error("Method not implemented.");
   }
 }

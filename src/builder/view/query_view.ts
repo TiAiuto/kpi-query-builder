@@ -1,5 +1,6 @@
 import { InnerJoin } from "../join/inner_join";
 import { OrdinaryJoin } from "../join/ordinary_join";
+import { PhraseResolutionContext } from "../phrase_resolution_context";
 import { ResolvedColumn } from "../resolved_column";
 import { ResolvedReference } from "../resolved_reference";
 import { ResolvedView } from "../resolved_view";
@@ -40,10 +41,16 @@ export class QueryView extends ReferenceView {
         availableColumns.push(...joinDependentView.resolvedColumns);
       }
     });
+    const phraseResolutionContext = new PhraseResolutionContext({
+      resolver,
+      availableColumns,
+    });
 
-    const joinPhrases = jointJoins.map((join) => join.toSQL(resolver, availableColumns));
+    const joinPhrases = jointJoins.map((join) =>
+      join.toSQL(phraseResolutionContext)
+    );
     const conditionPhrases = jointConditions.map((condition) =>
-      condition.toSQL(resolver, availableColumns)
+      condition.toSQL(phraseResolutionContext)
     );
 
     return new ResolvedReference({

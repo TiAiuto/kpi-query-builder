@@ -1,5 +1,4 @@
-import { ResolvedColumn } from "../resolved_column";
-import { ViewResolver } from "../view_resolver";
+import { PhraseResolutionContext } from "../phrase_resolution_context";
 import { Join } from "./join";
 
 export class RawJoin extends Join {
@@ -10,11 +9,11 @@ export class RawJoin extends Join {
     this.raw = raw;
   }
 
-  toSQL(resolver: ViewResolver, availableColumns: ResolvedColumn[]): string {
+  toSQL(context: PhraseResolutionContext): string {
     return this.raw;
   }
-  
-  toSQLForRoot(resolver: ViewResolver): string {
+
+  toSQLForRoot(): string {
     return this.raw;
   }
 }

@@ -1,7 +1,6 @@
 import { Condition } from "../condition/condition";
 import { Join } from "./join";
-import { ViewResolver } from "../view_resolver";
-import { ResolvedColumn } from "../resolved_column";
+import { PhraseResolutionContext } from "../phrase_resolution_context";
 
 export type OrdinaryJoinArgs = {
   target: string;
@@ -24,11 +23,11 @@ export abstract class OrdinaryJoin extends Join {
     this.conditions = conditions;
   }
 
-  toSQL(resolver: ViewResolver, availableColumns: ResolvedColumn[]): string {
+  toSQL(context: PhraseResolutionContext): string {
     throw new Error("Method not implemented.");
   }
 
-  toSQLForRoot(resolver: ViewResolver): string {
+  toSQLForRoot(): string {
     throw new Error("Method not implemented.");
   }
 }

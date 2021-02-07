@@ -1,20 +1,19 @@
-import { ResolvedColumn } from "../resolved_column";
-import { ViewResolver } from "../view_resolver";
+import { PhraseResolutionContext } from "../phrase_resolution_context";
 import { Condition } from "./condition";
 
 export class RawCondition extends Condition {
   raw: string;
 
   constructor({ raw }: { raw: string }) {
-    super({type: 'raw'});
+    super({ type: "raw" });
     this.raw = raw;
   }
 
-  toSQL(resolver: ViewResolver, availableColumns: ResolvedColumn[]): string {
+  toSQL(context: PhraseResolutionContext): string {
     return this.raw;
   }
-  
-  toSQLForRoot(resolver: ViewResolver): string {
+
+  toSQLForRoot(): string {
     return this.raw;
   }
 }
