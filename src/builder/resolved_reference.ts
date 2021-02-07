@@ -37,7 +37,7 @@ export class ResolvedReference {
 
   toSQL(): string {
     let sql = 'SELECT ';
-    sql += this.resolvedColumns.map((item) => item.toSQL()).join(', ');
+    sql += this.resolvedColumns.map((item) => item.toSelectSQL()).join(', ');
     sql += ' FROM ';
     sql += `${this.physicalSource} `;
     if (this.physicalSourceAlias) {
