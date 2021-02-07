@@ -1,5 +1,6 @@
 import { Condition } from "./condition";
 import { Join } from "./join";
+import { ViewResolver } from "./view_resolver";
 
 export class InnerJoin extends Join {
   target: string;
@@ -15,5 +16,9 @@ export class InnerJoin extends Join {
     super({ type: "inner" });
     this.target = target;
     this.conditions = conditions;
+  }
+
+  toSQL(resolver: ViewResolver): string {
+    throw new Error("Method not implemented.");
   }
 }
