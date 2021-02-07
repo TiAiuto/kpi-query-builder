@@ -1,9 +1,8 @@
-import { ResolvedColumn } from "../resolved_column";
+import { PhraseResolutionContext } from "../phrase_resolution_context";
 import { SourceColumn } from "../source_column";
 import { SelectValue } from "../value/select_value";
 import { ValueSurface } from "../value_surface";
 import { QueryView } from "../view/query_view";
-import { ViewResolver } from "../view_resolver";
 import { ValueSet } from "./value_set";
 
 export class SelectValueSet extends ValueSet implements SourceColumn {
@@ -16,7 +15,7 @@ export class SelectValueSet extends ValueSet implements SourceColumn {
     this.sourceColumnName = sourceColumnName;
   }
 
-  toSQL(resolver: ViewResolver, availableColumns: ResolvedColumn[]): string {
+  toSQL(context: PhraseResolutionContext): string {
     const temporaryQueryView = new QueryView({
       name: "一時テーブル",
       alphabetName: "temporary table",
@@ -30,6 +29,6 @@ export class SelectValueSet extends ValueSet implements SourceColumn {
         }),
       ],
     });
-    return temporaryQueryView.resolve(resolver).sql;
+    return temporaryQueryView.resolve(context.resolver).sql;
   }
 }
