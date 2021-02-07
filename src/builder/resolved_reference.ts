@@ -36,23 +36,23 @@ export class ResolvedReference {
   }
 
   toSQL(): string {
-    let sql = 'SELECT ';
+    let sql = 'SELECT \n ';
     sql += this.resolvedColumns.map((item) => item.toSelectSQL()).join(', ');
-    sql += ' FROM ';
+    sql += ' \n FROM ';
     sql += `${this.physicalSource} `;
     if (this.physicalSourceAlias) {
       sql += `${this.physicalSourceAlias} `;
     }
     sql += this.joinPhrases.join(' ');
-    sql += ' ';
+    sql += ' \n ';
     if (this.conditionsPhrases.length) {
-      sql += `WHERE ${this.conditionsPhrases.join('AND ')}`;
+      sql += `WHERE ${this.conditionsPhrases.join('AND ')} \n`;
     }
     if (this.groupPhrases.length) {
-      sql += `GROUP BY ${this.groupPhrases.join(', ')}`;
+      sql += `GROUP BY ${this.groupPhrases.join(', ')} \n`;
     }
     if (this.orderPhrases.length) {
-      sql += `ORDER BY ${this.orderPhrases.join(', ')}`;
+      sql += `ORDER BY ${this.orderPhrases.join(', ')} \n`;
     }
     return sql;
   }

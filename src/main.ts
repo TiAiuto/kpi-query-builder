@@ -113,8 +113,8 @@ function main() {
       }),
     ],
   });
-  console.log(resolver.resolve("ユーザコード付きPLUS契約"));
-  console.log(resolver.resolve("PLUSユーザコード付きアクセスログ"));
-  console.log(resolver.resolve("PLUS契約者アクセスログ"));
+  resolver.resolve("PLUS契約者アクセスログ");
+  const withQueries = resolver.resolvedViews.map((resolvedView) => `${resolvedView.physicalName} AS ( ${resolvedView.sql} )`).join(', \n');
+  console.log(withQueries);
 }
 main();
