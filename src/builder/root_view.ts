@@ -70,21 +70,8 @@ export class RootView extends View {
       jointJoins.push(...filter.joins);
     });
 
-    const joinPhrases = jointJoins.map((join) => {
-      if (join instanceof RawJoin) {
-        return join.raw;
-      } else {
-        throw new Error('Root Viewではraw以外のJoinは未対応');
-      }
-    });
-
-    const conditionPhrases = jointConditions.map((condition) => {
-      if (condition instanceof RawCondition) {
-        return condition.raw;
-      } else {
-        throw new Error('Root Viewではraw以外のConditionは未対応');
-      }
-    });
+    const joinPhrases = jointJoins.map((join) => join.toSQL(resolver));
+    const conditionPhrases = jointConditions.map((condition) => condition.toSQL(resolver));
 
     return new ResoledReference({
       resolvedColumns: this.buildResolvedColumns(),
