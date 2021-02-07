@@ -10,4 +10,13 @@ export class SelectValue extends Value implements SourceColumn {
     this.source = source;
     this.sourceColumnName = sourceColumnName;
   }
+
+  toSQL(): string {
+    let sql = '';
+    if (this.source) {
+      sql += `${this.source}.`;
+    }
+    sql += this.sourceColumnName;
+    return sql;
+  }
 }

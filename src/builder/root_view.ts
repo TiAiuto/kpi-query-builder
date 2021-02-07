@@ -1,5 +1,11 @@
+import { RawCondition } from "./raw_condition";
+import { RawJoin } from "./raw_join";
+import { RawResoledColumn } from "./raw_resolved_column";
 import { ReferenceView, ReferenceViewArgs } from "./reference_view";
+import { ResolvedColumn } from "./resolved_column";
+import { ResoledReference } from "./resolved_reference";
 import { ResolvedView } from "./resolved_view";
+import { SelectValue } from "./select_value";
 import { ViewResolver } from "./view_resolver";
 
 export class RootView extends ReferenceView {
@@ -28,19 +34,60 @@ export class RootView extends ReferenceView {
   }
 
   resolve(resolver: ViewResolver): ResolvedView {
-    const availableColumns = [];
-
-    const conditions = [...this.conditions];
-    const joins = [...this.joins];
+    const jointConditions = [...this.conditions];
+    const jointJoins = [...this.joins];
     this.filters.forEach((filter) => {
-      conditions.push(...filter.conditions);
-      joins.push(...filter.joins);
+      jointConditions.push(...filter.conditions);
+      jointJoins.push(...filter.joins);
     });
 
-    joins.forEach((join) => {
-
+    const resolvedColumns = this.columns.map((column) => {
+      if (column.value instanceof SelectValue) {
+        return new RawResoledColumn({
+          publicName: column.name, 
+          physicalName: column.alphabetName, 
+          raw: column.value.toSQL()
+        });  
+      } else {
+        throw new Error('Select Value以外のcolumn指定は未対応');
+      }
     });
 
-    throw new Error("Method not implemented.");
+    const joinPhrases = jointJoins.map((join) => {
+      if (join instanceof RawJoin) {
+        return join.raw;
+      } else {
+        throw new Error('Root Viewではraw以外のJoinは未対応');
+      }
+    });
+
+    const conditionPhrases = jointConditions.map((condition) => {
+      if (condition instanceof RawCondition) {
+        return condition.raw;
+      } else {
+        throw new Error('Root Viewではraw以外のConditionは未対応');
+      }
+    });
+
+    if (this.orders) {
+      throw new Error('Root Viewではordersは未対応');
+    }
+
+    const resolvedReference = new ResoledReference({
+      resolvedColumns: resolvedColumns, 
+      physicalSource: this.physicalSource, 
+      physicalSourceAlias: this.physicalSourceAlias, 
+      joinPhrases, 
+      conditionPhrases, 
+      groupPhrases: [],
+      orderPhrases: []
+    });
+
+    return new ResolvedView({
+      publicName: this.name,
+      physicalName: this.alphabetName,
+      columns: resolvedColumns,
+      sql: resolvedReference.toSQL()
+    });
   }
 }
