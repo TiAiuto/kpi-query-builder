@@ -3,7 +3,7 @@ import { FilterUsage } from "../filter_usage";
 import { Join } from "../join/join";
 import { RawResoledColumn } from "../raw_resolved_column";
 import { ResolvedColumn } from "../resolved_column";
-import { ResoledReference } from "../resolved_reference";
+import { ResolvedReference } from "../resolved_reference";
 import { ResolvedView } from "../resolved_view";
 import { RawValue } from "../value/raw_value";
 import { ViewResolver } from "../view_resolver";
@@ -59,7 +59,7 @@ export class RootView extends View {
     })
   }
 
-  private buildResolvedReference(resolver: ViewResolver): ResoledReference {
+  private buildResolvedReference(resolver: ViewResolver): ResolvedReference {
     const jointConditions = [...this.conditions];
     const jointJoins = [...this.joins];
     this.filterUsages.forEach((filterUsage) => {
@@ -71,7 +71,7 @@ export class RootView extends View {
     const joinPhrases = jointJoins.map((join) => join.toSQL(resolver));
     const conditionPhrases = jointConditions.map((condition) => condition.toSQL(resolver));
 
-    return new ResoledReference({
+    return new ResolvedReference({
       resolvedColumns: this.buildResolvedColumns(),
       physicalSource: this.physicalSource,
       physicalSourceAlias: this.physicalSourceAlias,

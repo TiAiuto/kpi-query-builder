@@ -1,6 +1,6 @@
 import { ResolvedColumn } from "./resolved_column";
 
-export class ResoledReference {
+export class ResolvedReference {
   resolvedColumns: ResolvedColumn[];
   physicalSource: string;
   physicalSourceAlias?: string;
