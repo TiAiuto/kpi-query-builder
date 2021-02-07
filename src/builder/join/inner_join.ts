@@ -1,28 +1,8 @@
 import { Condition } from "../condition/condition";
-import { Join } from "./join";
-import { ViewResolver } from "../view_resolver";
+import { OrdinaryJoin, OrdinaryJoinArgs } from "./ordinary_join";
 
-export class InnerJoin extends Join {
-  target: string;
-  conditions: Condition[];
-
-  constructor({
-    target,
-    conditions,
-  }: {
-    target: string;
-    conditions: Condition[];
-  }) {
-    super({ type: "inner" });
-    this.target = target;
-    this.conditions = conditions;
-  }
-
-  toSQL(resolver: ViewResolver): string {
-    throw new Error("Method not implemented.");
-  }
-  
-  toSQLForRoot(resolver: ViewResolver): string {
-    throw new Error("Method not implemented.");
+export class InnerJoin extends OrdinaryJoin {
+  constructor(args: OrdinaryJoinArgs) {
+    super({ ...args, type: "inner" });
   }
 }
