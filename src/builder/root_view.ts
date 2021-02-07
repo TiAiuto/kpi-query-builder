@@ -5,7 +5,7 @@ import { RawCondition } from "./raw_condition";
 import { RawJoin } from "./raw_join";
 import { RawResoledColumn } from "./raw_resolved_column";
 import { RawValue } from "./raw_value";
-import { ReferenceView, ReferenceViewArgs } from "./reference_view";
+import { ResolvedColumn } from "./resolved_column";
 import { ResoledReference } from "./resolved_reference";
 import { ResolvedView } from "./resolved_view";
 import { View, ViewArgs } from "./view";
@@ -47,16 +47,8 @@ export class RootView extends View {
     this.dateSuffixEnabled = dateSuffixEnabled;
   }
 
-  resolve(resolver: ViewResolver): ResolvedView {
-    const jointConditions = [...this.conditions];
-    const jointJoins = [...this.joins];
-    this.filterUsages.forEach((filterUsage) => {
-      const filter = resolver.findFilter(filterUsage.name);
-      jointConditions.push(...filter.conditions);
-      jointJoins.push(...filter.joins);
-    });
-
-    const resolvedColumns = this.columns.map((column) => {
+  private buildResolvedColumns(): ResolvedColumn[] {
+    return this.columns.map((column) => {
       if (column.value instanceof RawValue) {
         return new RawResoledColumn({
           publicName: column.name,
@@ -66,6 +58,16 @@ export class RootView extends View {
       } else {
         throw new Error('Raw Value以外のcolumn指定は未対応');
       }
+    })
+  }
+
+  private buildResolvedReference(resolver: ViewResolver): ResoledReference {
+    const jointConditions = [...this.conditions];
+    const jointJoins = [...this.joins];
+    this.filterUsages.forEach((filterUsage) => {
+      const filter = resolver.findFilter(filterUsage.name);
+      jointConditions.push(...filter.conditions);
+      jointJoins.push(...filter.joins);
     });
 
     const joinPhrases = jointJoins.map((join) => {
@@ -84,8 +86,8 @@ export class RootView extends View {
       }
     });
 
-    const resolvedReference = new ResoledReference({
-      resolvedColumns: resolvedColumns,
+    return new ResoledReference({
+      resolvedColumns: this.buildResolvedColumns(),
       physicalSource: this.physicalSource,
       physicalSourceAlias: this.physicalSourceAlias,
       joinPhrases,
@@ -93,11 +95,15 @@ export class RootView extends View {
       groupPhrases: [],
       orderPhrases: []
     });
+  }
+
+  resolve(resolver: ViewResolver): ResolvedView {
+    const resolvedReference = this.buildResolvedReference(resolver);
 
     return new ResolvedView({
       publicName: this.name,
       physicalName: this.alphabetName,
-      columns: resolvedColumns,
+      columns: resolvedReference.resolvedColumns,
       sql: resolvedReference.toSQL()
     });
   }
