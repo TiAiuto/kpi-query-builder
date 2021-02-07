@@ -2,12 +2,12 @@ import { Condition } from "../condition/condition";
 import { FilterUsage } from "../filter_usage";
 import { Join } from "../join/join";
 import { RawResoledColumn } from "../raw_resolved_column";
-import { RawValue } from "../raw_value";
 import { ResolvedColumn } from "../resolved_column";
 import { ResoledReference } from "../resolved_reference";
 import { ResolvedView } from "../resolved_view";
-import { View, ViewArgs } from "../view";
+import { RawValue } from "../value/raw_value";
 import { ViewResolver } from "../view_resolver";
+import { View, ViewArgs } from "./view";
 
 export class RootView extends View {
   filterUsages: FilterUsage[];

@@ -1,6 +1,6 @@
-import { SourceColumn } from "./source_column";
-import { TransformedValue } from "./transformed_value";
-import { TransformPattern } from "./transform_pattern";
+import { SourceColumn } from "../source_column";
+import { TransformedValue } from "../transformed_value";
+import { TransformPattern } from "../transform_pattern";
 import { Value } from "./value";
 
 export class ConvertValue extends Value implements SourceColumn {

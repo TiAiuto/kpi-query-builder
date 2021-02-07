@@ -1,7 +1,7 @@
-import { ResolvedView } from "./resolved_view";
-import { RoutinePattern } from "./routine_pattern";
+import { ResolvedView } from "../resolved_view";
+import { RoutinePattern } from "../routine_pattern";
+import { ViewResolver } from "../view_resolver";
 import { View, ViewArgs } from "./view";
-import { ViewResolver } from "./view_resolver";
 
 export class RoutineView extends View {
   pattern: RoutinePattern;

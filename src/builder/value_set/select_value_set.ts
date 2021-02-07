@@ -1,4 +1,4 @@
-import { SourceColumn } from "./source_column";
+import { SourceColumn } from "../source_column";
 import { ValueSet } from "./value_set";
 
 export class SelectValueSet extends ValueSet implements SourceColumn {

@@ -1,7 +1,7 @@
-import { Aggregate } from "./aggregate";
+import { Aggregate } from "../aggregate";
+import { ResolvedView } from "../resolved_view";
+import { ViewResolver } from "../view_resolver";
 import { ReferenceView, ReferenceViewArgs } from "./reference_view";
-import { ResolvedView } from "./resolved_view";
-import { ViewResolver } from "./view_resolver";
 
 export class AggregateView extends ReferenceView {
   aggregates: Aggregate[];

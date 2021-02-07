@@ -1,5 +1,5 @@
+import { ViewResolver } from "../view_resolver";
 import { Condition } from "./condition";
-import { ViewResolver } from "./view_resolver";
 
 export class RawCondition extends Condition {
   raw: string;

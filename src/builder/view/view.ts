@@ -1,6 +1,6 @@
-import { ResolvedView } from "./resolved_view";
-import { TransformedValue } from "./transformed_value";
-import { ViewResolver } from "./view_resolver";
+import { ResolvedView } from "../resolved_view";
+import { TransformedValue } from "../transformed_value";
+import { ViewResolver } from "../view_resolver";
 
 export type ViewArgs = {
   name: string;

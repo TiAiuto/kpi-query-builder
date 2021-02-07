@@ -1,5 +1,5 @@
 import { TransformedColumn } from "./transformed_column";
-import { Value } from "./value";
+import { Value } from "./value/value";
 
 export class TransformedValue implements TransformedColumn {
   name: string;

@@ -1,6 +1,6 @@
 import { Filter } from "./filter";
 import { ResolvedView } from "./resolved_view";
-import { View } from "./view";
+import { View } from "./view/view";
 
 export class ViewResolver {
   resolvedViews: ResolvedView[];

@@ -1,5 +1,5 @@
+import { ViewResolver } from "../view_resolver";
 import { Join } from "./join";
-import { ViewResolver } from "./view_resolver";
 
 export class RawJoin extends Join {
   raw: string;
