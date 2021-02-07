@@ -1,6 +1,7 @@
 import { InnerJoin } from "../join/inner_join";
 import { OrdinaryJoin } from "../join/ordinary_join";
 import { PhraseResolutionContext } from "../phrase_resolution_context";
+import { ReferenceResolvedColumn } from "../reference_resolved_column";
 import { ResolvedColumn } from "../resolved_column";
 import { ResolvedReference } from "../resolved_reference";
 import { ResolvedView } from "../resolved_view";
@@ -26,23 +27,23 @@ export class QueryView extends ReferenceView {
     this.columns.forEach((column) => {
       const resolvedColumn = context.findColumnByValue(column.value);
       resolvedColumns.push(
-        new ResolvedColumn({
+        new ReferenceResolvedColumn({
           publicSource: this.name,
           publicName: column.name,
           physicalName: column.alphabetName,
           physicalSource: resolvedColumn.physicalSource,
-          physicalSourceColumnName: resolvedColumn.physicalSourceColumnName,
+          physicalSourceValue: resolvedColumn.physicalSourceValue,
         })
       );
     });
     if (this.columnsInheritanceEnabled) {
       dependentView.resolvedColumns.forEach((dependentResolvedColumn) => {
-        resolvedColumns.push(new ResolvedColumn({
+        resolvedColumns.push(new ReferenceResolvedColumn({
           publicSource: this.name,
           publicName: dependentResolvedColumn.publicName,
           physicalName: dependentResolvedColumn.physicalName,
           physicalSource: this.alphabetName,
-          physicalSourceColumnName: dependentResolvedColumn.physicalName,
+          physicalSourceValue: dependentResolvedColumn.physicalName,
         }));
       });
     }

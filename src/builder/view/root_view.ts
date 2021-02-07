@@ -1,6 +1,7 @@
 import { Condition } from "../condition/condition";
 import { FilterUsage } from "../filter_usage";
 import { Join } from "../join/join";
+import { RawResolvedColumn } from "../raw_resolved_column";
 import { ResolvedColumn } from "../resolved_column";
 import { ResolvedReference } from "../resolved_reference";
 import { ResolvedView } from "../resolved_view";
@@ -47,12 +48,12 @@ export class RootView extends View {
   private buildResolvedColumns(): ResolvedColumn[] {
     return this.columns.map((column) => {
       if (column.value instanceof RawValue) {
-        return new ResolvedColumn({
+        return new RawResolvedColumn({
           publicSource: this.name,
           publicName: column.name,
           physicalName: column.alphabetName,
           physicalSource: this.physicalSourceAlias,
-          physicalSourceColumnName: column.value.toSQL(), // RawValueはselectを想定しているがWHEREなどでも動くはず
+          physicalSourceValue: column.value.toSQL(), // RawValueはselectを想定しているがWHEREなどでも動くはず
         });
       } else {
         throw new Error("Raw Value以外のcolumn指定は未対応");
