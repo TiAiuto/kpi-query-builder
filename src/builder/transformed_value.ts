@@ -1,4 +1,3 @@
-import { SourceColumn } from "./source_column";
 import { TransformedColumn } from "./transformed_column";
 import { Value } from "./value";
 

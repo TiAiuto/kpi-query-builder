@@ -28,6 +28,19 @@ export class RootView extends ReferenceView {
   }
 
   resolve(resolver: ViewResolver): ResolvedView {
+    const availableColumns = [];
+
+    const conditions = [...this.conditions];
+    const joins = [...this.joins];
+    this.filters.forEach((filter) => {
+      conditions.push(...filter.conditions);
+      joins.push(...filter.joins);
+    });
+
+    joins.forEach((join) => {
+
+    });
+
     throw new Error("Method not implemented.");
   }
 }
