@@ -1,4 +1,4 @@
-import { Condition } from "../condition";
+import { Condition } from "../condition/condition";
 import { Join } from "./join";
 import { ViewResolver } from "../view_resolver";
 

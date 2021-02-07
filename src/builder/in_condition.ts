@@ -1,4 +1,4 @@
-import { Condition } from "./condition";
+import { Condition } from "./condition/condition";
 import { ValueSet } from "./value_set";
 import { ViewResolver } from "./view_resolver";
 

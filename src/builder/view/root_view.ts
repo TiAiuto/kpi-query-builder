@@ -1,4 +1,4 @@
-import { Condition } from "../condition";
+import { Condition } from "../condition/condition";
 import { FilterUsage } from "../filter_usage";
 import { Join } from "../join/join";
 import { RawResoledColumn } from "../raw_resolved_column";
