@@ -1,4 +1,3 @@
-import { InnerJoin } from "../join/inner_join";
 import { OrdinaryJoin } from "../join/ordinary_join";
 import { PhraseResolutionContext } from "../phrase_resolution_context";
 import { ReferenceResolvedColumn } from "../reference_resolved_column";
@@ -19,6 +18,18 @@ export class QueryView extends ReferenceView {
     this.columnsInheritanceEnabled = columnsInheritanceEnabled;
   }
 
+  private resolveInheritedAsOwnColumn(
+    dependentResolvedColumn: ResolvedColumn
+  ): ResolvedColumn {
+    return new ReferenceResolvedColumn({
+      publicSource: this.name,
+      publicName: dependentResolvedColumn.publicName,
+      physicalName: dependentResolvedColumn.physicalName,
+      physicalSource: this.alphabetName,
+      physicalSourceValue: dependentResolvedColumn.physicalName,
+    });
+  }
+
   private buildResolvedColumns(
     dependentView: ResolvedView,
     context: PhraseResolutionContext
@@ -37,15 +48,11 @@ export class QueryView extends ReferenceView {
       );
     });
     if (this.columnsInheritanceEnabled) {
-      dependentView.resolvedColumns.forEach((dependentResolvedColumn) => {
-        resolvedColumns.push(new ReferenceResolvedColumn({
-          publicSource: this.name,
-          publicName: dependentResolvedColumn.publicName,
-          physicalName: dependentResolvedColumn.physicalName,
-          physicalSource: this.alphabetName,
-          physicalSourceValue: dependentResolvedColumn.physicalName,
-        }));
-      });
+      resolvedColumns.push(
+        ...dependentView.resolvedColumns.map((column) =>
+          this.resolveInheritedAsOwnColumn(column)
+        )
+      );
     }
     return resolvedColumns;
   }

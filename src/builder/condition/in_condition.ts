@@ -25,7 +25,7 @@ export class InCondition extends Condition implements SourceColumn {
 
   toSQL(context: PhraseResolutionContext): string {
     const column = context.findColumnByName(this.sourceColumnName, this.source);
-    return `${column.physicalName} IN ( ${this.valueSet.toSQL(context)} )`;
+    return `${column.toValueSQL()} IN ( ${this.valueSet.toSQL(context)} )`;
   }
 
   toSQLForRoot(): string {

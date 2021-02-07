@@ -43,6 +43,8 @@ export class ResolvedReference {
     if (this.physicalSourceAlias) {
       sql += `${this.physicalSourceAlias} `;
     }
+    sql += this.joinPhrases.join(' ');
+    sql += ' ';
     if (this.conditionsPhrases.length) {
       sql += `WHERE ${this.conditionsPhrases.join('AND ')}`;
     }
