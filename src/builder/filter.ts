@@ -1,5 +1,5 @@
 import { Condition } from "./condition";
-import { Join } from "./join";
+import { Join } from "./join/join";
 
 export class Filter {
   name: string;

@@ -1,4 +1,4 @@
-import { ViewResolver } from "./view_resolver";
+import { ViewResolver } from "../view_resolver";
 
 export abstract class Join {
   type: string;

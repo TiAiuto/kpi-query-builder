@@ -1,8 +1,6 @@
 import { Condition } from "./condition";
 import { FilterUsage } from "./filter_usage";
-import { Join } from "./join";
-import { RawCondition } from "./raw_condition";
-import { RawJoin } from "./raw_join";
+import { Join } from "./join/join";
 import { RawResoledColumn } from "./raw_resolved_column";
 import { RawValue } from "./raw_value";
 import { ResolvedColumn } from "./resolved_column";

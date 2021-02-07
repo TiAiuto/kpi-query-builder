@@ -1,5 +1,5 @@
 import { Condition } from "./condition";
-import { Join } from "./join";
+import { Join } from "./join/join";
 import { ViewResolver } from "./view_resolver";
 
 export class InnerJoin extends Join {

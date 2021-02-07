@@ -1,6 +1,6 @@
 import { Condition } from "./condition";
 import { FilterUsage } from "./filter_usage";
-import { Join } from "./join";
+import { Join } from "./join/join";
 import { Order } from "./order";
 import { TransformedValue } from "./transformed_value";
 import { View, ViewArgs } from "./view";
