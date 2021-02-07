@@ -1,7 +1,6 @@
 import { Filter } from "./builder/filter";
 import { FilterUsage } from "./builder/filter_usage";
-import { InCondition } from "./builder/in_condition";
-import { RawCondition } from "./builder/raw_condition";
+import { InCondition } from "./builder/condition/in_condition";
 import { RawValue } from "./builder/raw_value";
 import { RootView } from "./builder/view/root_view";
 import { SelectValueSet } from "./builder/select_value_set";
@@ -9,6 +8,7 @@ import { TransformedValue } from "./builder/transformed_value";
 import { ViewResolver } from "./builder/view_resolver";
 import { RawJoin } from "./builder/join/raw_join";
 import { QueryView } from "./builder/view/query_view";
+import { RawCondition } from "./builder/condition/raw_condition";
 
 function main() {
   const resolver = new ViewResolver({

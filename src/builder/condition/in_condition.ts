@@ -1,6 +1,6 @@
-import { Condition } from "./condition/condition";
-import { ValueSet } from "./value_set";
-import { ViewResolver } from "./view_resolver";
+import { Condition } from "./condition";
+import { ValueSet } from "../value_set";
+import { ViewResolver } from "../view_resolver";
 
 export class InCondition extends Condition {
   valueSet: ValueSet;
