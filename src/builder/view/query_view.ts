@@ -16,6 +16,7 @@ export class QueryView extends ReferenceView {
   }
   
   private buildResolvedColumns(resolver: ViewResolver): ResolvedColumn[] {
+    
     throw new Error("実装中");
   }
 

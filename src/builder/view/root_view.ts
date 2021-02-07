@@ -1,7 +1,7 @@
 import { Condition } from "../condition/condition";
 import { FilterUsage } from "../filter_usage";
 import { Join } from "../join/join";
-import { RawResoledColumn } from "../raw_resolved_column";
+import { RawResolvedColumn } from "../raw_resolved_column";
 import { ResolvedColumn } from "../resolved_column";
 import { ResolvedReference } from "../resolved_reference";
 import { ResolvedView } from "../resolved_view";
@@ -48,7 +48,7 @@ export class RootView extends View {
   private buildResolvedColumns(): ResolvedColumn[] {
     return this.columns.map((column) => {
       if (column.value instanceof RawValue) {
-        return new RawResoledColumn({
+        return new RawResolvedColumn({
           publicSource: this.name,
           publicName: column.name,
           physicalName: column.alphabetName,

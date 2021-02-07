@@ -1,6 +1,6 @@
 import { ResolvedColumn, ResolvedColumnArgs } from "./resolved_column";
 
-export class RawResoledColumn extends ResolvedColumn {
+export class RawResolvedColumn extends ResolvedColumn {
   raw: string;
 
   constructor({ raw, ...args }: ResolvedColumnArgs & { raw: string }) {
