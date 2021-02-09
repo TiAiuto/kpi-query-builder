@@ -2,6 +2,7 @@ import { Condition } from "../condition/condition";
 import { ExtractedColumn } from "../extracted_column";
 import { FilterUsage } from "../filter_usage";
 import { Join } from "../join/join";
+import { PhraseResolutionContext } from "../phrase_resolution_context";
 import { ResolvedReference } from "../resolved_reference";
 import { ResolvedView } from "../resolved_view";
 import { RawValue } from "../value/raw_value";
@@ -49,13 +50,13 @@ export class RootView extends View {
     this.columns = columns;
   }
 
-  private buildColumns(): ExtractedColumn[] {
+  private buildColumns(context: PhraseResolutionContext): ExtractedColumn[] {
     return this.columns.map((column) => {
       if (column.value instanceof RawValue) {
         return new ExtractedColumn({
           publicName: column.name,
           physicalName: column.alphabetName,
-          selectSQL: column.value.toSQL(), // RawValueはselectを想定しているがWHEREなどでも動くはず
+          selectSQL: column.value.toSQL(context), // RawValueはselectを想定しているがWHEREなどでも動くはず
         });
       } else {
         throw new Error("Raw Value以外のcolumn指定は未対応");
@@ -78,8 +79,14 @@ export class RootView extends View {
       condition.toSQLForRoot()
     );
 
+    const phraseResolutionContext = new PhraseResolutionContext({
+      currentView: this,
+      resolver,
+      availableColumns: [], // Root Viewでは特になし＆rawを使う想定
+    });
+
     return new ResolvedReference({
-      columns: this.buildColumns(),
+      columns: this.buildColumns(phraseResolutionContext),
       physicalSource: this.physicalSource,
       physicalSourceAlias: this.physicalSourceAlias,
       joinPhrases,

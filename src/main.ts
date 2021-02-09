@@ -10,6 +10,8 @@ import { QueryView } from "./builder/view/query_view";
 import { RawCondition } from "./builder/condition/raw_condition";
 import { SelectValueSet } from "./builder/value_set/select_value_set";
 import { SelectValue } from "./builder/value/select_value";
+import { TransformValue } from "./builder/value/transform_value";
+import { TransformPattern } from "./builder/transform_pattern";
 
 function main() {
   const resolver = new ViewResolver({
@@ -103,6 +105,14 @@ function main() {
             alphabetName: "user_code_alias",
             value: new SelectValue({ sourceColumnName: "ユーザコード" }),
           }),
+          new ValueSurface({
+            name: "月",
+            alphabetName: "month",
+            value: new TransformValue({
+              sourceColumnName: "タイムスタンプ",
+              pattern: new TransformPattern({ name: "タイムスタンプ_月" }),
+            }),
+          }),
         ],
         columnsInheritanceEnabled: true,
         filterUsages: [
@@ -114,7 +124,12 @@ function main() {
     ],
   });
   resolver.resolve("PLUS契約者アクセスログ");
-  const withQueries = resolver.resolvedViews.map((resolvedView) => `${resolvedView.physicalName} AS ( ${resolvedView.sql} )`).join(', \n');
+  const withQueries = resolver.resolvedViews
+    .map(
+      (resolvedView) =>
+        `${resolvedView.physicalName} AS ( ${resolvedView.sql} )`
+    )
+    .join(", \n");
   console.log(withQueries);
 }
 main();
