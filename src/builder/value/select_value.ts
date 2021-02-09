@@ -1,3 +1,4 @@
+import { PhraseResolutionContext } from "../phrase_resolution_context";
 import { SourceColumn } from "../source_column";
 import { Value } from "./value";
 
@@ -11,7 +12,7 @@ export class SelectValue extends Value implements SourceColumn {
     this.sourceColumnName = sourceColumnName;
   }
 
-  toSQL(): string {
+  toSQL(context: PhraseResolutionContext): string {
     let sql = '';
     if (this.source) {
       sql += `${this.source}.`;
