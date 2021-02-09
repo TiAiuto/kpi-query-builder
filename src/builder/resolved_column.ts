@@ -1,3 +1,4 @@
+import { PublicColumnInterface } from "./public_column_interface";
 import { ResolvedView } from "./resolved_view";
 
 export type ResolvedColumnArgs = {
@@ -6,7 +7,7 @@ export type ResolvedColumnArgs = {
   physicalName: string; // SQL側で公開する（書き出す）カラム名
 };
 
-export class ResolvedColumn {
+export class ResolvedColumn implements PublicColumnInterface {
   resolvedView: ResolvedView;
   publicName: string;
   physicalName: string;

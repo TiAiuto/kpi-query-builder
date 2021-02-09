@@ -1,6 +1,7 @@
 import { ExtractedColumn } from "../extracted_column";
 import { OrdinaryJoin } from "../join/ordinary_join";
 import { PhraseResolutionContext } from "../phrase_resolution_context";
+import { PublicColumnInterface } from "../public_column_interface";
 import { ResolvedColumn } from "../resolved_column";
 import { ResolvedReference } from "../resolved_reference";
 import { ResolvedView } from "../resolved_view";

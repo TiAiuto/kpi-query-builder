@@ -1,4 +1,6 @@
-export class ExtractedColumn {
+import { PublicColumnInterface } from "./public_column_interface";
+
+export class ExtractedColumn implements PublicColumnInterface {
   selectSQL: string;
   publicName: string;
   physicalName: string;
