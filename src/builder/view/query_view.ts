@@ -24,11 +24,11 @@ export class QueryView extends ReferenceView {
   ): ExtractedColumn[] {
     const columns: ExtractedColumn[] = [];
     this.columns.forEach((column) => {
-      const resolvedColumn = context.findColumnByValue(column.value);
       columns.push(
-        resolvedColumn.toExtractedColumn({
-          newPublicName: column.name, 
-          newPhysicalName: column.alphabetName
+        new ExtractedColumn({
+          publicName: column.name,
+          physicalName: column.alphabetName,
+          selectSQL: column.value.toSQL(context),
         })
       );
     });
@@ -54,9 +54,7 @@ export class QueryView extends ReferenceView {
     jointJoins.forEach((join) => {
       if (join instanceof OrdinaryJoin) {
         const joinDependentView = resolver.resolve(join.target);
-        availableColumns.push(
-          ...joinDependentView.asResolvedColumns()
-        );
+        availableColumns.push(...joinDependentView.asResolvedColumns());
       }
     });
     const phraseResolutionContext = new PhraseResolutionContext({

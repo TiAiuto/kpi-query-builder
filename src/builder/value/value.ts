@@ -8,4 +8,5 @@ export abstract class Value {
   }
   
   abstract toSQL(context: PhraseResolutionContext): string;
+  abstract toSQLForRoot(context: PhraseResolutionContext): string;
 }

@@ -12,4 +12,8 @@ export class RawValue extends Value {
   toSQL(context: PhraseResolutionContext): string {
     return this.raw;
   }
+
+  toSQLForRoot(context: PhraseResolutionContext): string {
+    return this.raw;
+  }
 }

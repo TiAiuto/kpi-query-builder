@@ -22,4 +22,8 @@ export class TransformValue extends Value implements SourceColumn {
   toSQL(context: PhraseResolutionContext): string {
     throw new Error("Method not implemented.");
   }
+
+  toSQLForRoot(context: PhraseResolutionContext): string {
+    throw new Error("Method not implemented.");
+  }
 }
