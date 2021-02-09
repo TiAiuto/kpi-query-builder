@@ -37,22 +37,22 @@ export class ResolvedReference {
 
   toSQL(): string {
     let sql = "SELECT \n ";
-    sql += this.columns.map((item) => item.selectSQL).join(", ");
+    sql += this.columns.map((item) => item.selectSQL).join(", \n");
     sql += " \n FROM ";
     sql += `${this.physicalSource} `;
     if (this.physicalSourceAlias) {
       sql += `${this.physicalSourceAlias} `;
     }
-    sql += this.joinPhrases.join(" ");
+    sql += this.joinPhrases.join(" \n ");
     sql += " \n ";
     if (this.conditionsPhrases.length) {
-      sql += `WHERE ${this.conditionsPhrases.join("AND ")} \n`;
+      sql += `WHERE ${this.conditionsPhrases.join("AND \n ")} \n`;
     }
     if (this.groupPhrases.length) {
-      sql += `GROUP BY ${this.groupPhrases.join(", ")} \n`;
+      sql += `GROUP BY ${this.groupPhrases.join(", \n ")} \n`;
     }
     if (this.orderPhrases.length) {
-      sql += `ORDER BY ${this.orderPhrases.join(", ")} \n`;
+      sql += `ORDER BY ${this.orderPhrases.join(", \n ")} \n`;
     }
     return sql;
   }
