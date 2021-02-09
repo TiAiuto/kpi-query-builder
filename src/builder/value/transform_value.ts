@@ -20,12 +20,16 @@ export class TransformValue extends Value implements SourceColumn {
   }
 
   toSQL(context: PhraseResolutionContext): string {
+    const resolvedColumn = context.findColumnByName(
+      this.sourceColumnName,
+      this.source
+    );
     if (this.pattern.name === "タイムスタンプ_月抽出") {
-      const resolvedColumn = context.findColumnByName(
-        this.sourceColumnName,
-        this.source
-      );
       return `FORMAT_TIMESTAMP('%Y-%m', ${resolvedColumn.fullPhysicalName}, 'Asia/Tokyo')`;
+    } else if (this.pattern.name === "タイムスタンプ_週抽出") {
+      return `FORMAT_TIMESTAMP('%Y-%m-%dW', TIMESTAMP_TRUNC(${resolvedColumn.fullPhysicalName}, WEEK(MONDAY)), 'Asia/Tokyo')`;
+    } else if (this.pattern.name === "タイムスタンプ_日抽出") {
+      return `FORMAT_TIMESTAMP('%Y-%m-%d', ${resolvedColumn.fullPhysicalName}, 'Asia/Tokyo')`;
     } else {
       throw new Error(`${this.pattern.name}は未実装`);
     }
