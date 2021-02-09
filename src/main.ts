@@ -110,7 +110,7 @@ function main() {
             alphabetName: "month",
             value: new TransformValue({
               sourceColumnName: "タイムスタンプ",
-              pattern: new TransformPattern({ name: "タイムスタンプ_月" }),
+              pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
             }),
           }),
         ],

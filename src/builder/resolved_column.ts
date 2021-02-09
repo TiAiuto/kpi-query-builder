@@ -33,7 +33,11 @@ export class ResolvedColumn implements PublicColumnInterface {
     return new ExtractedColumn({
       publicName: newPublicName,
       physicalName: newPhysicalName,
-      selectSQL: `${this.resolvedView.physicalName}.${this.physicalName} AS ${newPhysicalName}`,
+      selectSQL: `${this.fullPhysicalName} AS ${newPhysicalName}`,
     });
+  }
+
+  get fullPhysicalName(): string {
+    return `${this.resolvedView.physicalName}.${this.physicalName}`;
   }
 }

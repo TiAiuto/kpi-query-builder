@@ -14,7 +14,7 @@ export class SelectValue extends Value implements SourceColumn {
 
   toSQL(context: PhraseResolutionContext): string {
     const resolvedColumn = context.findColumnByName(this.sourceColumnName, this.source);
-    return `${resolvedColumn.resolvedView.physicalName}.${resolvedColumn.physicalName}`;
+    return resolvedColumn.fullPhysicalName;
   }
 
   toSQLForRoot(context: PhraseResolutionContext): string {

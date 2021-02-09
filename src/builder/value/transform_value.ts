@@ -20,7 +20,15 @@ export class TransformValue extends Value implements SourceColumn {
   }
 
   toSQL(context: PhraseResolutionContext): string {
-    throw new Error("Method not implemented.");
+    if (this.pattern.name === "タイムスタンプ_月抽出") {
+      const resolvedColumn = context.findColumnByName(
+        this.sourceColumnName,
+        this.source
+      );
+      return `FORMAT_TIMESTAMP('%Y-%m', ${resolvedColumn.fullPhysicalName}, 'Asia/Tokyo')`;
+    } else {
+      throw new Error(`${this.pattern.name}は未実装`);
+    }
   }
 
   toSQLForRoot(context: PhraseResolutionContext): string {
