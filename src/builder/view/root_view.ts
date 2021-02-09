@@ -6,6 +6,7 @@ import { ResolvedColumn } from "../resolved_column";
 import { ResolvedReference } from "../resolved_reference";
 import { ResolvedView } from "../resolved_view";
 import { RawValue } from "../value/raw_value";
+import { ValueSurface } from "../value_surface";
 import { ViewResolver } from "../view_resolver";
 import { View, ViewArgs } from "./view";
 
@@ -16,6 +17,7 @@ export class RootView extends View {
   physicalSource: string;
   physicalSourceAlias: string;
   dateSuffixEnabled: boolean;
+  columns: ValueSurface[];
 
   constructor({
     filterUsages,
@@ -24,6 +26,7 @@ export class RootView extends View {
     physicalSource,
     physicalSourceAlias,
     dateSuffixEnabled,
+    columns,
     ...args
   }: ViewArgs & {
     filterUsages?: FilterUsage[];
@@ -32,6 +35,7 @@ export class RootView extends View {
     physicalSource: string;
     physicalSourceAlias: string;
     dateSuffixEnabled: boolean;
+    columns: ValueSurface[];
   }) {
     super({
       ...args,
@@ -43,6 +47,7 @@ export class RootView extends View {
     this.physicalSource = physicalSource;
     this.physicalSourceAlias = physicalSourceAlias;
     this.dateSuffixEnabled = dateSuffixEnabled;
+    this.columns = columns;
   }
 
   private buildResolvedColumns(): ResolvedColumn[] {

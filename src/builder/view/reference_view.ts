@@ -5,9 +5,9 @@ import { Order } from "../order";
 import { ValueSurface } from "../value_surface";
 import { View, ViewArgs } from "./view";
 
-export type ReferenceViewArgs = Omit<ViewArgs, 'columns'> & {
+export type ReferenceViewArgs = Omit<ViewArgs, "columns"> & {
   source: string;
-  columns?: ValueSurface[],
+  columns?: ValueSurface[];
   filterUsages?: FilterUsage[];
   conditions?: Condition[];
   joins?: Join[];
@@ -20,6 +20,7 @@ export abstract class ReferenceView extends View {
   conditions: Condition[];
   joins: Join[];
   orders: Order[];
+  columns: ValueSurface[];
 
   constructor({
     columns,
@@ -30,11 +31,12 @@ export abstract class ReferenceView extends View {
     orders,
     ...args
   }: ReferenceViewArgs & { type: string }) {
-    super({ ...args, columns: columns || [] });
+    super(args);
     this.source = source;
     this.filterUsages = filterUsages || [];
     this.conditions = conditions || [];
     this.joins = joins || [];
     this.orders = orders || [];
+    this.columns = columns || [];
   }
 }
