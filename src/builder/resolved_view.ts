@@ -34,4 +34,10 @@ export class ResolvedView {
         })
     );
   }
+
+  asInheritedExtractedColumns(): ExtractedColumn[] {
+    return this.asResolvedColumns().map((resolvedColumn) =>
+      resolvedColumn.toExtractedColumn()
+    );
+  }
 }

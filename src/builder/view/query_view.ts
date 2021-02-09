@@ -19,23 +19,6 @@ export class QueryView extends ReferenceView {
     this.columnsInheritanceEnabled = columnsInheritanceEnabled;
   }
 
-  private resolveInheritedAsOwnColumn(
-    dependentView: ResolvedView,
-    context: PhraseResolutionContext
-  ): ExtractedColumn[] {
-    return dependentView.columns.map((dependentViewColumn) => {
-      const resolvedColumn = context.findColumnByName(
-        dependentViewColumn.publicName,
-        dependentView.publicName
-      );
-      return new ExtractedColumn({
-        publicName: resolvedColumn.publicName,
-        physicalName: resolvedColumn.physicalName, 
-        selectSQL: `${dependentView.physicalName}.${resolvedColumn.physicalName} AS ${resolvedColumn.physicalName}`,
-      });
-    });
-  }
-
   private buildColumns(
     dependentView: ResolvedView,
     context: PhraseResolutionContext
@@ -44,15 +27,14 @@ export class QueryView extends ReferenceView {
     this.columns.forEach((column) => {
       const resolvedColumn = context.findColumnByValue(column.value);
       columns.push(
-        new ExtractedColumn({
-          publicName: column.name,
-          physicalName: column.alphabetName, 
-          selectSQL: `${resolvedColumn.resolvedView.physicalName}.${resolvedColumn.physicalName} AS ${column.alphabetName}`,
+        resolvedColumn.toExtractedColumn({
+          newPublicName: column.name, 
+          newPhysicalName: column.alphabetName
         })
       );
     });
     if (this.columnsInheritanceEnabled) {
-      columns.push(...this.resolveInheritedAsOwnColumn(dependentView, context));
+      columns.push(...dependentView.asInheritedExtractedColumns());
     }
     return columns;
   }

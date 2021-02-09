@@ -1,3 +1,4 @@
+import { ExtractedColumn } from "./extracted_column";
 import { PublicColumnInterface } from "./public_column_interface";
 import { ResolvedView } from "./resolved_view";
 
@@ -20,5 +21,19 @@ export class ResolvedColumn implements PublicColumnInterface {
 
   toValueSQL(): string {
     return `${this.resolvedView.physicalName}.${this.physicalName}`;
+  }
+
+  toExtractedColumn({
+    newPublicName = this.publicName,
+    newPhysicalName = this.physicalName,
+  }: {
+    newPublicName?: string;
+    newPhysicalName?: string;
+  } = {}): ExtractedColumn {
+    return new ExtractedColumn({
+      publicName: newPublicName,
+      physicalName: newPhysicalName,
+      selectSQL: `${this.resolvedView.physicalName}.${this.physicalName} AS ${newPhysicalName}`,
+    });
   }
 }
