@@ -96,14 +96,14 @@ function main() {
         name: "PLUS契約者アクセスログ",
         alphabetName: "plus_contracted_users_logs",
         source: "PLUSユーザコード付きアクセスログ",
-        // columns: [
-        //   // テスト
-        //   new ValueSurface({
-        //     name: "新しい名前のユーザコード",
-        //     alphabetName: "user_code_alias",
-        //     value: new SelectValue({ sourceColumnName: "ユーザコード" }),
-        //   }),
-        // ],
+        columns: [
+          // テスト
+          new ValueSurface({
+            name: "新しい名前のユーザコード",
+            alphabetName: "user_code_alias",
+            value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+          }),
+        ],
         columnsInheritanceEnabled: true,
         filterUsages: [
           new FilterUsage({
