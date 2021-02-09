@@ -53,6 +53,8 @@ export class RootView extends View {
     return this.columns.map((column) => {
       if (column.value instanceof RawValue) {
         return new ExtractedColumn({
+          publicName: column.name,
+          physicalName: column.alphabetName,
           selectSQL: column.value.toSQL(), // RawValueはselectを想定しているがWHEREなどでも動くはず
         });
       } else {

@@ -1,7 +1,6 @@
 import { ExtractedColumn } from "../extracted_column";
 import { OrdinaryJoin } from "../join/ordinary_join";
 import { PhraseResolutionContext } from "../phrase_resolution_context";
-import { ReferenceResolvedColumn } from "../reference_resolved_column";
 import { ResolvedColumn } from "../resolved_column";
 import { ResolvedReference } from "../resolved_reference";
 import { ResolvedView } from "../resolved_view";
@@ -20,55 +19,41 @@ export class QueryView extends ReferenceView {
   }
 
   private resolveInheritedAsOwnColumn(
-    dependentView: ResolvedView
-  ): ResolvedColumn[] {
-    return dependentView.resolvedColumns.map((dependentResolvedColumn) => {
-      return new ReferenceResolvedColumn({
-        publicSource: this.name,
-        publicName: dependentResolvedColumn.publicName,
-        physicalName: dependentResolvedColumn.physicalName,
-        physicalSource: dependentView.physicalName,
-        physicalSourceValue: dependentResolvedColumn.physicalName,
+    dependentView: ResolvedView,
+    context: PhraseResolutionContext
+  ): ExtractedColumn[] {
+    return dependentView.columns.map((dependentViewColumn) => {
+      const resolvedColumn = context.findColumnByName(
+        dependentViewColumn.publicName,
+        dependentView.publicName
+      );
+      return new ExtractedColumn({
+        publicName: resolvedColumn.publicName,
+        physicalName: resolvedColumn.physicalName, 
+        selectSQL: `${dependentView.physicalName}.${resolvedColumn.physicalName} AS ${resolvedColumn.physicalName}`,
       });
     });
-  }
-
-  private resolveAvailableColumns(
-    dependentQuery: ResolvedView
-  ): ResolvedColumn[] {
-    return dependentQuery.resolvedColumns.map(
-      (column) =>
-        new ReferenceResolvedColumn({
-          publicSource: dependentQuery.publicName,
-          publicName: column.publicName,
-          physicalName: column.physicalName, // この値は使われない想定だが正しい値を入れておく
-          physicalSource: dependentQuery.physicalName,
-          physicalSourceValue: column.physicalName,
-        })
-    );
   }
 
   private buildColumns(
     dependentView: ResolvedView,
     context: PhraseResolutionContext
   ): ExtractedColumn[] {
-    const resolvedColumns: ResolvedColumn[] = [];
+    const columns: ExtractedColumn[] = [];
     this.columns.forEach((column) => {
       const resolvedColumn = context.findColumnByValue(column.value);
-      resolvedColumns.push(
-        new ReferenceResolvedColumn({
-          publicSource: this.name,
+      columns.push(
+        new ExtractedColumn({
           publicName: column.name,
-          physicalName: column.alphabetName,
-          physicalSource: resolvedColumn.physicalSource,
-          physicalSourceValue: resolvedColumn.physicalSourceValue,
+          physicalName: column.alphabetName, 
+          selectSQL: `${resolvedColumn.resolvedView.physicalName}.${resolvedColumn.physicalName} AS ${column.alphabetName}`,
         })
       );
     });
     if (this.columnsInheritanceEnabled) {
-      resolvedColumns.push(...this.resolveInheritedAsOwnColumn(dependentView));
+      columns.push(...this.resolveInheritedAsOwnColumn(dependentView, context));
     }
-    return resolvedColumns;
+    return columns;
   }
 
   private buildResolvedReference(resolver: ViewResolver): ResolvedReference {
@@ -82,13 +67,13 @@ export class QueryView extends ReferenceView {
 
     const dependentView = resolver.resolve(this.source);
     const availableColumns: ResolvedColumn[] = [
-      ...this.resolveAvailableColumns(dependentView),
+      ...dependentView.asResolvedColumns(),
     ];
     jointJoins.forEach((join) => {
       if (join instanceof OrdinaryJoin) {
         const joinDependentView = resolver.resolve(join.target);
         availableColumns.push(
-          ...this.resolveAvailableColumns(joinDependentView)
+          ...joinDependentView.asResolvedColumns()
         );
       }
     });
@@ -106,10 +91,7 @@ export class QueryView extends ReferenceView {
     );
 
     return new ResolvedReference({
-      columns: this.buildColumns(
-        dependentView,
-        phraseResolutionContext
-      ),
+      columns: this.buildColumns(dependentView, phraseResolutionContext),
       physicalSource: dependentView.physicalName,
       joinPhrases,
       conditionPhrases,

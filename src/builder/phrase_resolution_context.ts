@@ -28,7 +28,7 @@ export class PhraseResolutionContext {
       const completeMatchedColumn = this.availableColumns.find(
         (column) =>
           column.publicName === sourceColumnName &&
-          column.publicSource === source
+          column.resolvedView.publicName === source
       );
       if (completeMatchedColumn) {
         return completeMatchedColumn;

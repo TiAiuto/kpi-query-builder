@@ -23,4 +23,15 @@ export class ResolvedView {
     this.columns = columns;
     this.sql = sql;
   }
+
+  asResolvedColumns(): ResolvedColumn[] {
+    return this.columns.map(
+      (column) =>
+        new ResolvedColumn({
+          publicName: column.publicName,
+          physicalName: column.physicalName,
+          resolvedView: this,
+        })
+    );
+  }
 }

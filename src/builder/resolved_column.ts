@@ -1,32 +1,23 @@
+import { ResolvedView } from "./resolved_view";
+
 export type ResolvedColumnArgs = {
-  publicSource: string;
+  resolvedView: ResolvedView;
   publicName: string; // 外側に公開するカラム名
   physicalName: string; // SQL側で公開する（書き出す）カラム名
-  physicalSource: string; // SQL側で参照するテーブル名
-  physicalSourceValue: string; // SQL側で参照するカラム名
 };
 
-export abstract class ResolvedColumn {
-  publicSource: string;
-  publicName: string; // 外側に公開するカラム名
-  physicalName: string; // SQL側で公開する（書き出す）カラム名
-  physicalSource: string; // SQL側で参照するテーブル名
-  physicalSourceValue: string; // SQL側で参照するカラム名
+export class ResolvedColumn {
+  resolvedView: ResolvedView;
+  publicName: string;
+  physicalName: string;
 
-  constructor({
-    publicSource,
-    publicName,
-    physicalName,
-    physicalSource,
-    physicalSourceValue,
-  }: ResolvedColumnArgs) {
-    this.publicSource = publicSource;
+  constructor({ resolvedView, publicName, physicalName }: ResolvedColumnArgs) {
+    this.resolvedView = resolvedView;
     this.publicName = publicName;
     this.physicalName = physicalName;
-    this.physicalSource = physicalSource;
-    this.physicalSourceValue = physicalSourceValue;
   }
 
-  abstract toValueSQL(): string;
-  abstract toSelectSQL(): string;
+  toValueSQL(): string {
+    return `${this.resolvedView.physicalName}.${this.physicalName}`;
+  }
 }
