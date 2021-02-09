@@ -3,7 +3,7 @@ import { ValueSurface } from "../value_surface";
 import { TransformPattern } from "../transform_pattern";
 import { Value } from "./value";
 
-export class ConvertValue extends Value implements SourceColumn {
+export class TransformValue extends Value implements SourceColumn {
   source?: string;
   sourceColumnName: string;
   output: ValueSurface;
