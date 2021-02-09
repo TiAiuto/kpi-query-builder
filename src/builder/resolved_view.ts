@@ -1,25 +1,26 @@
 import { ResolvedColumn } from "./resolved_column";
+import { ExtractedColumn } from "./extracted_column";
 
 export class ResolvedView {
   publicName: string;
   physicalName: string;
-  resolvedColumns: ResolvedColumn[];
+  columns: ExtractedColumn[];
   sql: string;
 
   constructor({
     publicName,
     physicalName,
-    resolvedColumns,
+    columns,
     sql,
   }: {
     publicName: string;
     physicalName: string;
-    resolvedColumns: ResolvedColumn[];
+    columns: ExtractedColumn[];
     sql: string;
   }) {
     this.publicName = publicName;
     this.physicalName = physicalName;
-    this.resolvedColumns = resolvedColumns;
+    this.columns = columns;
     this.sql = sql;
   }
 }

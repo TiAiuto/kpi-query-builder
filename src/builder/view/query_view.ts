@@ -1,3 +1,4 @@
+import { ExtractedColumn } from "../extracted_column";
 import { OrdinaryJoin } from "../join/ordinary_join";
 import { PhraseResolutionContext } from "../phrase_resolution_context";
 import { ReferenceResolvedColumn } from "../reference_resolved_column";
@@ -47,10 +48,10 @@ export class QueryView extends ReferenceView {
     );
   }
 
-  private buildResolvedColumns(
+  private buildColumns(
     dependentView: ResolvedView,
     context: PhraseResolutionContext
-  ): ResolvedColumn[] {
+  ): ExtractedColumn[] {
     const resolvedColumns: ResolvedColumn[] = [];
     this.columns.forEach((column) => {
       const resolvedColumn = context.findColumnByValue(column.value);
@@ -105,7 +106,7 @@ export class QueryView extends ReferenceView {
     );
 
     return new ResolvedReference({
-      resolvedColumns: this.buildResolvedColumns(
+      columns: this.buildColumns(
         dependentView,
         phraseResolutionContext
       ),
@@ -123,7 +124,7 @@ export class QueryView extends ReferenceView {
     return new ResolvedView({
       publicName: this.name,
       physicalName: this.alphabetName,
-      resolvedColumns: resolvedReference.resolvedColumns,
+      columns: resolvedReference.columns,
       sql: resolvedReference.toSQL(),
     });
   }

@@ -1,7 +1,7 @@
-import { ResolvedColumn } from "./resolved_column";
+import { ExtractedColumn } from "./extracted_column";
 
 export class ResolvedReference {
-  resolvedColumns: ResolvedColumn[];
+  columns: ExtractedColumn[];
   physicalSource: string;
   physicalSourceAlias?: string;
   joinPhrases: string[];
@@ -10,15 +10,15 @@ export class ResolvedReference {
   orderPhrases: string[];
 
   constructor({
-    resolvedColumns,
+    columns,
     physicalSource,
     physicalSourceAlias,
     joinPhrases,
     conditionPhrases,
     groupPhrases,
-    orderPhrases
+    orderPhrases,
   }: {
-    resolvedColumns: ResolvedColumn[];
+    columns: ExtractedColumn[];
     physicalSource: string;
     physicalSourceAlias?: string;
     joinPhrases: string[];
@@ -26,7 +26,7 @@ export class ResolvedReference {
     groupPhrases: string[];
     orderPhrases: string[];
   }) {
-    this.resolvedColumns = resolvedColumns;
+    this.columns = columns;
     this.physicalSource = physicalSource;
     this.physicalSourceAlias = physicalSourceAlias;
     this.joinPhrases = joinPhrases;
@@ -36,23 +36,23 @@ export class ResolvedReference {
   }
 
   toSQL(): string {
-    let sql = 'SELECT \n ';
-    sql += this.resolvedColumns.map((item) => item.toSelectSQL()).join(', ');
-    sql += ' \n FROM ';
+    let sql = "SELECT \n ";
+    sql += this.columns.map((item) => item.selectSQL).join(", ");
+    sql += " \n FROM ";
     sql += `${this.physicalSource} `;
     if (this.physicalSourceAlias) {
       sql += `${this.physicalSourceAlias} `;
     }
-    sql += this.joinPhrases.join(' ');
-    sql += ' \n ';
+    sql += this.joinPhrases.join(" ");
+    sql += " \n ";
     if (this.conditionsPhrases.length) {
-      sql += `WHERE ${this.conditionsPhrases.join('AND ')} \n`;
+      sql += `WHERE ${this.conditionsPhrases.join("AND ")} \n`;
     }
     if (this.groupPhrases.length) {
-      sql += `GROUP BY ${this.groupPhrases.join(', ')} \n`;
+      sql += `GROUP BY ${this.groupPhrases.join(", ")} \n`;
     }
     if (this.orderPhrases.length) {
-      sql += `ORDER BY ${this.orderPhrases.join(', ')} \n`;
+      sql += `ORDER BY ${this.orderPhrases.join(", ")} \n`;
     }
     return sql;
   }
