@@ -8,13 +8,13 @@ export class Order {
 
   constructor({
     value,
-    sortOrder,
+    sortOrder = 'asc',
   }: {
     value: Value,
     sortOrder?: string;
   }) {
     this.value = value;
-    this.sortOrder = sortOrder || "asc";
+    this.sortOrder = sortOrder;
   }
 
   toSQL(context: PhraseResolutionContext): string {
