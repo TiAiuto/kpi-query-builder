@@ -1,5 +1,3 @@
-import { ExtractedColumn } from "../extracted_column";
-import { ResolvedColumn } from "../resolved_column";
 import { ResolvedView } from "../resolved_view";
 import { ResolvedViewColumn } from "../resolved_view_column";
 import { RoutinePattern } from "../routine_pattern";
