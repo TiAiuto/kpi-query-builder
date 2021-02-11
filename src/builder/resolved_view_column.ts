@@ -1,19 +1,14 @@
-import { PublicColumnInterface } from "./public_column_interface";
-
 export type ResolvedViewColumnArgs = {
   publicName: string;
   physicalName: string;
 };
 
 // TODO: ここの命名改善できそう。。
-export class ResolvedViewColumn implements PublicColumnInterface {
+export class ResolvedViewColumn {
   publicName: string;
   physicalName: string;
 
-  constructor({
-    publicName,
-    physicalName,
-  }: ResolvedViewColumnArgs) {
+  constructor({ publicName, physicalName }: ResolvedViewColumnArgs) {
     this.publicName = publicName;
     this.physicalName = physicalName;
   }

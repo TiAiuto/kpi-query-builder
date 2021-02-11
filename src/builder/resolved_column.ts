@@ -1,23 +1,24 @@
 import { ExtractedColumn } from "./extracted_column";
-import { PublicColumnInterface } from "./public_column_interface";
 import { ResolvedView } from "./resolved_view";
+import {
+  ResolvedViewColumn,
+  ResolvedViewColumnArgs,
+} from "./resolved_view_column";
 
-export type ResolvedColumnArgs = {
+export type ResolvedColumnArgs = ResolvedViewColumnArgs & {
   resolvedView: ResolvedView;
-  publicName: string; // 外側に公開するカラム名
-  physicalName: string; // SQL側で公開する（書き出す）カラム名
 };
 
 // 「参照可能カラム」みたいな名前にするとはまりそう
-export class ResolvedColumn implements PublicColumnInterface {
+export class ResolvedColumn extends ResolvedViewColumn {
   resolvedView: ResolvedView;
-  publicName: string;
-  physicalName: string;
 
-  constructor({ resolvedView, publicName, physicalName }: ResolvedColumnArgs) {
+  constructor({
+    resolvedView,
+    ...args
+  }: ResolvedColumnArgs & { resolvedView: ResolvedView }) {
+    super(args);
     this.resolvedView = resolvedView;
-    this.publicName = publicName;
-    this.physicalName = physicalName;
   }
 
   toValueSQL(): string {
