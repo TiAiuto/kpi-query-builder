@@ -1,6 +1,6 @@
 import { SelectColumn } from "./select_column";
 
-export class ResolvedReference {
+export class ResolvedQuery {
   columns: SelectColumn[];
   physicalSource: string;
   physicalSourceAlias?: string;

@@ -3,7 +3,7 @@ import { Group } from "../group";
 import { OrdinaryJoin } from "../join/ordinary_join";
 import { ViewResolutionContext } from "../view_resolution_context";
 import { PublicColumnReference } from "../public_column_reference";
-import { ResolvedReference } from "../resolved_reference";
+import { ResolvedQuery } from "../resolved_query";
 import { ResolvedView } from "../resolved_view";
 import { ViewResolver } from "../view_resolver";
 import { ReferenceView, ReferenceViewArgs } from "./reference_view";
@@ -45,7 +45,7 @@ export class QueryView extends ReferenceView {
     return columns;
   }
 
-  private buildResolvedReference(resolver: ViewResolver): ResolvedReference {
+  private buildResolvedReference(resolver: ViewResolver): ResolvedQuery {
     const jointConditions = [...this.conditions];
     const jointJoins = [...this.joins];
     this.mixinUsages.forEach((mixinUsage) => {
@@ -77,7 +77,7 @@ export class QueryView extends ReferenceView {
     const groupPhrases = this.groups.map((group) => group.toSQL(context));
     const orderPhrases = this.orders.map((order) => order.toSQL(context));
 
-    return new ResolvedReference({
+    return new ResolvedQuery({
       columns: this.buildColumns(dependentView, context),
       physicalSource: dependentView.physicalName,
       joinPhrases,

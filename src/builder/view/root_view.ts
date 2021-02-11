@@ -3,7 +3,7 @@ import { SelectColumn } from "../select_column";
 import { Join } from "../join/join";
 import { MixinUsage } from "../mixin_usage";
 import { ViewResolutionContext } from "../view_resolution_context";
-import { ResolvedReference } from "../resolved_reference";
+import { ResolvedQuery } from "../resolved_query";
 import { ResolvedView } from "../resolved_view";
 import { RawValue } from "../value/raw_value";
 import { ValueSurface } from "../value_surface";
@@ -64,7 +64,7 @@ export class RootView extends View {
     });
   }
 
-  private buildResolvedReference(resolver: ViewResolver): ResolvedReference {
+  private buildResolvedReference(resolver: ViewResolver): ResolvedQuery {
     const jointConditions = [...this.conditions];
     const jointJoins = [...this.joins];
     this.mixinUsages.forEach((mixinUsage) => {
@@ -85,7 +85,7 @@ export class RootView extends View {
       availableColumns: [], // Root Viewでは特になし＆rawを使う想定
     });
 
-    return new ResolvedReference({
+    return new ResolvedQuery({
       columns: this.buildColumns(phraseResolutionContext),
       physicalSource: this.physicalSource,
       physicalSourceAlias: this.physicalSourceAlias,
