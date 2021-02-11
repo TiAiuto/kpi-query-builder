@@ -4,6 +4,7 @@ import { MixinUsage } from "../mixin_usage";
 import { ValueSurface } from "../value_surface";
 import { QueryView } from "./query_view";
 
+// 最適化のためにACTIONの定義はQueryViewに縛る
 export class ActionView extends QueryView {
   constructor({
     actionName, // 一応命名気をつけてねということでキー名も変える
