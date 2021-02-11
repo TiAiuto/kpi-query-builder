@@ -1,4 +1,4 @@
-import { ResolvedColumn } from "./resolved_column";
+import { PublicColumnReference } from "./public_column_reference";
 import { ExtractedColumn } from "./extracted_column";
 import { ResolvedViewColumn } from "./resolved_view_column";
 
@@ -25,10 +25,10 @@ export class ResolvedView {
     this.sql = sql;
   }
 
-  asResolvedColumns(): ResolvedColumn[] {
+  asResolvedColumns(): PublicColumnReference[] {
     return this.columns.map(
       (column) =>
-        new ResolvedColumn({
+        new PublicColumnReference({
           publicName: column.publicName,
           physicalName: column.physicalName,
           resolvedView: this,

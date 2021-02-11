@@ -2,7 +2,7 @@ import { ExtractedColumn } from "../extracted_column";
 import { Group } from "../group";
 import { OrdinaryJoin } from "../join/ordinary_join";
 import { ViewResolutionContext } from "../view_resolution_context";
-import { ResolvedColumn } from "../resolved_column";
+import { PublicColumnReference } from "../public_column_reference";
 import { ResolvedReference } from "../resolved_reference";
 import { ResolvedView } from "../resolved_view";
 import { ViewResolver } from "../view_resolver";
@@ -55,7 +55,7 @@ export class QueryView extends ReferenceView {
     });
 
     const dependentView = resolver.resolve(this.source);
-    const availableColumns: ResolvedColumn[] = [
+    const availableColumns: PublicColumnReference[] = [
       ...dependentView.asResolvedColumns(),
     ];
     jointJoins.forEach((join) => {

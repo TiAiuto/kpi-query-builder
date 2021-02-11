@@ -1,4 +1,4 @@
-import { ResolvedColumn } from "./resolved_column";
+import { PublicColumnReference } from "./public_column_reference";
 import { SelectValue } from "./value/select_value";
 import { Value } from "./value/value";
 import { View } from "./view/view";
@@ -7,7 +7,7 @@ import { ViewResolver } from "./view_resolver";
 export class ViewResolutionContext {
   currentView: View;
   resolver: ViewResolver;
-  availableColumns: ResolvedColumn[];
+  availableColumns: PublicColumnReference[];
 
   constructor({
     currentView,
@@ -16,14 +16,14 @@ export class ViewResolutionContext {
   }: {
     currentView: View;
     resolver: ViewResolver;
-    availableColumns: ResolvedColumn[];
+    availableColumns: PublicColumnReference[];
   }) {
     this.currentView = currentView;
     this.resolver = resolver;
     this.availableColumns = availableColumns;
   }
 
-  findColumnByName(sourceColumnName: string, source?: string): ResolvedColumn {
+  findColumnByName(sourceColumnName: string, source?: string): PublicColumnReference {
     if (source) {
       const completeMatchedColumn = this.availableColumns.find(
         (column) =>
@@ -49,7 +49,7 @@ export class ViewResolutionContext {
     );
   }
 
-  findColumnByValue(value: Value): ResolvedColumn {
+  findColumnByValue(value: Value): PublicColumnReference {
     if (value instanceof SelectValue) {
       return this.findColumnByName(value.sourceColumnName, value.source);
     }

@@ -1,4 +1,4 @@
-import { ResolvedColumn } from "./resolved_column";
+import { PublicColumnReference } from "./public_column_reference";
 import { ResolvedView } from "./resolved_view";
 import { ResolvedViewColumn, ResolvedViewColumnArgs } from "./resolved_view_column";
 
@@ -15,8 +15,8 @@ export class ExtractedColumn extends ResolvedViewColumn {
     this.selectSQL = selectSQL;
   }
 
-  toResolvedColumn(resolvedView: ResolvedView): ResolvedColumn {
-    return new ResolvedColumn({
+  toResolvedColumn(resolvedView: ResolvedView): PublicColumnReference {
+    return new PublicColumnReference({
       publicName: this.publicName,
       physicalName: this.physicalName,
       resolvedView,

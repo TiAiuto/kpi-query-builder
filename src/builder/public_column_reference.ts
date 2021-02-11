@@ -5,18 +5,17 @@ import {
   ResolvedViewColumnArgs,
 } from "./resolved_view_column";
 
-export type ResolvedColumnArgs = ResolvedViewColumnArgs & {
+export type PublicColumnReferenceArgs = ResolvedViewColumnArgs & {
   resolvedView: ResolvedView;
 };
 
-// 「参照可能カラム」みたいな名前にするとはまりそう
-export class ResolvedColumn extends ResolvedViewColumn {
+export class PublicColumnReference extends ResolvedViewColumn {
   resolvedView: ResolvedView;
 
   constructor({
     resolvedView,
     ...args
-  }: ResolvedColumnArgs & { resolvedView: ResolvedView }) {
+  }: PublicColumnReferenceArgs & { resolvedView: ResolvedView }) {
     super(args);
     this.resolvedView = resolvedView;
   }
