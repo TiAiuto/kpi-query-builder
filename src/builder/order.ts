@@ -1,22 +1,18 @@
-import { SourceColumn } from "./source_column";
+import { Value } from "./value/value";
 
 // クラス名はlodashのインタフェースを参考にした
-// TOOD: rawの場合とqueryの場合の対応が必要そう
-// abstractにしたほうがいい
-export class Order implements SourceColumn {
-  source?: string;
-  sourceColumnName: string;
+export class Order {
+  value: Value;
   sortOrder: string;
 
   constructor({
-    source,
-    sourceColumnName,
+    value,
     sortOrder,
-  }: SourceColumn & {
+  }: {
+    value: Value,
     sortOrder?: string;
   }) {
-    this.source = source;
-    this.sourceColumnName = sourceColumnName;
+    this.value = value;
     this.sortOrder = sortOrder || "asc";
   }
 }
