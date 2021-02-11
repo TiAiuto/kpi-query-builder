@@ -1,10 +1,11 @@
 import { ResolvedColumn } from "./resolved_column";
 import { ExtractedColumn } from "./extracted_column";
+import { ResolvedViewColumn } from "./resolved_view_column";
 
 export class ResolvedView {
   publicName: string;
   physicalName: string;
-  columns: ExtractedColumn[];
+  columns: ResolvedViewColumn[];
   sql: string;
 
   constructor({
@@ -15,7 +16,7 @@ export class ResolvedView {
   }: {
     publicName: string;
     physicalName: string;
-    columns: ExtractedColumn[];
+    columns: ResolvedViewColumn[];
     sql: string;
   }) {
     this.publicName = publicName;

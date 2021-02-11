@@ -1,24 +1,18 @@
-import { PublicColumnInterface } from "./public_column_interface";
 import { ResolvedColumn } from "./resolved_column";
 import { ResolvedView } from "./resolved_view";
+import { ResolvedViewColumn, ResolvedViewColumnArgs } from "./resolved_view_column";
 
-export class ExtractedColumn implements PublicColumnInterface {
+export class ExtractedColumn extends ResolvedViewColumn {
   selectSQL: string;
-  publicName: string;
-  physicalName: string;
 
   constructor({
     selectSQL,
-    publicName,
-    physicalName,
-  }: {
+    ...args
+  }: ResolvedViewColumnArgs & {
     selectSQL: string;
-    publicName: string;
-    physicalName: string;
   }) {
+    super(args);
     this.selectSQL = selectSQL;
-    this.publicName = publicName;
-    this.physicalName = physicalName;
   }
 
   toResolvedColumn(resolvedView: ResolvedView): ResolvedColumn {

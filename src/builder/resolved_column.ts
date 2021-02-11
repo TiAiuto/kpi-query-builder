@@ -8,6 +8,7 @@ export type ResolvedColumnArgs = {
   physicalName: string; // SQL側で公開する（書き出す）カラム名
 };
 
+// 「参照可能カラム」みたいな名前にするとはまりそう
 export class ResolvedColumn implements PublicColumnInterface {
   resolvedView: ResolvedView;
   publicName: string;
