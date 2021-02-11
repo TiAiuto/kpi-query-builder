@@ -2,7 +2,7 @@ import { PublicColumnReference } from "./public_column_reference";
 import { ResolvedView } from "./resolved_view";
 import { ResolvedViewColumn, ResolvedViewColumnArgs } from "./resolved_view_column";
 
-export class ExtractedColumn extends ResolvedViewColumn {
+export class SelectColumn extends ResolvedViewColumn {
   selectSQL: string;
 
   constructor({

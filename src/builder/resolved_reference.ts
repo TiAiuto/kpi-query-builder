@@ -1,7 +1,7 @@
-import { ExtractedColumn } from "./extracted_column";
+import { SelectColumn } from "./select_column";
 
 export class ResolvedReference {
-  columns: ExtractedColumn[];
+  columns: SelectColumn[];
   physicalSource: string;
   physicalSourceAlias?: string;
   joinPhrases: string[];
@@ -18,7 +18,7 @@ export class ResolvedReference {
     groupPhrases,
     orderPhrases,
   }: {
-    columns: ExtractedColumn[];
+    columns: SelectColumn[];
     physicalSource: string;
     physicalSourceAlias?: string;
     joinPhrases: string[];

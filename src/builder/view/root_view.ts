@@ -1,5 +1,5 @@
 import { Condition } from "../condition/condition";
-import { ExtractedColumn } from "../extracted_column";
+import { SelectColumn } from "../select_column";
 import { Join } from "../join/join";
 import { MixinUsage } from "../mixin_usage";
 import { ViewResolutionContext } from "../view_resolution_context";
@@ -50,10 +50,10 @@ export class RootView extends View {
     this.columns = columns;
   }
 
-  private buildColumns(context: ViewResolutionContext): ExtractedColumn[] {
+  private buildColumns(context: ViewResolutionContext): SelectColumn[] {
     return this.columns.map((column) => {
       if (column.value instanceof RawValue) {
-        return new ExtractedColumn({
+        return new SelectColumn({
           publicName: column.name,
           physicalName: column.alphabetName,
           selectSQL: column.value.toSQL(context), // RawValueはselectを想定しているがWHEREなどでも動くはず

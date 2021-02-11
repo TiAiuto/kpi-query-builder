@@ -1,5 +1,5 @@
 import { PublicColumnReference } from "./public_column_reference";
-import { ExtractedColumn } from "./extracted_column";
+import { SelectColumn } from "./select_column";
 import { ResolvedViewColumn } from "./resolved_view_column";
 
 export class ResolvedView {
@@ -36,7 +36,7 @@ export class ResolvedView {
     );
   }
 
-  asInheritedExtractedColumns(): ExtractedColumn[] {
+  asInheritedExtractedColumns(): SelectColumn[] {
     return this.asResolvedColumns().map((resolvedColumn) =>
       resolvedColumn.toExtractedColumn()
     );

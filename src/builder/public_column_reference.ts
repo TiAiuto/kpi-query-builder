@@ -1,4 +1,4 @@
-import { ExtractedColumn } from "./extracted_column";
+import { SelectColumn } from "./select_column";
 import { ResolvedView } from "./resolved_view";
 import {
   ResolvedViewColumn,
@@ -30,8 +30,8 @@ export class PublicColumnReference extends ResolvedViewColumn {
   }: {
     newPublicName?: string;
     newPhysicalName?: string;
-  } = {}): ExtractedColumn {
-    return new ExtractedColumn({
+  } = {}): SelectColumn {
+    return new SelectColumn({
       publicName: newPublicName,
       physicalName: newPhysicalName,
       selectSQL: `${this.fullPhysicalName} AS ${newPhysicalName}`,

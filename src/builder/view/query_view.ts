@@ -1,4 +1,4 @@
-import { ExtractedColumn } from "../extracted_column";
+import { SelectColumn } from "../select_column";
 import { Group } from "../group";
 import { OrdinaryJoin } from "../join/ordinary_join";
 import { ViewResolutionContext } from "../view_resolution_context";
@@ -28,11 +28,11 @@ export class QueryView extends ReferenceView {
   private buildColumns(
     dependentView: ResolvedView,
     context: ViewResolutionContext
-  ): ExtractedColumn[] {
-    const columns: ExtractedColumn[] = [];
+  ): SelectColumn[] {
+    const columns: SelectColumn[] = [];
     this.columns.forEach((column) => {
       columns.push(
-        new ExtractedColumn({
+        new SelectColumn({
           publicName: column.name,
           physicalName: column.alphabetName,
           selectSQL: column.value.toSQL(context),
