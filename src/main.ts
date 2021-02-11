@@ -12,6 +12,7 @@ import { SelectValueSet } from "./builder/value_set/select_value_set";
 import { SelectValue } from "./builder/value/select_value";
 import { TransformValue } from "./builder/value/transform_value";
 import { TransformPattern } from "./builder/transform_pattern";
+import { Order } from "./builder/order";
 
 function main() {
   const resolver = new ViewResolver({
@@ -120,6 +121,9 @@ function main() {
             name: "PLUS契約ユーザ（解約済み含む）",
           }),
         ],
+        orders: [
+          new Order({ value: new SelectValue({ sourceColumnName: 'タイムスタンプ' }) })
+        ]
       }),
     ],
   });
@@ -129,7 +133,7 @@ function main() {
       (resolvedView) =>
         `${resolvedView.physicalName} AS ( ${resolvedView.sql} )`
     )
-    .join(", \n");
+    .join(", \n\n");
   console.log(withQueries);
 }
 main();
