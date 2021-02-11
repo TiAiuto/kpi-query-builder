@@ -57,26 +57,27 @@ export class QueryView extends ReferenceView {
         availableColumns.push(...joinDependentView.asResolvedColumns());
       }
     });
-    const phraseResolutionContext = new PhraseResolutionContext({
+    const context = new PhraseResolutionContext({
       currentView: this,
       resolver,
       availableColumns,
     });
 
     const joinPhrases = jointJoins.map((join) =>
-      join.toSQL(phraseResolutionContext)
+      join.toSQL(context)
     );
     const conditionPhrases = jointConditions.map((condition) =>
-      condition.toSQL(phraseResolutionContext)
+      condition.toSQL(context)
     );
+    const orderPhrases = this.orders.map((order) => order.toSQL(context));
 
     return new ResolvedReference({
-      columns: this.buildColumns(dependentView, phraseResolutionContext),
+      columns: this.buildColumns(dependentView, context),
       physicalSource: dependentView.physicalName,
       joinPhrases,
       conditionPhrases,
-      groupPhrases: [],
-      orderPhrases: [], // TODO: orderは後で
+      groupPhrases: [], // groupは使わない
+      orderPhrases,
     });
   }
 
