@@ -1,35 +1,20 @@
+import { Value } from "../value/value";
 import { ViewResolutionContext } from "../view_resolution_context";
 import { Condition } from "./condition";
 
 export class EqCondition extends Condition {
-  oneSource?: string;
-  oneSourceColumnName: string;
+  value: Value;
+  otherValue: Value;
 
-  otherSource?: string;
-  otherSourceColumnName: string;
-
-  constructor({
-    oneSource,
-    oneSourceColumnName,
-    otherSource,
-    otherSourceColumnName,
-  }: {
-    oneSource?: string;
-    oneSourceColumnName: string;
-    otherSource?: string;
-    otherSourceColumnName: string;
-  }) {
+  constructor({ value, otherValue }: { value: Value; otherValue: Value }) {
     super({ type: "eq" });
 
-    this.oneSource = oneSource;
-    this.oneSourceColumnName = oneSourceColumnName;
-
-    this.otherSource = otherSource;
-    this.otherSourceColumnName = otherSourceColumnName;
+    this.value = value;
+    this.otherValue = otherValue;
   }
 
   toSQL(context: ViewResolutionContext): string {
-    throw new Error("Method not implemented.");
+    return `${this.value.toSQL(context)} = ${this.otherValue.toSQL(context)}`;
   }
 
   toSQLForRoot(): string {
