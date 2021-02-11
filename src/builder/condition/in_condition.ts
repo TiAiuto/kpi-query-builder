@@ -1,31 +1,22 @@
 import { Condition } from "./condition";
 import { ValueSet } from "../value_set/value_set";
-import { SourceColumn } from "../source_column";
 import { ViewResolutionContext } from "../view_resolution_context";
+import { Value } from "../value/value";
 
-export class InCondition extends Condition implements SourceColumn {
-  source?: string;
-  sourceColumnName: string;
-  valueSet: ValueSet;
+export class InCondition extends Condition {
+  value: Value;
+  inValueSet: ValueSet;
 
-  constructor({
-    source, 
-    sourceColumnName, 
-    valueSet,
-  }: {
-    valueSet: ValueSet;
-    source?: string;
-    sourceColumnName: string;
-  }) {
+  constructor({ value, inValueSet }: { value: Value; inValueSet: ValueSet }) {
     super({ type: "in" });
-    this.source = source;
-    this.sourceColumnName = sourceColumnName;
-    this.valueSet = valueSet;
+    this.value = value;
+    this.inValueSet = inValueSet;
   }
 
   toSQL(context: ViewResolutionContext): string {
-    const column = context.findColumnByName(this.sourceColumnName, this.source);
-    return `${column.toValueSQL()} IN ( ${this.valueSet.toSQL(context)} )`;
+    return `${this.value.toSQL(context)} IN ( ${this.inValueSet.toSQL(
+      context
+    )} )`;
   }
 
   toSQLForRoot(): string {

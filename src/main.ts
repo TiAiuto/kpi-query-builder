@@ -25,8 +25,8 @@ function main() {
         name: "PLUS契約ユーザ（解約済み含む）",
         conditions: [
           new InCondition({
-            sourceColumnName: "ユーザコード",
-            valueSet: new SelectValueSet({
+            value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+            inValueSet: new SelectValueSet({
               source: "ユーザコード付きPLUS契約",
               sourceColumnName: "契約ユーザコード",
             }),
@@ -122,8 +122,10 @@ function main() {
           }),
         ],
         orders: [
-          new Order({ value: new SelectValue({ sourceColumnName: 'タイムスタンプ' }) })
-        ]
+          new Order({
+            value: new SelectValue({ sourceColumnName: "タイムスタンプ" }),
+          }),
+        ],
       }),
     ],
   });
