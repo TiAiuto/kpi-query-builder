@@ -1,4 +1,4 @@
-import { PhraseResolutionContext } from "./phrase_resolution_context";
+import { ViewResolutionContext } from "./view_resolution_context";
 import { Value } from "./value/value";
 
 // クラス名はlodashのインタフェースを参考にした
@@ -17,7 +17,7 @@ export class Order {
     this.sortOrder = sortOrder;
   }
 
-  toSQL(context: PhraseResolutionContext): string {
+  toSQL(context: ViewResolutionContext): string {
     return `${this.value.toSQL(context)} ${this.sortOrder}`;
   }
 }

@@ -1,4 +1,4 @@
-import { PhraseResolutionContext } from "../phrase_resolution_context";
+import { ViewResolutionContext } from "../view_resolution_context";
 import { SourceColumn } from "../source_column";
 import { SelectValue } from "../value/select_value";
 import { ValueSurface } from "../value_surface";
@@ -15,7 +15,7 @@ export class SelectValueSet extends ValueSet implements SourceColumn {
     this.sourceColumnName = sourceColumnName;
   }
 
-  toSQL(context: PhraseResolutionContext): string {
+  toSQL(context: ViewResolutionContext): string {
     const temporaryQueryView = new QueryView({
       name: "一時テーブル",
       alphabetName: "temporary table",

@@ -1,4 +1,4 @@
-import { PhraseResolutionContext } from "./phrase_resolution_context";
+import { ViewResolutionContext } from "./view_resolution_context";
 import { Value } from "./value/value";
 
 export class Group {
@@ -8,7 +8,7 @@ export class Group {
     this.value = value;
   }
 
-  toSQL(context: PhraseResolutionContext): string {
+  toSQL(context: ViewResolutionContext): string {
     return this.value.toSQL(context);
   }
 }

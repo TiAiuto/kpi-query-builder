@@ -2,7 +2,7 @@ import { Condition } from "../condition/condition";
 import { ExtractedColumn } from "../extracted_column";
 import { Join } from "../join/join";
 import { MixinUsage } from "../mixin_usage";
-import { PhraseResolutionContext } from "../phrase_resolution_context";
+import { ViewResolutionContext } from "../view_resolution_context";
 import { ResolvedReference } from "../resolved_reference";
 import { ResolvedView } from "../resolved_view";
 import { RawValue } from "../value/raw_value";
@@ -50,7 +50,7 @@ export class RootView extends View {
     this.columns = columns;
   }
 
-  private buildColumns(context: PhraseResolutionContext): ExtractedColumn[] {
+  private buildColumns(context: ViewResolutionContext): ExtractedColumn[] {
     return this.columns.map((column) => {
       if (column.value instanceof RawValue) {
         return new ExtractedColumn({
@@ -79,7 +79,7 @@ export class RootView extends View {
       condition.toSQLForRoot()
     );
 
-    const phraseResolutionContext = new PhraseResolutionContext({
+    const phraseResolutionContext = new ViewResolutionContext({
       currentView: this,
       resolver,
       availableColumns: [], // Root Viewでは特になし＆rawを使う想定

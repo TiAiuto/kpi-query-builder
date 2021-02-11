@@ -1,4 +1,4 @@
-import { PhraseResolutionContext } from "../phrase_resolution_context";
+import { ViewResolutionContext } from "../view_resolution_context";
 import { Join } from "./join";
 
 export class RawJoin extends Join {
@@ -9,7 +9,7 @@ export class RawJoin extends Join {
     this.raw = raw;
   }
 
-  toSQL(context: PhraseResolutionContext): string {
+  toSQL(context: ViewResolutionContext): string {
     return this.raw;
   }
 

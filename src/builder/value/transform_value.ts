@@ -1,4 +1,4 @@
-import { PhraseResolutionContext } from "../phrase_resolution_context";
+import { ViewResolutionContext } from "../view_resolution_context";
 import { SourceColumn } from "../source_column";
 import { TransformPattern } from "../transform_pattern";
 import { Value } from "./value";
@@ -19,7 +19,7 @@ export class TransformValue extends Value implements SourceColumn {
     this.pattern = pattern;
   }
 
-  toSQL(context: PhraseResolutionContext): string {
+  toSQL(context: ViewResolutionContext): string {
     const resolvedColumn = context.findColumnByName(
       this.sourceColumnName,
       this.source
@@ -35,7 +35,7 @@ export class TransformValue extends Value implements SourceColumn {
     }
   }
 
-  toSQLForRoot(context: PhraseResolutionContext): string {
+  toSQLForRoot(context: ViewResolutionContext): string {
     throw new Error("Method not implemented.");
   }
 }

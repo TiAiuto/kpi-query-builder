@@ -4,7 +4,7 @@ import { Value } from "./value/value";
 import { View } from "./view/view";
 import { ViewResolver } from "./view_resolver";
 
-export class PhraseResolutionContext {
+export class ViewResolutionContext {
   currentView: View;
   resolver: ViewResolver;
   availableColumns: ResolvedColumn[];

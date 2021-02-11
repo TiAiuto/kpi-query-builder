@@ -1,4 +1,4 @@
-import { PhraseResolutionContext } from "../phrase_resolution_context";
+import { ViewResolutionContext } from "../view_resolution_context";
 import { Condition } from "./condition";
 
 export class RawCondition extends Condition {
@@ -9,7 +9,7 @@ export class RawCondition extends Condition {
     this.raw = raw;
   }
 
-  toSQL(context: PhraseResolutionContext): string {
+  toSQL(context: ViewResolutionContext): string {
     return this.raw;
   }
 

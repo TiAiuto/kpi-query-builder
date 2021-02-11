@@ -1,4 +1,4 @@
-import { PhraseResolutionContext } from "../phrase_resolution_context";
+import { ViewResolutionContext } from "../view_resolution_context";
 import { Value } from "./value";
 
 export class RawValue extends Value {
@@ -9,11 +9,11 @@ export class RawValue extends Value {
     this.raw = raw;
   }
 
-  toSQL(context: PhraseResolutionContext): string {
+  toSQL(context: ViewResolutionContext): string {
     return this.raw;
   }
 
-  toSQLForRoot(context: PhraseResolutionContext): string {
+  toSQLForRoot(context: ViewResolutionContext): string {
     return this.raw;
   }
 }

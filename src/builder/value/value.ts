@@ -1,4 +1,4 @@
-import { PhraseResolutionContext } from "../phrase_resolution_context";
+import { ViewResolutionContext } from "../view_resolution_context";
 
 export abstract class Value {
   type: string;
@@ -7,6 +7,6 @@ export abstract class Value {
     this.type = type;
   }
   
-  abstract toSQL(context: PhraseResolutionContext): string;
-  abstract toSQLForRoot(context: PhraseResolutionContext): string;
+  abstract toSQL(context: ViewResolutionContext): string;
+  abstract toSQLForRoot(context: ViewResolutionContext): string;
 }

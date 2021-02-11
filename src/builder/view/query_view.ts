@@ -1,7 +1,7 @@
 import { ExtractedColumn } from "../extracted_column";
 import { Group } from "../group";
 import { OrdinaryJoin } from "../join/ordinary_join";
-import { PhraseResolutionContext } from "../phrase_resolution_context";
+import { ViewResolutionContext } from "../view_resolution_context";
 import { ResolvedColumn } from "../resolved_column";
 import { ResolvedReference } from "../resolved_reference";
 import { ResolvedView } from "../resolved_view";
@@ -27,7 +27,7 @@ export class QueryView extends ReferenceView {
 
   private buildColumns(
     dependentView: ResolvedView,
-    context: PhraseResolutionContext
+    context: ViewResolutionContext
   ): ExtractedColumn[] {
     const columns: ExtractedColumn[] = [];
     this.columns.forEach((column) => {
@@ -64,7 +64,7 @@ export class QueryView extends ReferenceView {
         availableColumns.push(...joinDependentView.asResolvedColumns());
       }
     });
-    const context = new PhraseResolutionContext({
+    const context = new ViewResolutionContext({
       currentView: this,
       resolver,
       availableColumns,

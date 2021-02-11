@@ -1,7 +1,7 @@
 import { Condition } from "./condition";
 import { ValueSet } from "../value_set/value_set";
 import { SourceColumn } from "../source_column";
-import { PhraseResolutionContext } from "../phrase_resolution_context";
+import { ViewResolutionContext } from "../view_resolution_context";
 
 export class InCondition extends Condition implements SourceColumn {
   source?: string;
@@ -23,7 +23,7 @@ export class InCondition extends Condition implements SourceColumn {
     this.valueSet = valueSet;
   }
 
-  toSQL(context: PhraseResolutionContext): string {
+  toSQL(context: ViewResolutionContext): string {
     const column = context.findColumnByName(this.sourceColumnName, this.source);
     return `${column.toValueSQL()} IN ( ${this.valueSet.toSQL(context)} )`;
   }
