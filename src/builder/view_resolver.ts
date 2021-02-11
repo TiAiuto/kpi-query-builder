@@ -1,15 +1,15 @@
-import { Filter } from "./filter";
+import { Mixin } from "./mixin";
 import { ResolvedView } from "./resolved_view";
 import { View } from "./view/view";
 
 export class ViewResolver {
   resolvedViews: ResolvedView[];
   private views: View[];
-  private filters: Filter[];
+  private mixins: Mixin[];
 
-  constructor({ views, filters }: { views: View[]; filters: Filter[] }) {
+  constructor({ views, mixins }: { views: View[]; mixins: Mixin[] }) {
     this.views = views;
-    this.filters = filters;
+    this.mixins = mixins;
     this.resolvedViews = [];
   }
 
@@ -27,10 +27,10 @@ export class ViewResolver {
     return resolvedView;
   }
 
-  findFilter(name: string): Filter {
-    const filter = this.filters.find((item) => item.name === name);
-    if (filter) {
-      return filter;
+  findMixin(name: string): Mixin {
+    const mixin = this.mixins.find((item) => item.name === name);
+    if (mixin) {
+      return mixin;
     }
 
     throw new Error(`${name}は未定義`);

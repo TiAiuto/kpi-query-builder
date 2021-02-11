@@ -1,4 +1,4 @@
-export class AggregatePattern {
+export class MixinUsage {
   name: string;
 
   constructor({ name }: { name: string }) {
