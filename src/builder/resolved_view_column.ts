@@ -3,7 +3,6 @@ export type ResolvedViewColumnArgs = {
   physicalName: string;
 };
 
-// TODO: ここの命名改善できそう。。
 export class ResolvedViewColumn {
   publicName: string;
   physicalName: string;
