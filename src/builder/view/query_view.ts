@@ -1,4 +1,5 @@
 import { ExtractedColumn } from "../extracted_column";
+import { Group } from "../group";
 import { OrdinaryJoin } from "../join/ordinary_join";
 import { PhraseResolutionContext } from "../phrase_resolution_context";
 import { ResolvedColumn } from "../resolved_column";
@@ -8,14 +9,20 @@ import { ViewResolver } from "../view_resolver";
 import { ReferenceView, ReferenceViewArgs } from "./reference_view";
 
 export class QueryView extends ReferenceView {
+  groups: Group[];
   columnsInheritanceEnabled: boolean;
 
   constructor({
     columnsInheritanceEnabled,
+    groups = [],
     ...args
-  }: ReferenceViewArgs & { columnsInheritanceEnabled: boolean }) {
+  }: ReferenceViewArgs & {
+    columnsInheritanceEnabled: boolean;
+    groups?: Group[];
+  }) {
     super({ type: "query", ...args });
     this.columnsInheritanceEnabled = columnsInheritanceEnabled;
+    this.groups = groups;
   }
 
   private buildColumns(
@@ -67,6 +74,7 @@ export class QueryView extends ReferenceView {
     const conditionPhrases = jointConditions.map((condition) =>
       condition.toSQL(context)
     );
+    const groupPhrases = this.groups.map((group) => group.toSQL(context));
     const orderPhrases = this.orders.map((order) => order.toSQL(context));
 
     return new ResolvedReference({
@@ -74,7 +82,7 @@ export class QueryView extends ReferenceView {
       physicalSource: dependentView.physicalName,
       joinPhrases,
       conditionPhrases,
-      groupPhrases: [], // groupは使わない
+      groupPhrases,
       orderPhrases,
     });
   }
