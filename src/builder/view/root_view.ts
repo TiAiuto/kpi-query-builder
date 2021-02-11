@@ -1,7 +1,7 @@
 import { Condition } from "../condition/condition";
 import { ExtractedColumn } from "../extracted_column";
-import { FilterUsage } from "../filter_usage";
 import { Join } from "../join/join";
+import { MixinUsage } from "../mixin_usage";
 import { PhraseResolutionContext } from "../phrase_resolution_context";
 import { ResolvedReference } from "../resolved_reference";
 import { ResolvedView } from "../resolved_view";
@@ -11,7 +11,7 @@ import { ViewResolver } from "../view_resolver";
 import { View, ViewArgs } from "./view";
 
 export class RootView extends View {
-  filterUsages: FilterUsage[];
+  mixinUsages: MixinUsage[];
   conditions: Condition[];
   joins: Join[];
   physicalSource: string;
@@ -20,16 +20,16 @@ export class RootView extends View {
   columns: ValueSurface[];
 
   constructor({
-    filterUsages,
-    conditions,
-    joins,
+    mixinUsages = [],
+    conditions = [],
+    joins = [],
     physicalSource,
     physicalSourceAlias,
     dateSuffixEnabled,
     columns,
     ...args
   }: ViewArgs & {
-    filterUsages?: FilterUsage[];
+    mixinUsages?: MixinUsage[];
     conditions?: Condition[];
     joins?: Join[];
     physicalSource: string;
@@ -41,9 +41,9 @@ export class RootView extends View {
       ...args,
       type: "root",
     });
-    this.filterUsages = filterUsages || [];
-    this.conditions = conditions || [];
-    this.joins = joins || [];
+    this.mixinUsages = mixinUsages;
+    this.conditions = conditions;
+    this.joins = joins;
     this.physicalSource = physicalSource;
     this.physicalSourceAlias = physicalSourceAlias;
     this.dateSuffixEnabled = dateSuffixEnabled;
@@ -67,10 +67,10 @@ export class RootView extends View {
   private buildResolvedReference(resolver: ViewResolver): ResolvedReference {
     const jointConditions = [...this.conditions];
     const jointJoins = [...this.joins];
-    this.filterUsages.forEach((filterUsage) => {
-      const filter = resolver.findFilter(filterUsage.name);
-      jointConditions.push(...filter.conditions);
-      jointJoins.push(...filter.joins);
+    this.mixinUsages.forEach((mixinUsage) => {
+      const mixin = resolver.findMixin(mixinUsage.name);
+      jointConditions.push(...mixin.conditions);
+      jointJoins.push(...mixin.joins);
     });
 
     // rootではraw以外のjoin, conditionは使わない想定

@@ -41,10 +41,10 @@ export class QueryView extends ReferenceView {
   private buildResolvedReference(resolver: ViewResolver): ResolvedReference {
     const jointConditions = [...this.conditions];
     const jointJoins = [...this.joins];
-    this.filterUsages.forEach((filterUsage) => {
-      const filter = resolver.findFilter(filterUsage.name);
-      jointConditions.push(...filter.conditions);
-      jointJoins.push(...filter.joins);
+    this.mixinUsages.forEach((mixinUsage) => {
+      const mixin = resolver.findMixin(mixinUsage.name);
+      jointConditions.push(...mixin.conditions);
+      jointJoins.push(...mixin.joins);
     });
 
     const dependentView = resolver.resolve(this.source);
@@ -63,9 +63,7 @@ export class QueryView extends ReferenceView {
       availableColumns,
     });
 
-    const joinPhrases = jointJoins.map((join) =>
-      join.toSQL(context)
-    );
+    const joinPhrases = jointJoins.map((join) => join.toSQL(context));
     const conditionPhrases = jointConditions.map((condition) =>
       condition.toSQL(context)
     );

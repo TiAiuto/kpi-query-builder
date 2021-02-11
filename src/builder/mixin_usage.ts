@@ -1,4 +1,4 @@
-export class FilterUsage {
+export class MixinUsage {
   name: string;
 
   constructor({ name }: { name: string }) {

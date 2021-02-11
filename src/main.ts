@@ -1,5 +1,3 @@
-import { Filter } from "./builder/filter";
-import { FilterUsage } from "./builder/filter_usage";
 import { InCondition } from "./builder/condition/in_condition";
 import { RawValue } from "./builder/value/raw_value";
 import { RootView } from "./builder/view/root_view";
@@ -13,15 +11,17 @@ import { SelectValue } from "./builder/value/select_value";
 import { TransformValue } from "./builder/value/transform_value";
 import { TransformPattern } from "./builder/transform_pattern";
 import { Order } from "./builder/order";
+import { Mixin } from "./builder/mixin";
+import { MixinUsage } from "./builder/mixin_usage";
 
 function main() {
   const resolver = new ViewResolver({
-    filters: [
-      new Filter({
+    mixins: [
+      new Mixin({
         name: "契約済み契約",
         conditions: [new RawCondition({ raw: "usage_start_date IS NOT NULL" })],
       }),
-      new Filter({
+      new Mixin({
         name: "PLUS契約ユーザ（解約済み含む）",
         conditions: [
           new InCondition({
@@ -63,7 +63,7 @@ function main() {
             value: new RawValue({ raw: "users.id" }),
           }),
         ],
-        filterUsages: [new FilterUsage({ name: "契約済み契約" })],
+        mixinUsages: [new MixinUsage({ name: "契約済み契約" })],
         joins: [
           new RawJoin({
             raw:
@@ -116,8 +116,8 @@ function main() {
           }),
         ],
         columnsInheritanceEnabled: true,
-        filterUsages: [
-          new FilterUsage({
+        mixinUsages: [
+          new MixinUsage({
             name: "PLUS契約ユーザ（解約済み含む）",
           }),
         ],
