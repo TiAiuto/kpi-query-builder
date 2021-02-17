@@ -1,6 +1,7 @@
 import {View, ViewArgs} from './view';
 import {ViewResolver} from '../view_resolver';
 import {ResolvedView} from '../resolved_view';
+import {ActionReportViewActionReference} from '../action_report_view_action_reference';
 
 export class ActionReportView extends View {
     // 期間を使う場合はここで基準集合も指定
@@ -12,18 +13,26 @@ export class ActionReportView extends View {
     // [基準アクション日, 基準アクションユーザ識別子, 関連アクション1アクション日]
 
     periodViewName: string; // 本当は事前にView作るんじゃなくて自動生成したい
-    baseActionName: string;
+    baseAction: ActionReportViewActionReference;
+    relatedActions: ActionReportViewActionReference[];
 
-    constructor({periodViewName, baseActionName, ...args}: ViewArgs & {
+    constructor({periodViewName, baseAction, relatedActions, ...args}: ViewArgs & {
         periodViewName: string;
-        baseActionName: string;
+        baseAction: ActionReportViewActionReference;
+        relatedActions: ActionReportViewActionReference[];
     }) {
         super({...args, type: 'action_report'});
         this.periodViewName = periodViewName;
-        this.baseActionName = baseActionName;
+        this.baseAction = baseAction;
+        this.relatedActions = relatedActions;
     }
 
     resolve(resolver: ViewResolver): ResolvedView {
-        throw new Error('未実装');
+        return new ResolvedView({
+            publicName: this.name,
+            physicalName: this.alphabetName,
+            columns: [],
+            sql: '' // TODO: 実装
+        });
     }
 }
