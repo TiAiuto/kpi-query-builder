@@ -94,6 +94,12 @@ function main() {
             value: new RawValue({ raw: "TIMESTAMP_SECONDS(rack_plus.time)" }),
           }),
         ],
+          joins: [
+              new RawJoin({
+                  raw:
+                      "JOIN `h-navi.lo_production.users` users ON rack_plus.user_id = users.id",
+              }),
+          ],
       }),
       new QueryView({
         name: "PLUS契約者アクセスログ",
