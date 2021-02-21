@@ -23,11 +23,7 @@ export abstract class OrdinaryJoin extends Join {
     this.conditions = conditions;
   }
 
-  toSQL(context: ViewResolutionContext): string {
-    throw new Error("Method not implemented.");
-  }
-
-  toSQLForRoot(): string {
-    throw new Error("Method not implemented.");
+  protected generateConditionPhrases(context: ViewResolutionContext): string[] {
+    return this.conditions.map((condition) => condition.toSQL(context));
   }
 }

@@ -1,13 +1,13 @@
 import { ViewResolutionContext } from "../view_resolution_context";
 import { OrdinaryJoin, OrdinaryJoinArgs } from "./ordinary_join";
 
-export class InnerJoin extends OrdinaryJoin {
+export class LeftJoin extends OrdinaryJoin {
   constructor(args: OrdinaryJoinArgs) {
-    super({ ...args, type: "inner" });
+    super({ ...args, type: "left" });
   }
 
   toSQL(context: ViewResolutionContext): string {
-    return `INNER JOIN ${
+    return `LEFT JOIN ${
       context.resolver.findView(this.target).alphabetName
     } \n ON ${this.generateConditionPhrases(context).join(" AND \n ")} `;
   }
