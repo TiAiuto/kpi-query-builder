@@ -16,6 +16,7 @@ import { MixinUsage } from "./builder/mixin_usage";
 import { ActionView } from "./builder/view/action_view";
 import { ActionReportView } from "./builder/view/action_report_view";
 import { ActionReportViewActionReference } from "./builder/action_report_view_action_reference";
+import { BinomialCondition } from "./builder/condition/binomial_condition";
 
 function main() {
   const resolver = new ViewResolver({
@@ -211,7 +212,19 @@ function main() {
         relatedActions: [
           new ActionReportViewActionReference({
             actionName: "ACTION_個別ケース相談一時相談",
-            conditions: []
+            conditions: [
+              new BinomialCondition({
+                value: new SelectValue({
+                  sourceColumnName: "タイムスタンプ",
+                  source: "ACTION_PLUS利用開始",
+                }),
+                otherValue: new SelectValue({
+                  sourceColumnName: "タイムスタンプ",
+                  source: "ACTION_個別ケース相談一時相談",
+                }),
+                template: "TIMESTAMP_ADD(?, INTERVAL 1 MONTH) <= ?", // TODO: いったん仮の条件
+              }),
+            ],
           }),
         ],
       }),
