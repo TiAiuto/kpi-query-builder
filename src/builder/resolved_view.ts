@@ -39,7 +39,7 @@ export class ResolvedView {
           physicalName: column.physicalName,
           resolvedView: new ResolvedView({
             columns: this.columns,
-            sql: this.sql,
+            sql: this.sql, // sqlはいらない気もするが一応正しい値を渡しておく
             publicName: publicNameAlias || this.publicName,
             physicalName: physicalNameAlias || this.physicalName,
           }),
