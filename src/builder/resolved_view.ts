@@ -25,13 +25,24 @@ export class ResolvedView {
     this.sql = sql;
   }
 
-  asResolvedColumns(): PublicColumnReference[] {
+  asResolvedColumns({
+    publicNameAlias,
+    physicalNameAlias,
+  }: {
+    publicNameAlias?: string;
+    physicalNameAlias?: string;
+  } = {}): PublicColumnReference[] {
     return this.columns.map(
       (column) =>
         new PublicColumnReference({
           publicName: column.publicName,
           physicalName: column.physicalName,
-          resolvedView: this,
+          resolvedView: new ResolvedView({
+            columns: this.columns,
+            sql: this.sql,
+            publicName: publicNameAlias || this.publicName,
+            physicalName: physicalNameAlias || this.physicalName,
+          }),
         })
     );
   }

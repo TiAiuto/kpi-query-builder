@@ -56,10 +56,12 @@ export class ActionReportView extends View {
               }),
               otherValue: new SelectValue({
                 sourceColumnName: baseUnitName,
-                source: relatedAction.actionName,
+                source: relatedAction.actionNameAlias || relatedAction.actionName,
               }),
             }),
           ],
+          publicNameAlias: relatedAction.actionNameAlias, 
+          physicalNameAlias: `related_action_index_${index}`
         })
       );
       columns.push(
@@ -67,7 +69,7 @@ export class ActionReportView extends View {
           name: "関連アクション値",
           alphabetName: `related_action_base_unit_value_index_${index}`,
           value: new SelectValue({
-            source: relatedAction.actionName,
+            source: relatedAction.actionNameAlias || relatedAction.actionName,
             sourceColumnName: baseUnitName,
           }),
         })

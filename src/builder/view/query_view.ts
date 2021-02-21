@@ -61,7 +61,12 @@ export class QueryView extends ReferenceView {
     jointJoins.forEach((join) => {
       if (join instanceof OrdinaryJoin) {
         const joinDependentView = resolver.resolve(join.target);
-        availableColumns.push(...joinDependentView.asResolvedColumns());
+        availableColumns.push(
+          ...joinDependentView.asResolvedColumns({
+            publicNameAlias: join.publicNameAlias,
+            physicalNameAlias: join.physicalNameAlias,
+          })
+        );
       }
     });
     const context = new ViewResolutionContext({

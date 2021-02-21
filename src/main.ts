@@ -212,6 +212,7 @@ function main() {
         relatedActions: [
           new ActionReportViewActionReference({
             actionName: "ACTION_個別ケース相談一時相談",
+            actionNameAlias: 'ACTION_個別ケース相談一時相談1', 
             conditions: [
               new BinomialCondition({
                 value: new SelectValue({
@@ -220,7 +221,7 @@ function main() {
                 }),
                 otherValue: new SelectValue({
                   sourceColumnName: "タイムスタンプ",
-                  source: "ACTION_個別ケース相談一時相談",
+                  source: "ACTION_個別ケース相談一時相談1",
                 }),
                 template: "TIMESTAMP_ADD(?, INTERVAL 1 MONTH) <= ?", // TODO: いったん仮の条件
               }),
