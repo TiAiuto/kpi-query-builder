@@ -14,6 +14,8 @@ import { Order } from "./builder/order";
 import { Mixin } from "./builder/mixin";
 import { MixinUsage } from "./builder/mixin_usage";
 import { ActionView } from "./builder/view/action_view";
+import { ActionReportView } from "./builder/view/action_report_view";
+import { ActionReportViewActionReference } from "./builder/action_report_view_action_reference";
 
 function main() {
   const resolver = new ViewResolver({
@@ -173,35 +175,49 @@ function main() {
             value: new SelectValue({ sourceColumnName: "契約ユーザコード" }),
           }),
           new ValueSurface({
-            name: 'タイムスタンプ', 
-            alphabetName: 'time', 
-            value: new SelectValue({sourceColumnName: '利用開始日タイムスタンプ'})
-          })
+            name: "タイムスタンプ",
+            alphabetName: "time",
+            value: new SelectValue({
+              sourceColumnName: "利用開始日タイムスタンプ",
+            }),
+          }),
         ],
-        mixinUsages: [
-          new MixinUsage({name: '申込済み一時相談'})
-        ]
+        mixinUsages: [new MixinUsage({ name: "申込済み一時相談" })],
       }),
       new ActionView({
-        actionName: 'ACTION_個別ケース相談一時相談', 
-        actionAlphabetName: 'submit_counseling_first_question', 
-        source: '個別ケース相談一時相談', 
+        actionName: "ACTION_個別ケース相談一時相談",
+        actionAlphabetName: "submit_counseling_first_question",
+        source: "個別ケース相談一時相談",
         columns: [
           new ValueSurface({
-            name: 'ユーザコード', 
-            alphabetName: 'user_code', 
-            value: new SelectValue({sourceColumnName: 'ユーザコード'})
+            name: "ユーザコード",
+            alphabetName: "user_code",
+            value: new SelectValue({ sourceColumnName: "ユーザコード" }),
           }),
           new ValueSurface({
-            name: 'タイムスタンプ', 
-            alphabetName: 'time', 
-            value: new SelectValue({sourceColumnName: '申込日時'})
-          })
-        ]
-      })
+            name: "タイムスタンプ",
+            alphabetName: "time",
+            value: new SelectValue({ sourceColumnName: "申込日時" }),
+          }),
+        ],
+      }),
+      new ActionReportView({
+        name: "使用状況レポート",
+        alphabetName: "usage_report",
+        periodViewName: "いったん無視",
+        baseAction: new ActionReportViewActionReference({
+          actionName: "ACTION_PLUS利用開始",
+        }),
+        relatedActions: [
+          new ActionReportViewActionReference({
+            actionName: "ACTION_個別ケース相談一時相談",
+            conditions: []
+          }),
+        ],
+      }),
     ],
   });
-  const outputViewName = "ACTION_個別ケース相談一時相談";
+  const outputViewName = "使用状況レポート";
   const outputResolvedView = resolver.resolve(outputViewName);
   const withQueries = resolver.resolvedViews
     .map(
