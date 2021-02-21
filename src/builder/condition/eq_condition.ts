@@ -1,13 +1,9 @@
-import { Value } from "../value/value";
 import { ViewResolutionContext } from "../view_resolution_context";
-import {
-  BinominalCondition,
-  BinominalConditionArgs,
-} from "./binominal_condition";
+import { BinomialCondition, BinomialConditionArgs } from "./binomial_condition";
 
-export class EqCondition extends BinominalCondition {
-  constructor(args: BinominalConditionArgs) {
-    super({ ...args, type: "eq" });
+export class EqCondition extends BinomialCondition {
+  constructor(args: BinomialConditionArgs) {
+    super({ ...args, template: "? = ?" });
   }
 
   toSQL(context: ViewResolutionContext): string {
