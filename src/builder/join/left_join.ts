@@ -7,9 +7,7 @@ export class LeftJoin extends OrdinaryJoin {
   }
 
   toSQL(context: ViewResolutionContext): string {
-    return `LEFT JOIN ${
-      context.resolver.findView(this.target).alphabetName
-    } \n ON ${this.generateConditionPhrases(context).join(" AND \n ")} `;
+    return `LEFT ${this.buildJoinPhrase(context)}`;
   }
 
   toSQLForRoot(): string {

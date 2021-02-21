@@ -7,9 +7,7 @@ export class InnerJoin extends OrdinaryJoin {
   }
 
   toSQL(context: ViewResolutionContext): string {
-    return `INNER JOIN ${
-      context.resolver.findView(this.target).alphabetName
-    } \n ON ${this.generateConditionPhrases(context).join(" AND \n ")} `;
+    return `INNER ${this.buildJoinPhrase(context)}`;
   }
 
   toSQLForRoot(): string {
