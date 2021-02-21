@@ -135,7 +135,8 @@ function main() {
       }),
     ],
   });
-  resolver.resolve("PLUS契約者アクセスログ");
+  const outputViewName = 'PLUS契約者アクセスログ';
+  const outputResolvedView = resolver.resolve(outputViewName);
   const withQueries = resolver.resolvedViews
     .map(
       (resolvedView) =>
@@ -143,5 +144,6 @@ function main() {
     )
     .join(", \n\n");
   console.log(withQueries);
+  console.log(`SELECT * FROM ${outputResolvedView.physicalName};`);
 }
 main();
