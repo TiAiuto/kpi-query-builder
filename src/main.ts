@@ -13,6 +13,7 @@ import { TransformPattern } from "./builder/transform_pattern";
 import { Order } from "./builder/order";
 import { Mixin } from "./builder/mixin";
 import { MixinUsage } from "./builder/mixin_usage";
+import { ActionView } from "./builder/view/action_view";
 
 function main() {
   const resolver = new ViewResolver({
@@ -94,12 +95,12 @@ function main() {
             value: new RawValue({ raw: "TIMESTAMP_SECONDS(rack_plus.time)" }),
           }),
         ],
-          joins: [
-              new RawJoin({
-                  raw:
-                      "JOIN `h-navi.lo_production.users` users ON rack_plus.user_id = users.id",
-              }),
-          ],
+        joins: [
+          new RawJoin({
+            raw:
+              "JOIN `h-navi.lo_production.users` users ON rack_plus.user_id = users.id",
+          }),
+        ],
       }),
       new QueryView({
         name: "PLUS契約者アクセスログ",
@@ -133,9 +134,21 @@ function main() {
           }),
         ],
       }),
+      new ActionView({
+        actionName: "PLUS利用開始",
+        actionAlphabetName: "start_using_plus",
+        source: "ユーザコード付きPLUS契約",
+        columns: [
+          new ValueSurface({
+            name: "ユーザコード",
+            alphabetName: "user_code",
+            value: new SelectValue({ sourceColumnName: "契約ユーザコード" }),
+          }),
+        ],
+      }),
     ],
   });
-  const outputViewName = 'PLUS契約者アクセスログ';
+  const outputViewName = "PLUS契約者アクセスログ";
   const outputResolvedView = resolver.resolve(outputViewName);
   const withQueries = resolver.resolvedViews
     .map(

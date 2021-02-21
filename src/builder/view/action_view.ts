@@ -11,17 +11,17 @@ export class ActionView extends QueryView {
     actionAlphabetName,
     source,
     columns,
-    mixinUsages,
-    conditions,
-    joins,
+    mixinUsages = [],
+    conditions = [],
+    joins = [],
   }: {
     actionName: string;
     actionAlphabetName: string;
     columns: ValueSurface[];
     source: string;
-    mixinUsages: MixinUsage[];
-    conditions: Condition[];
-    joins: Join[];
+    mixinUsages?: MixinUsage[];
+    conditions?: Condition[];
+    joins?: Join[];
   }) {
     // ここで必要なカラム（時間とユーザID？）を持っているか縛るのもあり
 
