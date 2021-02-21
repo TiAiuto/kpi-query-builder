@@ -167,7 +167,7 @@ function main() {
       }),
       new ActionView({
         actionName: "ACTION_PLUS利用開始",
-        actionAlphabetName: "start_using_plus",
+        actionAlphabetName: "action_start_using_plus",
         source: "ユーザコード付きPLUS契約",
         columns: [
           new ValueSurface({
@@ -187,7 +187,7 @@ function main() {
       }),
       new ActionView({
         actionName: "ACTION_個別ケース相談一時相談",
-        actionAlphabetName: "submit_counseling_first_question",
+        actionAlphabetName: "action_submit_counseling_first_question",
         source: "個別ケース相談一時相談",
         columns: [
           new ValueSurface({
