@@ -56,7 +56,7 @@ export class RootView extends View {
         return new SelectColumn({
           publicName: column.name,
           physicalName: column.alphabetName,
-          selectSQL: column.value.toSQL(context), // RawValueはselectを想定しているがWHEREなどでも動くはず
+          selectSQL: `${column.value.toSQLForRoot(context)} AS ${column.alphabetName}`, // RawValueはselectを想定しているがWHEREなどでも動くはず
         });
       } else {
         throw new Error("Raw Value以外のcolumn指定は未対応");

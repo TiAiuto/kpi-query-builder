@@ -35,7 +35,7 @@ export class QueryView extends ReferenceView {
         new SelectColumn({
           publicName: column.name,
           physicalName: column.alphabetName,
-          selectSQL: column.value.toSQL(context),
+          selectSQL: `${column.value.toSQL(context)} AS ${column.alphabetName}`,
         })
       );
     });
