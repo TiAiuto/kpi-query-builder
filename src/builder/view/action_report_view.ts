@@ -7,6 +7,7 @@ import { LeftJoin } from "../join/left_join";
 import { EqCondition } from "../condition/eq_condition";
 import { SelectValue } from "../value/select_value";
 import { Join } from "../join/join";
+import { ValueSurface } from "../value_surface";
 
 export class ActionReportView extends View {
   // 期間を使う場合はここで基準集合も指定
@@ -46,9 +47,19 @@ export class ActionReportView extends View {
   }
 
   resolve(resolver: ViewResolver): ResolvedView {
-    const actorIdentifier = "ユーザコード";
+    const baseUnitName = "ユーザコード";
     const joins: Join[] = [];
-    this.relatedActions.forEach((relatedAction) => {
+    const columns: ValueSurface[] = [
+      new ValueSurface({
+        name: "基準アクション値",
+        alphabetName: "base_action_base_unit_value",
+        value: new SelectValue({
+          sourceColumnName: baseUnitName,
+          source: this.baseAction.actionName,
+        }),
+      }),
+    ];
+    this.relatedActions.forEach((relatedAction, index) => {
       joins.push(
         new LeftJoin({
           target: relatedAction.actionName,
@@ -56,15 +67,25 @@ export class ActionReportView extends View {
             ...relatedAction.conditions,
             new EqCondition({
               value: new SelectValue({
-                sourceColumnName: actorIdentifier,
+                sourceColumnName: baseUnitName,
                 source: this.baseAction.actionName,
               }),
               otherValue: new SelectValue({
-                sourceColumnName: actorIdentifier,
+                sourceColumnName: baseUnitName,
                 source: relatedAction.actionName,
               }),
             }),
           ],
+        })
+      );
+      columns.push(
+        new ValueSurface({
+          name: "関連アクション値",
+          alphabetName: `related_action_base_unit_value_index_${index}`,
+          value: new SelectValue({
+            source: relatedAction.actionName,
+            sourceColumnName: baseUnitName,
+          }),
         })
       );
     });
@@ -75,7 +96,8 @@ export class ActionReportView extends View {
       source: this.baseAction.actionName,
       conditions: [...this.baseAction.conditions],
       columnsInheritanceEnabled: false,
-      joins
+      columns,
+      joins,
     });
 
     return new ResolvedView({
