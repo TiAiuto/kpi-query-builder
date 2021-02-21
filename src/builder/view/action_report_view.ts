@@ -12,6 +12,14 @@ export class ActionReportView extends View {
     // 条件の指定は抽象化した記述で済ませたい（JOINをそんなに意識したくない）
     // [基準アクション日, 基準アクションユーザ識別子, 関連アクション1アクション日]
 
+    /**
+     * 使用例イメージ：
+     * 基準アクション：サービス利用開始
+     * 関連アクション：ケース相談申込、条件：基準アクションから一か月以内（内部で結合：基準アクションとユーザコードで結合）
+     * 追加情報：基準アクションの月を追加
+     * 集計：月ごとに基準アクション、関連アクション数を集計
+     */
+
     periodViewName: string; // 本当は事前にView作るんじゃなくて自動生成したい
     baseAction: ActionReportViewActionReference;
     relatedActions: ActionReportViewActionReference[];
