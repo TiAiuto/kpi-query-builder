@@ -34,6 +34,12 @@ function main() {
           }),
         ],
       }),
+      new Mixin({
+        name: "申込済み一時相談",
+        conditions: [
+          new RawCondition({ raw: "application_datetime IS NOT NULL" }),
+        ],
+      }),
     ],
     views: [
       new RootView({
@@ -101,6 +107,28 @@ function main() {
               "JOIN `h-navi.lo_production.users` users ON rack_plus.user_id = users.id",
           }),
         ],
+      }),
+      new RootView({
+        name: "個別ケース相談一時相談",
+        alphabetName: "plus_counseling_first_applictions",
+        physicalSource:
+          "`h-navi.lo_plusmine_production.counseling_case_application_tickets`",
+        physicalSourceAlias: "application_tickets",
+        columns: [
+          new ValueSurface({
+            name: "ユーザコード",
+            alphabetName: "user_code",
+            value: new RawValue({ raw: "application_tickets.user_code" }),
+          }),
+          new ValueSurface({
+            name: "申込日時",
+            alphabetName: "application_datetime",
+            value: new RawValue({
+              raw: "application_tickets.application_datetime",
+            }),
+          }),
+        ],
+        dateSuffixEnabled: false,
       }),
       new QueryView({
         name: "PLUS契約者アクセスログ",
