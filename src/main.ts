@@ -163,7 +163,7 @@ function main() {
         ],
       }),
       new ActionView({
-        actionName: "PLUS利用開始",
+        actionName: "ACTION_PLUS利用開始",
         actionAlphabetName: "start_using_plus",
         source: "ユーザコード付きPLUS契約",
         columns: [
@@ -172,11 +172,36 @@ function main() {
             alphabetName: "user_code",
             value: new SelectValue({ sourceColumnName: "契約ユーザコード" }),
           }),
+          new ValueSurface({
+            name: 'タイムスタンプ', 
+            alphabetName: 'time', 
+            value: new SelectValue({sourceColumnName: '利用開始日タイムスタンプ'})
+          })
         ],
+        mixinUsages: [
+          new MixinUsage({name: '申込済み一時相談'})
+        ]
       }),
+      new ActionView({
+        actionName: 'ACTION_個別ケース相談一時相談', 
+        actionAlphabetName: 'submit_counseling_first_question', 
+        source: '個別ケース相談一時相談', 
+        columns: [
+          new ValueSurface({
+            name: 'ユーザコード', 
+            alphabetName: 'user_code', 
+            value: new SelectValue({sourceColumnName: 'ユーザコード'})
+          }),
+          new ValueSurface({
+            name: 'タイムスタンプ', 
+            alphabetName: 'time', 
+            value: new SelectValue({sourceColumnName: '申込日時'})
+          })
+        ]
+      })
     ],
   });
-  const outputViewName = "PLUS契約者アクセスログ";
+  const outputViewName = "ACTION_個別ケース相談一時相談";
   const outputResolvedView = resolver.resolve(outputViewName);
   const withQueries = resolver.resolvedViews
     .map(
