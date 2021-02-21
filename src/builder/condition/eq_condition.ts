@@ -1,16 +1,13 @@
 import { Value } from "../value/value";
 import { ViewResolutionContext } from "../view_resolution_context";
-import { Condition } from "./condition";
+import {
+  BinominalCondition,
+  BinominalConditionArgs,
+} from "./binominal_condition";
 
-export class EqCondition extends Condition {
-  value: Value;
-  otherValue: Value;
-
-  constructor({ value, otherValue }: { value: Value; otherValue: Value }) {
-    super({ type: "eq" });
-
-    this.value = value;
-    this.otherValue = otherValue;
+export class EqCondition extends BinominalCondition {
+  constructor(args: BinominalConditionArgs) {
+    super({ ...args, type: "eq" });
   }
 
   toSQL(context: ViewResolutionContext): string {
