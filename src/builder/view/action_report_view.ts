@@ -19,6 +19,9 @@ export class ActionReportView extends View {
   periodViewName: string; // 本当は事前にView作るんじゃなくて自動生成したい
   baseAction: ActionReportViewActionReference;
   relatedActions: ActionReportViewActionReference[];
+  // アドネットワークの管理画面みたいにどの列でGROUP BYするかだけここに追記していけばいいのかも
+  // ユーザごとに表示したい場合はGROUP BYにユーザコードも入れてもらえばいいだけ
+  
   // ここでカウントするかしないか、するならユニークでカウントするかを持ちたい
   // 単位を日単位、週単位、月単位で分けたい
 
