@@ -169,7 +169,7 @@ function main() {
             }),
           }),
         ],
-        columnsInheritanceEnabled: true,
+        inheritAllColumnsEnabled: true,
         mixinUsages: [
           new MixinUsage({
             name: "PLUS契約ユーザ（解約済み含む）",
@@ -204,7 +204,7 @@ function main() {
         actionName: "ACTION_個別ケース相談TOP表示",
         actionAlphabetName: "action_visit_counseling_top",
         source: "PLUSユーザコード付きアクセスログ",
-        columnsInheritanceEnabled: true,
+        inheritAllColumnsEnabled: true,
         conditions: [
           new RawCondition({
             raw: "REGEXP_CONTAINS(path, '^/plus/counseling$')",

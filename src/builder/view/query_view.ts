@@ -10,18 +10,18 @@ import { ReferenceView, ReferenceViewArgs } from "./reference_view";
 
 export class QueryView extends ReferenceView {
   groups: Group[];
-  columnsInheritanceEnabled: boolean;
+  inheritAllColumnsEnabled: boolean;
 
   constructor({
-    columnsInheritanceEnabled,
+    inheritAllColumnsEnabled,
     groups = [],
     ...args
   }: ReferenceViewArgs & {
-    columnsInheritanceEnabled: boolean;
+    inheritAllColumnsEnabled: boolean;
     groups?: Group[];
   }) {
     super({ type: "query", ...args });
-    this.columnsInheritanceEnabled = columnsInheritanceEnabled;
+    this.inheritAllColumnsEnabled = inheritAllColumnsEnabled;
     this.groups = groups;
   }
 
@@ -39,7 +39,7 @@ export class QueryView extends ReferenceView {
         })
       );
     });
-    if (this.columnsInheritanceEnabled) {
+    if (this.inheritAllColumnsEnabled) {
       columns.push(...dependentView.asInheritedExtractedColumns());
     }
     return columns;

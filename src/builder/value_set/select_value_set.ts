@@ -20,7 +20,7 @@ export class SelectValueSet extends ValueSet implements SourceColumn {
       name: "一時テーブル",
       alphabetName: "temporary table",
       source: this.source,
-      columnsInheritanceEnabled: false,
+      inheritAllColumnsEnabled: false,
       columns: [
         new ValueSurface({
           name: "抽出対象カラム",

@@ -117,7 +117,7 @@ export class ActionReportView extends View {
       alphabetName: `${this.alphabetName}_inner_query`,
       source: this.baseAction.actionName,
       conditions: [...this.baseAction.conditions],
-      columnsInheritanceEnabled: false,
+      inheritAllColumnsEnabled: false,
       columns,
       joins,
       orders: [
@@ -178,7 +178,7 @@ export class ActionReportView extends View {
       name: `${this.name}_集計クエリ`,
       alphabetName: `${this.alphabetName}_aggregate_query`,
       source: innerQueryView.name,
-      columnsInheritanceEnabled: false,
+      inheritAllColumnsEnabled: false,
       columns: aggregateColumns,
       orders: [
         new Order({
