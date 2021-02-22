@@ -107,6 +107,11 @@ function main() {
             alphabetName: "time",
             value: new RawValue({ raw: "TIMESTAMP_SECONDS(rack_plus.time)" }),
           }),
+          new ValueSurface({
+            name: "流入元パラメータ",
+            alphabetName: "source_param",
+            value: new RawValue({ raw: 'IF(referrer = "https://h-navi.jp/plus/welcome", "welcome", JSON_EXTRACT_SCALAR(message, "$.params.s"))' }), // WELCOMEスライドの場合はブックマークされることを考慮してパラメータを仕込んでいない
+          }),
         ],
         joins: [
           new RawJoin({
