@@ -21,9 +21,8 @@ export class ActionReportView extends View {
   relatedActions: ActionReportViewActionReference[];
   // アドネットワークの管理画面みたいにどの列でGROUP BYするかだけここに追記していけばいいのかも
   // ユーザごとに表示したい場合はGROUP BYにユーザコードも入れてもらえばいいだけ
-  
-  // ここでカウントするかしないか、するならユニークでカウントするかを持ちたい
-  // 単位を日単位、週単位、月単位で分けたい
+  // あとはACTIONのViewの結合を支援するくらい
+  // 集計方法はユニークと全部カウントを切り替えられるようにする
 
   constructor({
     periodViewName,
@@ -50,10 +49,6 @@ export class ActionReportView extends View {
     const periodUnitName = "基準アクション日";
     const periodUnitAlphabetName = "base_action_date";
 
-    const aggregatePatteren = new AggregatePattern({
-      name: "COUNT_DISTINCT",
-    });
-
     const joins: Join[] = [];
     const columns: ValueSurface[] = [
       new ValueSurface({
@@ -72,6 +67,13 @@ export class ActionReportView extends View {
         value: new SelectValue({
           sourceColumnName: baseUnitName,
           source: this.baseAction.actionName,
+        }),
+      }),
+      new ValueSurface({
+        name: "流入元パラメータ",
+        alphabetName: "source_param",
+        value: new SelectValue({
+          sourceColumnName: "流入元パラメータ",
         }),
       }),
     ];
@@ -142,12 +144,17 @@ export class ActionReportView extends View {
         value: groupByValue,
       }),
       new ValueSurface({
+        name: "流入元パラメータ",
+        alphabetName: "source_param",
+        value: new SelectValue({ sourceColumnName: "流入元パラメータ" }),
+      }),
+      new ValueSurface({
         name: `${baseActionView.name}_集計値`,
         alphabetName: `${baseActionView.alphabetName}_aggregated_value`,
         value: new AggregateValue({
           sourceColumnName: "基準アクション値",
           source: innerQueryView.name,
-          pattern: aggregatePatteren,
+          pattern: new AggregatePattern({ name: "COUNT_DISTINCT" }), // 利用開始ユーザ数だけはユニークで数えたい
         }),
       }),
     ];
@@ -161,7 +168,7 @@ export class ActionReportView extends View {
           value: new AggregateValue({
             sourceColumnName: `関連アクション値_${index}`,
             source: innerQueryView.name,
-            pattern: aggregatePatteren,
+            pattern: new AggregatePattern({ name: "COUNT" }),
           }),
         })
       );
@@ -181,6 +188,9 @@ export class ActionReportView extends View {
       groups: [
         new Group({
           value: groupByValue,
+        }),
+        new Group({
+          value: new SelectValue({ sourceColumnName: "流入元パラメータ" }),
         }),
       ],
     });
