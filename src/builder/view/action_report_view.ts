@@ -69,13 +69,6 @@ export class ActionReportView extends View {
           source: this.baseAction.actionName,
         }),
       }),
-      new ValueSurface({
-        name: "流入元パラメータ",
-        alphabetName: "source_param",
-        value: new SelectValue({
-          sourceColumnName: "流入元パラメータ",
-        }),
-      }),
     ];
     this.relatedActions.forEach((relatedAction, index) => {
       const relatedActionView = resolver.findView(relatedAction.actionName);
@@ -117,7 +110,7 @@ export class ActionReportView extends View {
       alphabetName: `${this.alphabetName}_inner_query`,
       source: this.baseAction.actionName,
       conditions: [...this.baseAction.conditions],
-      inheritAllColumnsEnabled: false,
+      inheritColumns: ['流入元パラメータ'], 
       columns,
       joins,
       orders: [
@@ -142,11 +135,6 @@ export class ActionReportView extends View {
         name: periodUnitName,
         alphabetName: periodUnitAlphabetName,
         value: groupByValue,
-      }),
-      new ValueSurface({
-        name: "流入元パラメータ",
-        alphabetName: "source_param",
-        value: new SelectValue({ sourceColumnName: "流入元パラメータ" }),
       }),
       new ValueSurface({
         name: `${baseActionView.name}_集計値`,
@@ -178,7 +166,7 @@ export class ActionReportView extends View {
       name: `${this.name}_集計クエリ`,
       alphabetName: `${this.alphabetName}_aggregate_query`,
       source: innerQueryView.name,
-      inheritAllColumnsEnabled: false,
+      inheritColumns: ["流入元パラメータ"],
       columns: aggregateColumns,
       orders: [
         new Order({

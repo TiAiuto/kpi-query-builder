@@ -19,7 +19,7 @@ export class QueryView extends ReferenceView {
     inheritColumns = [],
     ...args
   }: ReferenceViewArgs & {
-    inheritAllColumnsEnabled: boolean;
+    inheritAllColumnsEnabled?: boolean;
     inheritColumns?: string[];
     groups?: Group[];
   }) {
@@ -44,7 +44,19 @@ export class QueryView extends ReferenceView {
       );
     });
     if (this.inheritAllColumnsEnabled) {
+      // TODO: 本当はJoinしたテーブルの分もとりにいったほうが正しそう
       columns.push(...dependentView.asInheritedExtractedColumns());
+    } else {
+      this.inheritColumns.forEach((inheritColumn) => {
+        const columnRef = context.findColumnByName(inheritColumn);
+        columns.push(
+          new SelectColumn({
+            publicName: columnRef.publicName,
+            physicalName: columnRef.physicalName,
+            selectSQL: `${columnRef.physicalName}`,
+          })
+        );
+      });
     }
     return columns;
   }
