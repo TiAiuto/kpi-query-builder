@@ -56,14 +56,14 @@ function main() {
             name: "利用開始日タイムスタンプ",
             alphabetName: "usage_start_date_timestamp",
             value: new RawValue({
-              raw: "TIMESTAMP_SUB(usage_start_date, INTERVAL 9 HOUR)",
+              raw: "usage_start_date", // Dateの値は正しいタイムゾーンで入っているのでそのまま使う
             }),
           }),
           new ValueSurface({
             name: "利用終了日タイムスタンプ",
             alphabetName: "usage_end_date_timestamp",
             value: new RawValue({
-              raw: "TIMESTAMP_SUB(usage_end_date, INTERVAL 9 HOUR)",
+              raw: "usage_end_date",
             }),
           }),
           new ValueSurface({
