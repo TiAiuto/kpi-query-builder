@@ -183,7 +183,6 @@ function main() {
             }),
           }),
         ],
-        mixinUsages: [new MixinUsage({ name: "申込済み一時相談" })],
       }),
       new ActionView({
         actionName: "ACTION_個別ケース相談一時相談",
@@ -201,6 +200,7 @@ function main() {
             value: new SelectValue({ sourceColumnName: "申込日時" }),
           }),
         ],
+        mixinUsages: [new MixinUsage({ name: "申込済み一時相談" })],
       }),
       new ActionReportView({
         name: "使用状況レポート",
@@ -212,7 +212,7 @@ function main() {
         relatedActions: [
           new ActionReportViewActionReference({
             actionName: "ACTION_個別ケース相談一時相談",
-            actionNameAlias: 'ACTION_個別ケース相談一時相談1', 
+            actionNameAlias: 'ACTION_個別ケース相談一時相談1',
             conditions: [
               new BinomialCondition({
                 value: new SelectValue({
@@ -223,7 +223,7 @@ function main() {
                   sourceColumnName: "タイムスタンプ",
                   source: "ACTION_個別ケース相談一時相談1",
                 }),
-                template: "TIMESTAMP_ADD(?, INTERVAL 1 MONTH) <= ?", // TODO: いったん仮の条件
+                template: "DATE_DIFF(DATE(?), DATE(?), DAY) <= 31",
               }),
             ],
           }),
@@ -231,14 +231,15 @@ function main() {
       }),
     ],
   });
-  const outputViewName = "使用状況レポート";
-  const outputResolvedView = resolver.resolve(outputViewName);
+  const bootstrapViewName = "使用状況レポート";
+  const outputResolvedView = resolver.resolve(bootstrapViewName);
   const withQueries = resolver.resolvedViews
     .map(
       (resolvedView) =>
         `${resolvedView.physicalName} AS ( ${resolvedView.sql} )`
     )
     .join(", \n\n");
+  console.log('WITH ');
   console.log(withQueries);
   console.log(`SELECT * FROM ${outputResolvedView.physicalName};`);
 }
