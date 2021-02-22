@@ -55,12 +55,16 @@ function main() {
           new ValueSurface({
             name: "利用開始日タイムスタンプ",
             alphabetName: "usage_start_date_timestamp",
-            value: new RawValue({ raw: "usage_start_date" }),
+            value: new RawValue({
+              raw: "TIMESTAMP_SUB(usage_start_date, INTERVAL 9 HOUR)",
+            }),
           }),
           new ValueSurface({
             name: "利用終了日タイムスタンプ",
             alphabetName: "usage_end_date_timestamp",
-            value: new RawValue({ raw: "usage_end_date" }),
+            value: new RawValue({
+              raw: "TIMESTAMP_SUB(usage_end_date, INTERVAL 9 HOUR)",
+            }),
           }),
           new ValueSurface({
             name: "契約ユーザコード",
@@ -212,16 +216,16 @@ function main() {
         relatedActions: [
           new ActionReportViewActionReference({
             actionName: "ACTION_個別ケース相談一時相談",
-            actionNameAlias: 'ACTION_個別ケース相談一時相談1',
+            actionNameAlias: "ACTION_個別ケース相談一時相談1",
             conditions: [
               new BinomialCondition({
                 value: new SelectValue({
                   sourceColumnName: "タイムスタンプ",
-                  source: "ACTION_PLUS利用開始",
+                  source: "ACTION_個別ケース相談一時相談1",
                 }),
                 otherValue: new SelectValue({
                   sourceColumnName: "タイムスタンプ",
-                  source: "ACTION_個別ケース相談一時相談1",
+                  source: "ACTION_PLUS利用開始",
                 }),
                 template: "DATE_DIFF(DATE(?), DATE(?), DAY) <= 31",
               }),
@@ -239,7 +243,7 @@ function main() {
         `${resolvedView.physicalName} AS ( ${resolvedView.sql} )`
     )
     .join(", \n\n");
-  console.log('WITH ');
+  console.log("WITH ");
   console.log(withQueries);
   console.log(`SELECT * FROM ${outputResolvedView.physicalName};`);
 }
