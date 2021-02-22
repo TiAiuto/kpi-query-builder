@@ -11,6 +11,9 @@ import { ValueSurface } from "../value_surface";
 import { TransformValue } from "../value/transform_value";
 import { TransformPattern } from "../transform_pattern";
 import { Order } from "../order";
+import { Group } from "../group";
+import { AggregateValue } from "../value/aggregate_value";
+import { AggregatePattern } from "../aggregate_pattern";
 
 export class ActionReportView extends View {
   periodViewName: string; // 本当は事前にView作るんじゃなくて自動生成したい
@@ -66,7 +69,7 @@ export class ActionReportView extends View {
         new LeftJoin({
           target: relatedAction.actionName,
           conditions: [
-            ...relatedAction.conditions,
+            ...relatedAction.conditions, // ここで条件適用ではなくCOUNT時に条件適用でもよい（効率が良いほうにする）
             new EqCondition({
               value: new SelectValue({
                 sourceColumnName: baseUnitName,
@@ -85,7 +88,7 @@ export class ActionReportView extends View {
       );
       columns.push(
         new ValueSurface({
-          name: "関連アクション値",
+          name: `関連アクション値_${index}`,
           alphabetName: `${relatedActionView.alphabetName}_base_unit_value_index_${index}`,
           value: new SelectValue({
             source: relatedAction.actionNameAlias || relatedAction.actionName,
@@ -113,11 +116,75 @@ export class ActionReportView extends View {
       ],
     });
 
+    resolver.addView(innerQueryView);
+
+    const groupByValue = new SelectValue({
+      sourceColumnName: "基準アクション日",
+      source: innerQueryView.name,
+    });
+
+    const aggregatePatteren = new AggregatePattern({
+      name: "COUNT_DISTINCT",
+    });
+
+    const aggregateColumns = [
+      new ValueSurface({
+        name: "基準アクション日",
+        alphabetName: "base_action_date",
+        value: groupByValue,
+      }),
+      new ValueSurface({
+        name: `${baseActionView.name}_集計値`,
+        alphabetName: `${baseActionView.alphabetName}_aggregated_value`,
+        value: new AggregateValue({
+          sourceColumnName: "基準アクション値",
+          source: innerQueryView.name,
+          pattern: aggregatePatteren,
+        }),
+      }),
+    ];
+
+    this.relatedActions.forEach((relatedAction, index) => {
+      const relatedActionView = resolver.findView(relatedAction.actionName);
+      aggregateColumns.push(
+        new ValueSurface({
+          name: `${relatedActionView.name}_集計値`,
+          alphabetName: `${relatedActionView.alphabetName}_aggregated_value`,
+          value: new AggregateValue({
+            sourceColumnName: `関連アクション値_${index}`,
+            source: innerQueryView.name,
+            pattern: aggregatePatteren,
+          }),
+        })
+      );
+    });
+
+    const aggregateView = new QueryView({
+      name: `${this.name}_集計クエリ`,
+      alphabetName: `${this.alphabetName}_aggregate_query`,
+      source: innerQueryView.name,
+      columnsInheritanceEnabled: false,
+      columns: aggregateColumns,
+      orders: [
+        new Order({
+          value: groupByValue,
+        }),
+      ],
+      groups: [
+        new Group({
+          value: groupByValue,
+        }),
+      ],
+    });
+    resolver.addView(aggregateView);
+
+    const resolvedAggregateView = aggregateView.resolve(resolver);
+
     return new ResolvedView({
       publicName: this.name,
       physicalName: this.alphabetName,
-      columns: [],
-      sql: innerQueryView.resolve(resolver).sql, // TODO: 実装
+      columns: resolvedAggregateView.columns,
+      sql: resolvedAggregateView.sql,
     });
   }
 }

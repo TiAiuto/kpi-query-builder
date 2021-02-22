@@ -44,4 +44,8 @@ export class ViewResolver {
 
     throw new Error(`${name}は未定義`);
   }
+
+  addView(view: View): void {
+    this.views.push(view);
+  }
 }
