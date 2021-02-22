@@ -8,6 +8,9 @@ import { EqCondition } from "../condition/eq_condition";
 import { SelectValue } from "../value/select_value";
 import { Join } from "../join/join";
 import { ValueSurface } from "../value_surface";
+import { TransformValue } from "../value/transform_value";
+import { TransformPattern } from "../transform_pattern";
+import { Order } from "../order";
 
 export class ActionReportView extends View {
   periodViewName: string; // 本当は事前にView作るんじゃなくて自動生成したい
@@ -33,12 +36,24 @@ export class ActionReportView extends View {
   }
 
   resolve(resolver: ViewResolver): ResolvedView {
+    const baseActionView = resolver.findView(this.baseAction.actionName);
     const baseUnitName = "ユーザコード";
+    const timestampName = "タイムスタンプ";
     const joins: Join[] = [];
     const columns: ValueSurface[] = [
       new ValueSurface({
+        // ここでどの単位で抽出するかは選択可能にするとよさそう
+        name: "基準アクション日",
+        alphabetName: "base_action_date",
+        value: new TransformValue({
+          sourceColumnName: timestampName,
+          source: this.baseAction.actionName,
+          pattern: new TransformPattern({ name: "タイムスタンプ_日抽出" }),
+        }),
+      }),
+      new ValueSurface({
         name: "基準アクション値",
-        alphabetName: "base_action_base_unit_value",
+        alphabetName: `${baseActionView.alphabetName}_base_unit_value`,
         value: new SelectValue({
           sourceColumnName: baseUnitName,
           source: this.baseAction.actionName,
@@ -46,6 +61,7 @@ export class ActionReportView extends View {
       }),
     ];
     this.relatedActions.forEach((relatedAction, index) => {
+      const relatedActionView = resolver.findView(relatedAction.actionName);
       joins.push(
         new LeftJoin({
           target: relatedAction.actionName,
@@ -58,18 +74,19 @@ export class ActionReportView extends View {
               }),
               otherValue: new SelectValue({
                 sourceColumnName: baseUnitName,
-                source: relatedAction.actionNameAlias || relatedAction.actionName,
+                source:
+                  relatedAction.actionNameAlias || relatedAction.actionName,
               }),
             }),
           ],
-          publicNameAlias: relatedAction.actionNameAlias, 
-          physicalNameAlias: `related_action_index_${index}`
+          publicNameAlias: relatedAction.actionNameAlias,
+          physicalNameAlias: `${relatedActionView.alphabetName}_index_${index}`,
         })
       );
       columns.push(
         new ValueSurface({
           name: "関連アクション値",
-          alphabetName: `related_action_base_unit_value_index_${index}`,
+          alphabetName: `${relatedActionView.alphabetName}_base_unit_value_index_${index}`,
           value: new SelectValue({
             source: relatedAction.actionNameAlias || relatedAction.actionName,
             sourceColumnName: baseUnitName,
@@ -86,6 +103,14 @@ export class ActionReportView extends View {
       columnsInheritanceEnabled: false,
       columns,
       joins,
+      orders: [
+        new Order({
+          value: new SelectValue({
+            sourceColumnName: timestampName,
+            source: this.baseAction.actionName,
+          }),
+        }),
+      ],
     });
 
     return new ResolvedView({
