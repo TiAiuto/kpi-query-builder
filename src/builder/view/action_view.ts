@@ -10,18 +10,20 @@ export class ActionView extends QueryView {
     actionName, // 一応命名気をつけてねということでキー名も変える
     actionAlphabetName,
     source,
-    columns,
+    columns = [],
     mixinUsages = [],
     conditions = [],
     joins = [],
+    columnsInheritanceEnabled = false,
   }: {
     actionName: string;
     actionAlphabetName: string;
-    columns: ValueSurface[];
+    columns?: ValueSurface[];
     source: string;
     mixinUsages?: MixinUsage[];
     conditions?: Condition[];
     joins?: Join[];
+    columnsInheritanceEnabled?: boolean;
   }) {
     // ここで必要なカラム（時間とユーザID？）を持っているか縛るのもあり
 
@@ -34,7 +36,7 @@ export class ActionView extends QueryView {
       conditions,
       joins,
       orders: [],
-      columnsInheritanceEnabled: false, // 継承は不許可
+      columnsInheritanceEnabled,
     });
   }
 }

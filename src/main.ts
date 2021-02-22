@@ -26,6 +26,10 @@ function main() {
         conditions: [new RawCondition({ raw: "usage_start_date IS NOT NULL" })],
       }),
       new Mixin({
+        name: "成功リクエスト",
+        conditions: [new RawCondition({ raw: "status_code = '200'" })],
+      }),
+      new Mixin({
         name: "PLUS契約ユーザ（解約済み含む）",
         conditions: [
           new InCondition({
@@ -110,7 +114,10 @@ function main() {
           new ValueSurface({
             name: "流入元パラメータ",
             alphabetName: "source_param",
-            value: new RawValue({ raw: 'IF(referrer = "https://h-navi.jp/plus/welcome", "welcome", JSON_EXTRACT_SCALAR(message, "$.params.s"))' }), // WELCOMEスライドの場合はブックマークされることを考慮してパラメータを仕込んでいない
+            value: new RawValue({
+              raw:
+                'IF(referrer = "https://h-navi.jp/plus/welcome", "welcome", JSON_EXTRACT_SCALAR(message, "$.params.s"))',
+            }), // WELCOMEスライドの場合はブックマークされることを考慮してパラメータを仕込んでいない
           }),
         ],
         joins: [
@@ -194,7 +201,18 @@ function main() {
         ],
       }),
       new ActionView({
-        actionName: "ACTION_個別ケース相談一時相談",
+        actionName: "ACTION_個別ケース相談TOP表示",
+        actionAlphabetName: "action_visit_counseling_top",
+        source: "PLUSユーザコード付きアクセスログ",
+        columnsInheritanceEnabled: true,
+        conditions: [
+          new RawCondition({
+            raw: "REGEXP_CONTAINS(path, '^/plus/counseling$')",
+          }),
+        ],
+      }),
+      new ActionView({
+        actionName: "ACTION_個別ケース相談一時相談申込",
         actionAlphabetName: "action_submit_counseling_first_question",
         source: "個別ケース相談一時相談",
         columns: [
@@ -220,13 +238,28 @@ function main() {
         }),
         relatedActions: [
           new ActionReportViewActionReference({
-            actionName: "ACTION_個別ケース相談一時相談",
-            actionNameAlias: "ACTION_個別ケース相談一時相談1",
+            actionName: "ACTION_個別ケース相談TOP表示",
             conditions: [
               new BinomialCondition({
                 value: new SelectValue({
                   sourceColumnName: "タイムスタンプ",
-                  source: "ACTION_個別ケース相談一時相談1",
+                  source: "ACTION_個別ケース相談TOP表示",
+                }),
+                otherValue: new SelectValue({
+                  sourceColumnName: "タイムスタンプ",
+                  source: "ACTION_PLUS利用開始",
+                }),
+                template: "DATE_DIFF(DATE(?), DATE(?), DAY) <= 31",
+              }),
+            ],
+          }),new ActionReportViewActionReference({
+            actionName: "ACTION_個別ケース相談一時相談申込",
+            actionNameAlias: "ACTION_個別ケース相談一時相談申込1",
+            conditions: [
+              new BinomialCondition({
+                value: new SelectValue({
+                  sourceColumnName: "タイムスタンプ",
+                  source: "ACTION_個別ケース相談一時相談申込1",
                 }),
                 otherValue: new SelectValue({
                   sourceColumnName: "タイムスタンプ",
