@@ -11,17 +11,21 @@ import { ReferenceView, ReferenceViewArgs } from "./reference_view";
 export class QueryView extends ReferenceView {
   groups: Group[];
   inheritAllColumnsEnabled: boolean;
+  inheritColumns: string[];
 
   constructor({
-    inheritAllColumnsEnabled,
+    inheritAllColumnsEnabled = false,
     groups = [],
+    inheritColumns = [],
     ...args
   }: ReferenceViewArgs & {
     inheritAllColumnsEnabled: boolean;
+    inheritColumns?: string[];
     groups?: Group[];
   }) {
     super({ type: "query", ...args });
     this.inheritAllColumnsEnabled = inheritAllColumnsEnabled;
+    this.inheritColumns = inheritColumns;
     this.groups = groups;
   }
 
