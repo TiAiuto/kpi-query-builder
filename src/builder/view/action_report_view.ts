@@ -42,16 +42,25 @@ export class ActionReportView extends View {
     const baseActionView = resolver.findView(this.baseAction.actionName);
     const baseUnitName = "ユーザコード";
     const timestampName = "タイムスタンプ";
+
+    const periodUnitType = "タイムスタンプ_日抽出";
+    const periodUnitName = "基準アクション日";
+    const periodUnitAlphabetName = "base_action_date";
+
+    const aggregatePatteren = new AggregatePattern({
+      name: "COUNT_DISTINCT",
+    });
+
     const joins: Join[] = [];
     const columns: ValueSurface[] = [
       new ValueSurface({
         // ここでどの単位で抽出するかは選択可能にするとよさそう
-        name: "基準アクション日",
-        alphabetName: "base_action_date",
+        name: periodUnitName,
+        alphabetName: periodUnitAlphabetName,
         value: new TransformValue({
           sourceColumnName: timestampName,
           source: this.baseAction.actionName,
-          pattern: new TransformPattern({ name: "タイムスタンプ_日抽出" }),
+          pattern: new TransformPattern({ name: periodUnitType }),
         }),
       }),
       new ValueSurface({
@@ -119,18 +128,14 @@ export class ActionReportView extends View {
     resolver.addView(innerQueryView);
 
     const groupByValue = new SelectValue({
-      sourceColumnName: "基準アクション日",
+      sourceColumnName: periodUnitName,
       source: innerQueryView.name,
-    });
-
-    const aggregatePatteren = new AggregatePattern({
-      name: "COUNT_DISTINCT",
     });
 
     const aggregateColumns = [
       new ValueSurface({
-        name: "基準アクション日",
-        alphabetName: "base_action_date",
+        name: periodUnitName,
+        alphabetName: periodUnitAlphabetName,
         value: groupByValue,
       }),
       new ValueSurface({
