@@ -426,7 +426,7 @@ function main() {
       }),
       new ActionView({
         actionName: "ACTION_オンライン勉強会参加",
-        actionAlphabetName: "action_entry_study_meeting",
+        actionAlphabetName: "action_attend_study_meeting",
         source: "オンライン勉強会申込",
         columns: [
           new ValueSurface({
@@ -520,7 +520,7 @@ function main() {
               sourceColumnName: timeColumnName,
               source: baseActionName,
             }),
-            template: "DATE_DIFF(DATE(?), DATE(?), DAY) <= 31",
+            template: "DATE_DIFF(DATE(?), DATE(?), MONTH) <= 1",
           }),
         ],
       })
