@@ -200,26 +200,29 @@ function main() {
       new RootView({
         name: "オンライン勉強会申込",
         alphabetName: "plus_study_meeting_applications",
-        physicalSource: '`h-navi.lo_production.plus_study_meeting_applications`',
+        physicalSource:
+          "`h-navi.lo_production.plus_study_meeting_applications`",
         physicalSourceAlias: "study_meeting_applications",
         columns: [
           new ValueSurface({
             name: "ユーザコード",
             alphabetName: "user_code",
-            value: new RawValue({ raw: 'study_meeting_applications.user_code' }),
+            value: new RawValue({
+              raw: "study_meeting_applications.user_code",
+            }),
           }),
           new ValueSurface({
             name: "申込日時",
             alphabetName: "application_datetime",
             value: new RawValue({
-              raw: 'study_meeting_applications.application_datetime',
+              raw: "study_meeting_applications.application_datetime",
             }),
           }),
           new ValueSurface({
             name: "参加日時",
             alphabetName: "attended_at",
             value: new RawValue({
-              raw: 'study_meeting_applications.attended_at',
+              raw: "study_meeting_applications.attended_at",
             }),
           }),
           new ValueSurface({
@@ -397,8 +400,7 @@ function main() {
       }),
       new ActionView({
         actionName: "ACTION_オンライン勉強会申込",
-        actionAlphabetName:
-          "action_entry_study_meeting",
+        actionAlphabetName: "action_entry_study_meeting",
         source: "オンライン勉強会申込",
         columns: [
           new ValueSurface({
@@ -408,21 +410,6 @@ function main() {
           }),
         ],
         inheritColumns: ["ユーザコード", "流入元パラメータ"],
-      }),
-      new ActionView({
-        actionName: "ACTION_オンライン勉強会参加",
-        actionAlphabetName:
-          "action_entry_study_meeting",
-        source: "オンライン勉強会申込",
-        columns: [
-          new ValueSurface({
-            name: "タイムスタンプ",
-            alphabetName: "time",
-            value: new SelectValue({ sourceColumnName: "参加日時" }),
-          }),
-        ],
-        inheritColumns: ["ユーザコード", "流入元パラメータ"],
-        mixinUsages: [new MixinUsage({ name: "勉強会参加済み申込" })],
       }),
       new ActionView({
         actionName: "ACTION_勉強会申込詳細表示",
@@ -436,6 +423,20 @@ function main() {
               "REGEXP_CONTAINS(path, '^/plus/mypage/study_meeting_applications/\\\\w+?')",
           }),
         ],
+      }),
+      new ActionView({
+        actionName: "ACTION_オンライン勉強会参加",
+        actionAlphabetName: "action_entry_study_meeting",
+        source: "オンライン勉強会申込",
+        columns: [
+          new ValueSurface({
+            name: "タイムスタンプ",
+            alphabetName: "time",
+            value: new SelectValue({ sourceColumnName: "参加日時" }),
+          }),
+        ],
+        inheritColumns: ["ユーザコード", "流入元パラメータ"],
+        mixinUsages: [new MixinUsage({ name: "勉強会参加済み申込" })],
       }),
     ],
   });
@@ -455,6 +456,11 @@ function main() {
     "ACTION_個別ケース相談一次相談申込",
     "ACTION_個別ケース相談二次相談作成",
     "ACTION_個別ケース相談二次相談提出",
+    "ACTION_オンライン勉強会TOP表示",
+    "ACTION_オンライン勉強会詳細表示",
+    "ACTION_オンライン勉強会申込",
+    "ACTION_勉強会申込詳細表示",
+    "ACTION_オンライン勉強会参加",
   ];
 
   const reportInnerViewColumns: ValueSurface[] = [
