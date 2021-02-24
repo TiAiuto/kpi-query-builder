@@ -451,9 +451,9 @@ function main() {
   const timeColumnName = "タイムスタンプ";
   const baseUnitName = "ユーザコード";
 
-  const periodUnitType = "タイムスタンプ_日抽出";
-  const periodUnitName = "基準アクション日";
-  const periodUnitAlphabetName = "base_action_date";
+  const periodUnitType = "タイムスタンプ_月抽出";
+  const periodUnitName = "基準アクション月";
+  const periodUnitAlphabetName = "base_action_month";
 
   const baseActionName = "ACTION_PLUS利用開始";
   const relatedActionNames = [
