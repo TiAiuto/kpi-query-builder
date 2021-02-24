@@ -34,15 +34,6 @@ export class QueryView extends ReferenceView {
     context: ViewResolutionContext
   ): SelectColumn[] {
     const columns: SelectColumn[] = [];
-    this.columns.forEach((column) => {
-      columns.push(
-        new SelectColumn({
-          publicName: column.name,
-          physicalName: column.alphabetName,
-          selectSQL: `${column.value.toSQL(context)} AS ${column.alphabetName}`,
-        })
-      );
-    });
     if (this.inheritAllColumnsEnabled) {
       // TODO: 本当はJoinしたテーブルの分もとりにいったほうが正しそう
       columns.push(...dependentView.asInheritedExtractedColumns());
@@ -58,6 +49,15 @@ export class QueryView extends ReferenceView {
         );
       });
     }
+    this.columns.forEach((column) => {
+      columns.push(
+        new SelectColumn({
+          publicName: column.name,
+          physicalName: column.alphabetName,
+          selectSQL: `${column.value.toSQL(context)} AS ${column.alphabetName}`,
+        })
+      );
+    });
     return columns;
   }
 
