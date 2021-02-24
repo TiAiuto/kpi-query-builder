@@ -444,7 +444,8 @@ function main() {
     source: "使用状況レポート内側クエリ",
     columns: reportViewColumns,
     groups: [new Group({ value: groupByTimeValue })],
-    inheritColumns: [periodUnitName]
+    orders: [new Order({ value: groupByTimeValue })],
+    inheritColumns: [periodUnitName],
   });
   resolver.addView(reportView);
 
