@@ -15,12 +15,12 @@ import { Mixin } from "./builder/mixin";
 import { MixinUsage } from "./builder/mixin_usage";
 import { ActionView } from "./builder/view/action_view";
 import { BinomialCondition } from "./builder/condition/binomial_condition";
-import { Join } from "./builder/join/join";
-import { LeftJoin } from "./builder/join/left_join";
 import { EqCondition } from "./builder/condition/eq_condition";
 import { Group } from "./builder/group";
 import { AggregateValue } from "./builder/value/aggregate_value";
 import { AggregatePattern } from "./builder/aggregate_pattern";
+import { InnerJoin } from "./builder/join/inner_join";
+import { UnionView } from "./builder/view/union_view";
 
 function main() {
   const resolver = new ViewResolver({
@@ -162,7 +162,7 @@ function main() {
             name: "流入元パラメータ",
             alphabetName: "source_param",
             value: new RawValue({
-              raw: "NULL",
+              raw: "''",
             }),
           }),
         ],
@@ -191,7 +191,7 @@ function main() {
             name: "流入元パラメータ",
             alphabetName: "source_param",
             value: new RawValue({
-              raw: "NULL",
+              raw: "''",
             }),
           }),
         ],
@@ -229,7 +229,7 @@ function main() {
             name: "流入元パラメータ",
             alphabetName: "source_param",
             value: new RawValue({
-              raw: "NULL",
+              raw: "''",
             }),
           }),
         ],
@@ -463,90 +463,103 @@ function main() {
     "ACTION_オンライン勉強会参加",
   ];
 
-  const reportInnerViewColumns: ValueSurface[] = [
-    new ValueSurface({
-      name: periodUnitName,
-      alphabetName: periodUnitAlphabetName,
-      value: new TransformValue({
-        sourceColumnName: timeColumnName,
-        source: baseActionName,
-        pattern: new TransformPattern({ name: periodUnitType }),
-      }),
-    }),
-  ];
-  const reportInnerViewJoins: Join[] = [];
+  const unionViewNames: string[] = [];
   relatedActionNames.forEach((relatedActionName) => {
     const relatedActionView = resolver.resolve(relatedActionName);
 
-    reportInnerViewColumns.push(
-      new ValueSurface({
-        name: `${relatedActionView.publicName}_参照値`,
-        alphabetName: `${relatedActionView.physicalName}_reference_value`,
-        value: new AggregateValue({
-          pattern: new AggregatePattern({ name: "COUNT_DISTINCT" }),
-          source: relatedActionView.publicName,
-          sourceColumnName: baseUnitName,
-        }),
-      }),
-      new ValueSurface({
-        name: `${relatedActionView.publicName}_流入元パラメータ`,
-        alphabetName: `${relatedActionView.physicalName}_source_param`,
-        value: new SelectValue({
-          source: relatedActionView.publicName,
-          sourceColumnName: "流入元パラメータ",
-        }),
-      })
-    );
-
-    reportInnerViewJoins.push(
-      new LeftJoin({
-        target: relatedActionView.publicName,
-        conditions: [
-          new EqCondition({
-            value: new SelectValue({
-              sourceColumnName: baseUnitName,
+    unionViewNames.push(`${relatedActionView.publicName}_集計用`);
+    resolver.addView(
+      new QueryView({
+        name: `${relatedActionView.publicName}_集計用`,
+        alphabetName: `${relatedActionView.physicalName}_for_aggregation`,
+        source: baseActionName,
+        columns: [
+          new ValueSurface({
+            name: periodUnitName,
+            alphabetName: periodUnitAlphabetName,
+            value: new TransformValue({
+              sourceColumnName: timeColumnName,
               source: baseActionName,
-            }),
-            otherValue: new SelectValue({
-              sourceColumnName: baseUnitName,
-              source: relatedActionView.publicName,
+              pattern: new TransformPattern({ name: periodUnitType }),
             }),
           }),
-          new BinomialCondition({
-            value: new SelectValue({
-              sourceColumnName: timeColumnName,
+          new ValueSurface({
+            name: `${relatedActionView.publicName}_集計値`,
+            alphabetName: `${relatedActionView.physicalName}_aggregated_value`,
+            value: new AggregateValue({
+              pattern: new AggregatePattern({ name: "COUNT_DISTINCT" }),
               source: relatedActionView.publicName,
+              sourceColumnName: baseUnitName,
             }),
-            otherValue: new SelectValue({
+          }),
+          new ValueSurface({
+            name: `${relatedActionView.publicName}_流入元パラメータ`,
+            alphabetName: `${relatedActionView.physicalName}_source_param`,
+            value: new SelectValue({
+              source: relatedActionView.publicName,
+              sourceColumnName: "流入元パラメータ",
+            }),
+          }),
+          new ValueSurface({
+            name: "アクション種別ラベル",
+            alphabetName: "action_type_label",
+            value: new RawValue({ raw: `'${relatedActionView.publicName}'` }),
+          }),
+        ],
+        joins: [
+          new InnerJoin({
+            target: relatedActionView.publicName,
+            conditions: [
+              new EqCondition({
+                value: new SelectValue({
+                  sourceColumnName: baseUnitName,
+                  source: baseActionName,
+                }),
+                otherValue: new SelectValue({
+                  sourceColumnName: baseUnitName,
+                  source: relatedActionView.publicName,
+                }),
+              }),
+              new BinomialCondition({
+                value: new SelectValue({
+                  sourceColumnName: timeColumnName,
+                  source: relatedActionView.publicName,
+                }),
+                otherValue: new SelectValue({
+                  sourceColumnName: timeColumnName,
+                  source: baseActionName,
+                }),
+                template: "DATE_DIFF(DATE(?), DATE(?), MONTH) <= 1",
+              }),
+            ],
+          }),
+        ],
+        groups: [
+          new Group({
+            value: new TransformValue({
               sourceColumnName: timeColumnName,
               source: baseActionName,
+              pattern: new TransformPattern({ name: periodUnitType }),
             }),
-            template: "DATE_DIFF(DATE(?), DATE(?), MONTH) <= 1",
+          }),
+          new Group({
+            value: new SelectValue({
+              sourceColumnName: "流入元パラメータ",
+              source: relatedActionView.publicName,
+            }),
           }),
         ],
       })
     );
   });
-  const reportInnerViewName = "使用状況レポート内側クエリ";
-  const reportInnerView = new QueryView({
-    name: reportInnerViewName,
-    alphabetName: "usage_report_inner_query",
-    source: baseActionName,
-    columns: reportInnerViewColumns,
-    joins: reportInnerViewJoins,
-    groups: [
-      new Group({
-        value: new TransformValue({
-          sourceColumnName: timeColumnName,
-          source: baseActionName,
-          pattern: new TransformPattern({ name: periodUnitType }),
-        }),
-      }),
-    ],
+  const reportUnionView = new UnionView({
+    name: "集計クエリ",
+    alphabetName: "aggregated_view",
+    viewNames: unionViewNames,
   });
-  resolver.addView(reportInnerView);
+  resolver.addView(reportUnionView);
 
-  const bootstrapViewName = "使用状況レポート内側クエリ";
+  const bootstrapViewName = "集計クエリ";
 
   const outputResolvedView = resolver.resolve(bootstrapViewName);
   const withQueries = resolver.resolvedViews
