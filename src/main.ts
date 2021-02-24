@@ -212,6 +212,34 @@ function main() {
         ],
       }),
       new ActionView({
+        actionName: "ACTION_個別ケース相談詳細表示",
+        actionAlphabetName: "action_visit_counseling_show",
+        source: "PLUSユーザコード付きアクセスログ",
+        inheritAllColumnsEnabled: true,
+        conditions: [
+          new RawCondition({
+            raw: 'REGEXP_CONTAINS(path, \'^/plus/counseling/\\\\w+?$\')',
+          }),
+        ],
+      }),
+      new ActionView({
+        actionName: "ACTION_個別ケース相談一時相談作成",
+        actionAlphabetName: "action_create_counseling_first_question",
+        source: "個別ケース相談一時相談",
+        columns: [
+          new ValueSurface({
+            name: "ユーザコード",
+            alphabetName: "user_code",
+            value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+          }),
+          new ValueSurface({
+            name: "タイムスタンプ",
+            alphabetName: "time",
+            value: new SelectValue({ sourceColumnName: "申込日時" }),
+          }),
+        ],
+      }),
+      new ActionView({
         actionName: "ACTION_個別ケース相談一時相談申込",
         actionAlphabetName: "action_submit_counseling_first_question",
         source: "個別ケース相談一時相談",
