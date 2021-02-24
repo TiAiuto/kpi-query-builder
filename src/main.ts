@@ -487,7 +487,7 @@ function main() {
           source: relatedActionView.publicName,
           sourceColumnName: baseUnitName,
         }),
-      })
+      }),
       new ValueSurface({
         name: `${relatedActionView.publicName}_流入元パラメータ`,
         alphabetName: `${relatedActionView.physicalName}_source_param`,
@@ -547,7 +547,7 @@ function main() {
   resolver.addView(reportInnerView);
 
   const bootstrapViewName = "使用状況レポート内側クエリ";
-  
+
   const outputResolvedView = resolver.resolve(bootstrapViewName);
   const withQueries = resolver.resolvedViews
     .map(
