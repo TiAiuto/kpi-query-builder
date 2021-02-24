@@ -48,7 +48,7 @@ export class QueryView extends ReferenceView {
       columns.push(...dependentView.asInheritedExtractedColumns());
     } else {
       this.inheritColumns.forEach((inheritColumn) => {
-        const columnRef = context.findColumnByName(inheritColumn);
+        const columnRef = context.findColumnByName(inheritColumn, dependentView.publicName);
         columns.push(
           new SelectColumn({
             publicName: columnRef.publicName,
