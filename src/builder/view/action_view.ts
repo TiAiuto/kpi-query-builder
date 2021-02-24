@@ -15,6 +15,7 @@ export class ActionView extends QueryView {
     conditions = [],
     joins = [],
     inheritAllColumnsEnabled = false,
+    inheritColumns = [],
   }: {
     actionName: string;
     actionAlphabetName: string;
@@ -24,6 +25,7 @@ export class ActionView extends QueryView {
     conditions?: Condition[];
     joins?: Join[];
     inheritAllColumnsEnabled?: boolean;
+    inheritColumns?: string[];
   }) {
     // ここで必要なカラム（時間とユーザID？）を持っているか縛るのもあり
 
@@ -37,6 +39,7 @@ export class ActionView extends QueryView {
       joins,
       orders: [],
       inheritAllColumnsEnabled,
+      inheritColumns,
     });
   }
 }
