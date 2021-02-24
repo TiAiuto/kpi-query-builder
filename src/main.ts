@@ -294,6 +294,18 @@ function main() {
         mixinUsages: [new MixinUsage({ name: "申込済み一時相談" })],
       }),
       new ActionView({
+        actionName: "ACTION_個別ケース相談相談詳細ページ表示",
+        actionAlphabetName: "action_visit_counseling_application_detail",
+        source: "PLUSユーザコード付きアクセスログ",
+        inheritAllColumnsEnabled: true,
+        conditions: [
+          new RawCondition({
+            raw:
+              "REGEXP_CONTAINS(path, '^/plus/mypage/case_applications/\\\\w+?$')",
+          }),
+        ],
+      }),
+      new ActionView({
         actionName: "ACTION_個別ケース相談二次相談作成",
         actionAlphabetName:
           "action_create_counseling_case_application_second_question",
@@ -321,6 +333,41 @@ function main() {
         ],
         inheritColumns: ["ユーザコード", "流入元パラメータ"],
         mixinUsages: [new MixinUsage({ name: "申込済み二次相談" })],
+      }),
+      new ActionView({
+        actionName: "ACTION_オンライン勉強会TOP表示",
+        actionAlphabetName: "action_visit_study_meeting_top",
+        source: "PLUSユーザコード付きアクセスログ",
+        inheritAllColumnsEnabled: true,
+        conditions: [
+          new RawCondition({
+            raw: "REGEXP_CONTAINS(path, '^/plus/study_meeting$')",
+          }),
+        ],
+      }),
+      new ActionView({
+        actionName: "ACTION_オンライン勉強会詳細表示",
+        actionAlphabetName: "action_visit_study_meeting_detail",
+        source: "PLUSユーザコード付きアクセスログ",
+        inheritAllColumnsEnabled: true,
+        conditions: [
+          new RawCondition({
+            raw: "REGEXP_CONTAINS(path, '^/plus/study_meeting/\\\\w+?$')",
+          }),
+        ],
+      }),
+      new ActionView({
+        actionName: "ACTION_勉強会申込詳細表示",
+        actionAlphabetName:
+          "action_visit_mypage_study_meeting_application_detail",
+        source: "PLUSユーザコード付きアクセスログ",
+        inheritAllColumnsEnabled: true,
+        conditions: [
+          new RawCondition({
+            raw:
+              "REGEXP_CONTAINS(path, '^/plus/mypage/study_meeting_applications/\\\\w+?')",
+          }),
+        ],
       }),
     ],
   });
