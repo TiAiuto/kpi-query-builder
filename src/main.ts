@@ -49,9 +49,7 @@ function main() {
       }),
       new Mixin({
         name: "申込済み二次相談",
-        conditions: [
-          new RawCondition({ raw: "submitted_at IS NOT NULL" }),
-        ],
+        conditions: [new RawCondition({ raw: "submitted_at IS NOT NULL" })],
       }),
     ],
     views: [
@@ -152,13 +150,21 @@ function main() {
               raw: "application_tickets.application_datetime",
             }),
           }),
+          new ValueSurface({
+            name: "流入元パラメータ",
+            alphabetName: "source_param",
+            value: new RawValue({
+              raw: "NULL",
+            }),
+          }),
         ],
         dateSuffixEnabled: false,
       }),
       new RootView({
         name: "個別ケース相談二次相談",
         alphabetName: "plus_counseling_second_applictions",
-        physicalSource: '`h-navi.lo_plusmine_production.counseling_case_additional_question_tickets`',
+        physicalSource:
+          "`h-navi.lo_plusmine_production.counseling_case_additional_question_tickets`",
         physicalSourceAlias: "second_question_tickets",
         columns: [
           new ValueSurface({
@@ -171,6 +177,13 @@ function main() {
             alphabetName: "submitted_at",
             value: new RawValue({
               raw: "second_question_tickets.submitted_at",
+            }),
+          }),
+          new ValueSurface({
+            name: "流入元パラメータ",
+            alphabetName: "source_param",
+            value: new RawValue({
+              raw: "NULL",
             }),
           }),
         ],
@@ -245,7 +258,7 @@ function main() {
         inheritAllColumnsEnabled: true,
         conditions: [
           new RawCondition({
-            raw: 'REGEXP_CONTAINS(path, \'^/plus/counseling/\\\\w+?$\')',
+            raw: "REGEXP_CONTAINS(path, '^/plus/counseling/\\\\w+?$')",
           }),
         ],
       }),
@@ -255,16 +268,12 @@ function main() {
         source: "個別ケース相談一次相談",
         columns: [
           new ValueSurface({
-            name: "ユーザコード",
-            alphabetName: "user_code",
-            value: new SelectValue({ sourceColumnName: "ユーザコード" }),
-          }),
-          new ValueSurface({
             name: "タイムスタンプ",
             alphabetName: "time",
             value: new SelectValue({ sourceColumnName: "申込日時" }),
           }),
         ],
+        inheritColumns: ["ユーザコード", "流入元パラメータ"],
       }),
       new ActionView({
         actionName: "ACTION_個別ケース相談一次相談申込",
@@ -272,51 +281,41 @@ function main() {
         source: "個別ケース相談一次相談",
         columns: [
           new ValueSurface({
-            name: "ユーザコード",
-            alphabetName: "user_code",
-            value: new SelectValue({ sourceColumnName: "ユーザコード" }),
-          }),
-          new ValueSurface({
             name: "タイムスタンプ",
             alphabetName: "time",
             value: new SelectValue({ sourceColumnName: "申込日時" }),
           }),
         ],
+        inheritColumns: ["ユーザコード", "流入元パラメータ"],
         mixinUsages: [new MixinUsage({ name: "申込済み一時相談" })],
       }),
       new ActionView({
         actionName: "ACTION_個別ケース相談二次相談作成",
-        actionAlphabetName: "action_create_counseling_case_application_second_question",
+        actionAlphabetName:
+          "action_create_counseling_case_application_second_question",
         source: "個別ケース相談二次相談",
         columns: [
-          new ValueSurface({
-            name: "ユーザコード",
-            alphabetName: "user_code",
-            value: new SelectValue({ sourceColumnName: "ユーザコード" }),
-          }),
           new ValueSurface({
             name: "タイムスタンプ",
             alphabetName: "time",
             value: new SelectValue({ sourceColumnName: "提出日時" }),
           }),
         ],
+        inheritColumns: ["ユーザコード", "流入元パラメータ"],
       }),
       new ActionView({
         actionName: "ACTION_個別ケース相談二次相談提出",
-        actionAlphabetName: "action_submit_counseling_case_application_second_question",
+        actionAlphabetName:
+          "action_submit_counseling_case_application_second_question",
         source: "個別ケース相談二次相談",
         columns: [
-          new ValueSurface({
-            name: "ユーザコード",
-            alphabetName: "user_code",
-            value: new SelectValue({ sourceColumnName: "ユーザコード" }),
-          }),
           new ValueSurface({
             name: "タイムスタンプ",
             alphabetName: "time",
             value: new SelectValue({ sourceColumnName: "提出日時" }),
           }),
         ],
+        inheritColumns: ["ユーザコード", "流入元パラメータ"],
         mixinUsages: [new MixinUsage({ name: "申込済み二次相談" })],
       }),
       new ActionReportView({
@@ -342,7 +341,8 @@ function main() {
                 template: "DATE_DIFF(DATE(?), DATE(?), DAY) <= 31",
               }),
             ],
-          }),new ActionReportViewActionReference({
+          }),
+          new ActionReportViewActionReference({
             actionName: "ACTION_個別ケース相談一次相談申込",
             actionNameAlias: "ACTION_個別ケース相談一次相談申込1",
             conditions: [
@@ -363,6 +363,10 @@ function main() {
       }),
     ],
   });
+
+  const baseActionName = "ACTION_PLUS利用開始";
+  const relatedActionNames = "";
+
   const bootstrapViewName = "使用状況レポート";
   const outputResolvedView = resolver.resolve(bootstrapViewName);
   const withQueries = resolver.resolvedViews
