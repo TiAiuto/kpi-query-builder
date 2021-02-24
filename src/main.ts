@@ -128,7 +128,7 @@ function main() {
         ],
       }),
       new RootView({
-        name: "個別ケース相談一時相談",
+        name: "個別ケース相談一次相談",
         alphabetName: "plus_counseling_first_applictions",
         physicalSource:
           "`h-navi.lo_plusmine_production.counseling_case_application_tickets`",
@@ -223,9 +223,9 @@ function main() {
         ],
       }),
       new ActionView({
-        actionName: "ACTION_個別ケース相談一時相談作成",
+        actionName: "ACTION_個別ケース相談一次相談作成",
         actionAlphabetName: "action_create_counseling_first_question",
-        source: "個別ケース相談一時相談",
+        source: "個別ケース相談一次相談",
         columns: [
           new ValueSurface({
             name: "ユーザコード",
@@ -240,9 +240,9 @@ function main() {
         ],
       }),
       new ActionView({
-        actionName: "ACTION_個別ケース相談一時相談申込",
+        actionName: "ACTION_個別ケース相談一次相談申込",
         actionAlphabetName: "action_submit_counseling_first_question",
-        source: "個別ケース相談一時相談",
+        source: "個別ケース相談一次相談",
         columns: [
           new ValueSurface({
             name: "ユーザコード",
@@ -281,13 +281,13 @@ function main() {
               }),
             ],
           }),new ActionReportViewActionReference({
-            actionName: "ACTION_個別ケース相談一時相談申込",
-            actionNameAlias: "ACTION_個別ケース相談一時相談申込1",
+            actionName: "ACTION_個別ケース相談一次相談申込",
+            actionNameAlias: "ACTION_個別ケース相談一次相談申込1",
             conditions: [
               new BinomialCondition({
                 value: new SelectValue({
                   sourceColumnName: "タイムスタンプ",
-                  source: "ACTION_個別ケース相談一時相談申込1",
+                  source: "ACTION_個別ケース相談一次相談申込1",
                 }),
                 otherValue: new SelectValue({
                   sourceColumnName: "タイムスタンプ",
