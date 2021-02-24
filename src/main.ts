@@ -482,11 +482,12 @@ function main() {
       new ValueSurface({
         name: `${relatedActionView.publicName}_参照値`,
         alphabetName: `${relatedActionView.physicalName}_reference_value`,
-        value: new SelectValue({
+        value: new AggregateValue({
+          pattern: new AggregatePattern({ name: "COUNT_DISTINCT" }),
           source: relatedActionView.publicName,
           sourceColumnName: baseUnitName,
         }),
-      }),
+      })
       new ValueSurface({
         name: `${relatedActionView.publicName}_流入元パラメータ`,
         alphabetName: `${relatedActionView.physicalName}_source_param`,
@@ -533,43 +534,20 @@ function main() {
     source: baseActionName,
     columns: reportInnerViewColumns,
     joins: reportInnerViewJoins,
+    groups: [
+      new Group({
+        value: new TransformValue({
+          sourceColumnName: timeColumnName,
+          source: baseActionName,
+          pattern: new TransformPattern({ name: periodUnitType }),
+        }),
+      }),
+    ],
   });
   resolver.addView(reportInnerView);
 
-  const bootstrapViewName = "使用状況レポート";
-
-  const groupByTimeValue = new SelectValue({
-    sourceColumnName: periodUnitName,
-    source: reportInnerViewName,
-  });
-
-  const reportViewColumns: ValueSurface[] = [];
-  relatedActionNames.forEach((relatedActionName) => {
-    const relatedActionView = resolver.resolve(relatedActionName);
-
-    reportViewColumns.push(
-      new ValueSurface({
-        name: `${relatedActionView.publicName}_集計値`,
-        alphabetName: `${relatedActionView.physicalName}_aggregated_value`,
-        value: new AggregateValue({
-          pattern: new AggregatePattern({ name: "COUNT_DISTINCT" }),
-          source: reportInnerViewName,
-          sourceColumnName: `${relatedActionView.publicName}_参照値`,
-        }),
-      })
-    );
-  });
-  const reportView = new QueryView({
-    name: bootstrapViewName,
-    alphabetName: "usage_report",
-    source: "使用状況レポート内側クエリ",
-    columns: reportViewColumns,
-    groups: [new Group({ value: groupByTimeValue })],
-    orders: [new Order({ value: groupByTimeValue })],
-    inheritColumns: [periodUnitName],
-  });
-  resolver.addView(reportView);
-
+  const bootstrapViewName = "使用状況レポート内側クエリ";
+  
   const outputResolvedView = resolver.resolve(bootstrapViewName);
   const withQueries = resolver.resolvedViews
     .map(
