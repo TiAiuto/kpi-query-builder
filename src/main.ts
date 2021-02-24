@@ -284,6 +284,13 @@ function main() {
               sourceColumnName: "利用開始日タイムスタンプ",
             }),
           }),
+          new ValueSurface({
+            name: "流入元パラメータ",
+            alphabetName: "source_param",
+            value: new RawValue({
+              raw: "''",
+            }),
+          }),
         ],
       }),
       new ActionView({
@@ -464,6 +471,65 @@ function main() {
   ];
 
   const unionViewNames: string[] = [];
+
+  const baseActionView = resolver.resolve(baseActionName);
+  resolver.addView(
+    new QueryView({
+      name: `${baseActionView.publicName}_集計用`,
+      alphabetName: `${baseActionView.physicalName}_for_aggregation`,
+      source: baseActionName,
+      columns: [
+        new ValueSurface({
+          name: periodUnitName,
+          alphabetName: periodUnitAlphabetName,
+          value: new TransformValue({
+            sourceColumnName: timeColumnName,
+            source: baseActionName,
+            pattern: new TransformPattern({ name: periodUnitType }),
+          }),
+        }),
+        new ValueSurface({
+          name: `${baseActionView.publicName}_集計値`,
+          alphabetName: `${baseActionView.physicalName}_aggregated_value`,
+          value: new AggregateValue({
+            pattern: new AggregatePattern({ name: "COUNT_DISTINCT" }),
+            source: baseActionView.publicName,
+            sourceColumnName: baseUnitName,
+          }),
+        }),
+        // new ValueSurface({
+        //   name: `${relatedActionView.publicName}_流入元パラメータ`,
+        //   alphabetName: `${relatedActionView.physicalName}_source_param`,
+        //   value: new SelectValue({
+        //     source: relatedActionView.publicName,
+        //     sourceColumnName: "流入元パラメータ",
+        //   }),
+        // }),
+        new ValueSurface({
+          name: "アクション種別ラベル",
+          alphabetName: "action_type_label",
+          value: new RawValue({ raw: `'${baseActionView.publicName}'` }),
+        }),
+      ],
+      groups: [
+        new Group({
+          value: new TransformValue({
+            sourceColumnName: timeColumnName,
+            source: baseActionName,
+            pattern: new TransformPattern({ name: periodUnitType }),
+          }),
+        }),
+        // new Group({
+        //   value: new SelectValue({
+        //     sourceColumnName: "流入元パラメータ",
+        //     source: relatedActionView.publicName,
+        //   }),
+        // }),
+      ],
+    })
+  );
+  unionViewNames.push(`${baseActionView.publicName}_集計用`);
+
   relatedActionNames.forEach((relatedActionName) => {
     const relatedActionView = resolver.resolve(relatedActionName);
 
