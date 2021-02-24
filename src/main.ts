@@ -14,9 +14,13 @@ import { Order } from "./builder/order";
 import { Mixin } from "./builder/mixin";
 import { MixinUsage } from "./builder/mixin_usage";
 import { ActionView } from "./builder/view/action_view";
-import { ActionReportView } from "./builder/view/action_report_view";
-import { ActionReportViewActionReference } from "./builder/action_report_view_action_reference";
 import { BinomialCondition } from "./builder/condition/binomial_condition";
+import { Join } from "./builder/join/join";
+import { LeftJoin } from "./builder/join/left_join";
+import { EqCondition } from "./builder/condition/eq_condition";
+import { Group } from "./builder/group";
+import { AggregateValue } from "./builder/value/aggregate_value";
+import { AggregatePattern } from "./builder/aggregate_pattern";
 
 function main() {
   const resolver = new ViewResolver({
@@ -318,56 +322,132 @@ function main() {
         inheritColumns: ["ユーザコード", "流入元パラメータ"],
         mixinUsages: [new MixinUsage({ name: "申込済み二次相談" })],
       }),
-      new ActionReportView({
-        name: "使用状況レポート",
-        alphabetName: "usage_report",
-        periodViewName: "いったん無視",
-        baseAction: new ActionReportViewActionReference({
-          actionName: "ACTION_PLUS利用開始",
-        }),
-        relatedActions: [
-          new ActionReportViewActionReference({
-            actionName: "ACTION_個別ケース相談TOP表示",
-            conditions: [
-              new BinomialCondition({
-                value: new SelectValue({
-                  sourceColumnName: "タイムスタンプ",
-                  source: "ACTION_個別ケース相談TOP表示",
-                }),
-                otherValue: new SelectValue({
-                  sourceColumnName: "タイムスタンプ",
-                  source: "ACTION_PLUS利用開始",
-                }),
-                template: "DATE_DIFF(DATE(?), DATE(?), DAY) <= 31",
-              }),
-            ],
-          }),
-          new ActionReportViewActionReference({
-            actionName: "ACTION_個別ケース相談一次相談申込",
-            actionNameAlias: "ACTION_個別ケース相談一次相談申込1",
-            conditions: [
-              new BinomialCondition({
-                value: new SelectValue({
-                  sourceColumnName: "タイムスタンプ",
-                  source: "ACTION_個別ケース相談一次相談申込1",
-                }),
-                otherValue: new SelectValue({
-                  sourceColumnName: "タイムスタンプ",
-                  source: "ACTION_PLUS利用開始",
-                }),
-                template: "DATE_DIFF(DATE(?), DATE(?), DAY) <= 31",
-              }),
-            ],
-          }),
-        ],
-      }),
     ],
   });
 
+  const timeColumnName = "タイムスタンプ";
+  const baseUnitName = "ユーザコード";
+
+  const periodUnitType = "タイムスタンプ_日抽出";
+  const periodUnitName = "基準アクション日";
+  const periodUnitAlphabetName = "base_action_date";
+
   const baseActionName = "ACTION_PLUS利用開始";
-  const relatedActionNames = "";
+  const relatedActionNames = [
+    "ACTION_個別ケース相談TOP表示",
+    "ACTION_個別ケース相談詳細表示",
+    "ACTION_個別ケース相談一次相談作成",
+    "ACTION_個別ケース相談一次相談申込",
+    "ACTION_個別ケース相談二次相談作成",
+    "ACTION_個別ケース相談二次相談提出",
+  ];
+
+  const reportInnerViewColumns: ValueSurface[] = [
+    new ValueSurface({
+      name: periodUnitName,
+      alphabetName: periodUnitAlphabetName,
+      value: new TransformValue({
+        sourceColumnName: timeColumnName,
+        source: baseActionName,
+        pattern: new TransformPattern({ name: periodUnitType }),
+      }),
+    }),
+  ];
+  const reportInnerViewJoins: Join[] = [];
+  relatedActionNames.forEach((relatedActionName) => {
+    const relatedActionView = resolver.resolve(relatedActionName);
+
+    reportInnerViewColumns.push(
+      new ValueSurface({
+        name: `${relatedActionView.publicName}_参照値`,
+        alphabetName: `${relatedActionView.physicalName}_reference_value`,
+        value: new SelectValue({
+          source: relatedActionView.publicName,
+          sourceColumnName: baseUnitName,
+        }),
+      }),
+      new ValueSurface({
+        name: `${relatedActionView.publicName}_流入元パラメータ`,
+        alphabetName: `${relatedActionView.physicalName}_source_param`,
+        value: new SelectValue({
+          source: relatedActionView.publicName,
+          sourceColumnName: "流入元パラメータ",
+        }),
+      })
+    );
+
+    reportInnerViewJoins.push(
+      new LeftJoin({
+        target: relatedActionView.publicName,
+        conditions: [
+          new EqCondition({
+            value: new SelectValue({
+              sourceColumnName: baseUnitName,
+              source: baseActionName,
+            }),
+            otherValue: new SelectValue({
+              sourceColumnName: baseUnitName,
+              source: relatedActionView.publicName,
+            }),
+          }),
+          new BinomialCondition({
+            value: new SelectValue({
+              sourceColumnName: timeColumnName,
+              source: relatedActionView.publicName,
+            }),
+            otherValue: new SelectValue({
+              sourceColumnName: timeColumnName,
+              source: baseActionName,
+            }),
+            template: "DATE_DIFF(DATE(?), DATE(?), DAY) <= 31",
+          }),
+        ],
+      })
+    );
+  });
+  const reportInnerViewName = "使用状況レポート内側クエリ";
+  const reportInnerView = new QueryView({
+    name: reportInnerViewName,
+    alphabetName: "usage_report_inner_query",
+    source: baseActionName,
+    columns: reportInnerViewColumns,
+    joins: reportInnerViewJoins,
+  });
+  resolver.addView(reportInnerView);
 
   const bootstrapViewName = "使用状況レポート";
+
+  const groupByTimeValue = new SelectValue({
+    sourceColumnName: periodUnitName,
+    source: reportInnerViewName,
+  });
+
+  const reportViewColumns: ValueSurface[] = [];
+  relatedActionNames.forEach((relatedActionName) => {
+    const relatedActionView = resolver.resolve(relatedActionName);
+
+    reportViewColumns.push(
+      new ValueSurface({
+        name: `${relatedActionView.publicName}_集計値`,
+        alphabetName: `${relatedActionView.physicalName}_aggregated_value`,
+        value: new AggregateValue({
+          pattern: new AggregatePattern({ name: "COUNT_DISTINCT" }),
+          source: reportInnerViewName,
+          sourceColumnName: `${relatedActionView.publicName}_参照値`,
+        }),
+      })
+    );
+  });
+  const reportView = new QueryView({
+    name: bootstrapViewName,
+    alphabetName: "usage_report",
+    source: "使用状況レポート内側クエリ",
+    columns: reportViewColumns,
+    groups: [new Group({ value: groupByTimeValue })],
+    inheritColumns: [periodUnitName]
+  });
+  resolver.addView(reportView);
+
   const outputResolvedView = resolver.resolve(bootstrapViewName);
   const withQueries = resolver.resolvedViews
     .map(
