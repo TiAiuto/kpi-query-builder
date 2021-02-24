@@ -412,7 +412,7 @@ function main() {
         inheritColumns: ["ユーザコード", "流入元パラメータ"],
       }),
       new ActionView({
-        actionName: "ACTION_勉強会申込詳細表示",
+        actionName: "ACTION_オンライン勉強会申込詳細表示",
         actionAlphabetName:
           "action_visit_mypage_study_meeting_application_detail",
         source: "PLUSユーザコード付きアクセスログ",
@@ -459,7 +459,7 @@ function main() {
     "ACTION_オンライン勉強会TOP表示",
     "ACTION_オンライン勉強会詳細表示",
     "ACTION_オンライン勉強会申込",
-    "ACTION_勉強会申込詳細表示",
+    "ACTION_オンライン勉強会申込詳細表示",
     "ACTION_オンライン勉強会参加",
   ];
 
