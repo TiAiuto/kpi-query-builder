@@ -55,6 +55,10 @@ function main() {
         name: "申込済み二次相談",
         conditions: [new RawCondition({ raw: "submitted_at IS NOT NULL" })],
       }),
+      new Mixin({
+        name: "勉強会参加済み申込",
+        conditions: [new RawCondition({ raw: "attended_at IS NOT NULL" })],
+      }),
     ],
     views: [
       new RootView({
@@ -181,6 +185,41 @@ function main() {
             alphabetName: "submitted_at",
             value: new RawValue({
               raw: "second_question_tickets.submitted_at",
+            }),
+          }),
+          new ValueSurface({
+            name: "流入元パラメータ",
+            alphabetName: "source_param",
+            value: new RawValue({
+              raw: "NULL",
+            }),
+          }),
+        ],
+        dateSuffixEnabled: false,
+      }),
+      new RootView({
+        name: "オンライン勉強会申込",
+        alphabetName: "plus_study_meeting_applications",
+        physicalSource: '`h-navi.lo_production.plus_study_meeting_applications`',
+        physicalSourceAlias: "study_meeting_applications",
+        columns: [
+          new ValueSurface({
+            name: "ユーザコード",
+            alphabetName: "user_code",
+            value: new RawValue({ raw: 'study_meeting_applications.user_code' }),
+          }),
+          new ValueSurface({
+            name: "申込日時",
+            alphabetName: "application_datetime",
+            value: new RawValue({
+              raw: 'study_meeting_applications.application_datetime',
+            }),
+          }),
+          new ValueSurface({
+            name: "参加日時",
+            alphabetName: "attended_at",
+            value: new RawValue({
+              raw: 'study_meeting_applications.attended_at',
             }),
           }),
           new ValueSurface({
@@ -355,6 +394,35 @@ function main() {
             raw: "REGEXP_CONTAINS(path, '^/plus/study_meeting/\\\\w+?$')",
           }),
         ],
+      }),
+      new ActionView({
+        actionName: "ACTION_オンライン勉強会申込",
+        actionAlphabetName:
+          "action_entry_study_meeting",
+        source: "オンライン勉強会申込",
+        columns: [
+          new ValueSurface({
+            name: "タイムスタンプ",
+            alphabetName: "time",
+            value: new SelectValue({ sourceColumnName: "申込日時" }),
+          }),
+        ],
+        inheritColumns: ["ユーザコード", "流入元パラメータ"],
+      }),
+      new ActionView({
+        actionName: "ACTION_オンライン勉強会参加",
+        actionAlphabetName:
+          "action_entry_study_meeting",
+        source: "オンライン勉強会申込",
+        columns: [
+          new ValueSurface({
+            name: "タイムスタンプ",
+            alphabetName: "time",
+            value: new SelectValue({ sourceColumnName: "参加日時" }),
+          }),
+        ],
+        inheritColumns: ["ユーザコード", "流入元パラメータ"],
+        mixinUsages: [new MixinUsage({ name: "勉強会参加済み申込" })],
       }),
       new ActionView({
         actionName: "ACTION_勉強会申込詳細表示",
