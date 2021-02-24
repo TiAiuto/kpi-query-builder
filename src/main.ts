@@ -492,14 +492,14 @@ function main() {
               sourceColumnName: baseUnitName,
             }),
           }),
-          new ValueSurface({
-            name: `${relatedActionView.publicName}_流入元パラメータ`,
-            alphabetName: `${relatedActionView.physicalName}_source_param`,
-            value: new SelectValue({
-              source: relatedActionView.publicName,
-              sourceColumnName: "流入元パラメータ",
-            }),
-          }),
+          // new ValueSurface({
+          //   name: `${relatedActionView.publicName}_流入元パラメータ`,
+          //   alphabetName: `${relatedActionView.physicalName}_source_param`,
+          //   value: new SelectValue({
+          //     source: relatedActionView.publicName,
+          //     sourceColumnName: "流入元パラメータ",
+          //   }),
+          // }),
           new ValueSurface({
             name: "アクション種別ラベル",
             alphabetName: "action_type_label",
@@ -542,12 +542,12 @@ function main() {
               pattern: new TransformPattern({ name: periodUnitType }),
             }),
           }),
-          new Group({
-            value: new SelectValue({
-              sourceColumnName: "流入元パラメータ",
-              source: relatedActionView.publicName,
-            }),
-          }),
+          // new Group({
+          //   value: new SelectValue({
+          //     sourceColumnName: "流入元パラメータ",
+          //     source: relatedActionView.publicName,
+          //   }),
+          // }),
         ],
       })
     );
