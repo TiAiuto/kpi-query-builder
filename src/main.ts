@@ -28,7 +28,7 @@ function main() {
   const timeColumnName = "タイムスタンプ";
   const baseUnitName = "ユーザコード";
 
-  const periodUnitType = "タイムスタンプ_月抽出";
+  const periodUnitType = "タイムスタンプ_週抽出";
   const periodUnitName = "基準アクション月";
   const periodUnitAlphabetName = "base_action_month";
 
@@ -145,7 +145,7 @@ function main() {
         alphabetName: "aggregate_base_period",
         pattern: new RoutinePattern({
           name: "期間集合生成",
-          args: ["月単位", "20200401", "20210331"],
+          args: ["週単位", "20201001", "20210331"],
         }),
       })
     );
@@ -208,6 +208,9 @@ function main() {
             source: relatedActionView.publicName,
             columns: generateAggregateColumns(relatedActionView, countAll, index + 1),
             groups: generateGroupBy(relatedActionView, countAll),
+            conditions: [
+              new RawCondition({raw: 'DATE(time, "Asia/Tokyo") >= DATE("2020-10-01")'})
+            ]
           });
         }),
       ],
