@@ -13,6 +13,8 @@ export class QueryView extends ReferenceView {
   inheritAllColumnsEnabled: boolean;
   inheritColumns: string[];
 
+  // TODO: ここでsource指定かsourceView指定か切り替えれるようにしたい
+
   constructor({
     inheritAllColumnsEnabled = false,
     groups = [],
