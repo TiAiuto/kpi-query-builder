@@ -216,7 +216,7 @@ END`,
   new QueryView({
     name: "PLUS契約者アクセスログ流入元パラメータ除外",
     alphabetName: "plus_contracted_users_logs_without_source_param",
-    source: "PLUSユーザコード付きアクセスログ",
+    source: "PLUS契約者アクセスログ",
     inheritColumns: ["ユーザコード", "path", "タイムスタンプ"],
     columns: [
       new ValueSurface({
