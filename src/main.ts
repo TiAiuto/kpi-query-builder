@@ -34,13 +34,13 @@ function main() {
 
   const baseActionName = "A_PLUS利用開始";
   const relatedActionNames = [
-    "A_概観_サイト内の任意ページ表示",
-    "A_概観_勉強会内の任意ページ表示",
-    "A_概観_勉強会過去動画内の任意ページ表示",
-    "A_概観_個別ケース相談内の任意ページ表示",
-    "A_概観_教材内の任意ページ表示",
-    "A_概観_ヒント動画内の任意ページ表示",
-    "A_概観_マイページ内の任意ページ表示",
+    // "A_概観_サイト内の任意ページ表示",
+    // "A_概観_勉強会内の任意ページ表示",
+    // "A_概観_勉強会過去動画内の任意ページ表示",
+    // "A_概観_個別ケース相談内の任意ページ表示",
+    // "A_概観_教材内の任意ページ表示",
+    // "A_概観_ヒント動画内の任意ページ表示",
+    // "A_概観_マイページ内の任意ページ表示",
     "A_TOP表示",
     "A_マイページTOP表示",
     "A_ケース相談TOP表示",
@@ -181,6 +181,13 @@ function main() {
               alphabetName: "action_type_label",
               value: new RawValue({ raw: `'期間内PLUS契約中'` }),
             }),
+            new ValueSurface({
+              name: "流入元パラメータ",
+              alphabetName: "source_param",
+              value: new RawValue({
+                raw: "CAST(NULL AS STRING)",
+              }),
+            }),
           ],
           groups: [
             new Group({
@@ -316,7 +323,7 @@ function main() {
   };
 
   // usersAfterContract();
-  usersContracted(false);
+  usersContracted(true);
 
   const bootstrapViewName = "集計クエリ";
 
