@@ -79,6 +79,7 @@ export const DefinedViews: View[] = [
           raw: `CASE
 WHEN REGEXP_CONTAINS(referrer, "/plus/registers/complete") THEN "contract-completed"
 WHEN REGEXP_CONTAINS(referrer, "/plus/welcome") THEN "welcome"
+WHEN REGEXP_CONTAINS(referrer, "https://h-navi.jp") AND NOT REGEXP_CONTAINS(referrer, "https://h-navi.jp/plus") THEN "h-navi"
 ELSE JSON_EXTRACT_SCALAR(message, "$.params.s")
 END`,
         }), // WELCOMEスライドの場合はブックマークされることを考慮してパラメータを仕込んでいない
