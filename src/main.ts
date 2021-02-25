@@ -268,7 +268,7 @@ function main() {
         ],
       }),
       new ActionView({
-        actionName: "ACTION_PLUS利用開始",
+        actionName: "A_PLUS利用開始",
         actionAlphabetName: "action_start_using_plus",
         source: "ユーザコード付きPLUS契約",
         columns: [
@@ -294,7 +294,7 @@ function main() {
         ],
       }),
       new ActionView({
-        actionName: "ACTION_個別ケース相談TOP表示",
+        actionName: "A_ケース相談TOP表示",
         actionAlphabetName: "action_visit_counseling_top",
         source: "PLUSユーザコード付きアクセスログ",
         inheritAllColumnsEnabled: true,
@@ -305,7 +305,7 @@ function main() {
         ],
       }),
       new ActionView({
-        actionName: "ACTION_個別ケース相談詳細表示",
+        actionName: "A_ケース相談詳細表示",
         actionAlphabetName: "action_visit_counseling_show",
         source: "PLUSユーザコード付きアクセスログ",
         inheritAllColumnsEnabled: true,
@@ -316,7 +316,7 @@ function main() {
         ],
       }),
       new ActionView({
-        actionName: "ACTION_個別ケース相談一次相談作成",
+        actionName: "A_ケース相談一次相談作成",
         actionAlphabetName: "action_create_counseling_first_question",
         source: "個別ケース相談一次相談",
         columns: [
@@ -329,7 +329,7 @@ function main() {
         inheritColumns: ["ユーザコード", "流入元パラメータ"],
       }),
       new ActionView({
-        actionName: "ACTION_個別ケース相談一次相談申込",
+        actionName: "A_ケース相談一次相談申込",
         actionAlphabetName: "action_submit_counseling_first_question",
         source: "個別ケース相談一次相談",
         columns: [
@@ -343,7 +343,7 @@ function main() {
         mixinUsages: [new MixinUsage({ name: "申込済み一時相談" })],
       }),
       new ActionView({
-        actionName: "ACTION_個別ケース相談相談詳細ページ表示",
+        actionName: "A_ケース相談申込詳細表示",
         actionAlphabetName: "action_visit_counseling_application_detail",
         source: "PLUSユーザコード付きアクセスログ",
         inheritAllColumnsEnabled: true,
@@ -355,7 +355,7 @@ function main() {
         ],
       }),
       new ActionView({
-        actionName: "ACTION_個別ケース相談二次相談作成",
+        actionName: "A_ケース相談二次相談作成",
         actionAlphabetName:
           "action_create_counseling_case_application_second_question",
         source: "個別ケース相談二次相談",
@@ -369,7 +369,7 @@ function main() {
         inheritColumns: ["ユーザコード", "流入元パラメータ"],
       }),
       new ActionView({
-        actionName: "ACTION_個別ケース相談二次相談提出",
+        actionName: "A_ケース相談二次相談提出",
         actionAlphabetName:
           "action_submit_counseling_case_application_second_question",
         source: "個別ケース相談二次相談",
@@ -384,7 +384,7 @@ function main() {
         mixinUsages: [new MixinUsage({ name: "申込済み二次相談" })],
       }),
       new ActionView({
-        actionName: "ACTION_オンライン勉強会TOP表示",
+        actionName: "A_勉強会TOP表示",
         actionAlphabetName: "action_visit_study_meeting_top",
         source: "PLUSユーザコード付きアクセスログ",
         inheritAllColumnsEnabled: true,
@@ -395,7 +395,7 @@ function main() {
         ],
       }),
       new ActionView({
-        actionName: "ACTION_オンライン勉強会詳細表示",
+        actionName: "A_勉強会詳細表示",
         actionAlphabetName: "action_visit_study_meeting_detail",
         source: "PLUSユーザコード付きアクセスログ",
         inheritAllColumnsEnabled: true,
@@ -406,7 +406,7 @@ function main() {
         ],
       }),
       new ActionView({
-        actionName: "ACTION_オンライン勉強会申込",
+        actionName: "A_勉強会申込",
         actionAlphabetName: "action_entry_study_meeting",
         source: "オンライン勉強会申込",
         columns: [
@@ -419,7 +419,7 @@ function main() {
         inheritColumns: ["ユーザコード", "流入元パラメータ"],
       }),
       new ActionView({
-        actionName: "ACTION_オンライン勉強会申込詳細表示",
+        actionName: "A_勉強会申込詳細表示",
         actionAlphabetName:
           "action_visit_mypage_study_meeting_application_detail",
         source: "PLUSユーザコード付きアクセスログ",
@@ -432,7 +432,7 @@ function main() {
         ],
       }),
       new ActionView({
-        actionName: "ACTION_オンライン勉強会参加",
+        actionName: "A_勉強会参加",
         actionAlphabetName: "action_attend_study_meeting",
         source: "オンライン勉強会申込",
         columns: [
@@ -455,19 +455,20 @@ function main() {
   const periodUnitName = "基準アクション月";
   const periodUnitAlphabetName = "base_action_month";
 
-  const baseActionName = "ACTION_PLUS利用開始";
+  const baseActionName = "A_PLUS利用開始";
   const relatedActionNames = [
-    "ACTION_個別ケース相談TOP表示",
-    "ACTION_個別ケース相談詳細表示",
-    "ACTION_個別ケース相談一次相談作成",
-    "ACTION_個別ケース相談一次相談申込",
-    "ACTION_個別ケース相談二次相談作成",
-    "ACTION_個別ケース相談二次相談提出",
-    "ACTION_オンライン勉強会TOP表示",
-    "ACTION_オンライン勉強会詳細表示",
-    "ACTION_オンライン勉強会申込",
-    "ACTION_オンライン勉強会申込詳細表示",
-    "ACTION_オンライン勉強会参加",
+    "A_ケース相談TOP表示",
+    "A_ケース相談詳細表示",
+    "A_ケース相談一次相談作成",
+    "A_ケース相談一次相談申込",
+    "A_ケース相談申込詳細表示",
+    "A_ケース相談二次相談作成",
+    "A_ケース相談二次相談提出",
+    "A_勉強会TOP表示",
+    "A_勉強会詳細表示",
+    "A_勉強会申込",
+    "A_勉強会申込詳細表示",
+    "A_勉強会参加",
   ];
 
   const unionViewNames: string[] = [];
