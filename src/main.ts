@@ -18,6 +18,7 @@ import { ResolvedView } from "./builder/resolved_view";
 import { RoutineView } from "./builder/view/routine_view";
 import { RoutinePattern } from "./builder/routine_pattern";
 import { RawCondition } from "./builder/condition/raw_condition";
+import { UnaryCondition } from "./builder/condition/unary_condition";
 
 function main() {
   const resolver = new ViewResolver({
@@ -260,7 +261,8 @@ function main() {
     ];
 
     const generateAggregateColumns = function (
-      view: ResolvedView
+      view: ResolvedView, 
+      index: number
     ): ValueSurface[] {
       return [
         new ValueSurface({
@@ -292,7 +294,7 @@ function main() {
         new ValueSurface({
           name: "アクション種別ラベル",
           alphabetName: "action_type_label",
-          value: new RawValue({ raw: `'${view.publicName}'` }),
+          value: new RawValue({ raw: `'${index}_${view.publicName}'` }),
         }),
       ];
     };
@@ -324,21 +326,25 @@ function main() {
           name: `内側基準集計用`,
           alphabetName: `inner_base_for_aggregation`,
           source: baseActionName,
-          columns: generateAggregateColumns(baseActionView),
+          columns: generateAggregateColumns(baseActionView, 0),
           groups: generateGroupBy(baseActionView),
           conditions: [
-            new RawCondition({
-              raw: 'DATE(time, "Asia/Tokyo") >= DATE("2021-01-01")',
+            new UnaryCondition({
+              template: 'DATE(?, "Asia/Tokyo") >= DATE("2020-10-01")',
+              value: new SelectValue({
+                sourceColumnName: "タイムスタンプ",
+                source: baseActionName,
+              }),
             }),
           ],
-      }),
-        ...relatedActionNames.map((relatedActionName) => {
+        }),
+        ...relatedActionNames.map((relatedActionName, index) => {
           const relatedActionView = resolver.resolve(relatedActionName);
           return new QueryView({
             name: `内側関連アクション集計用`,
             alphabetName: `inner_related_for_aggregation`,
             source: baseActionName,
-            columns: generateAggregateColumns(relatedActionView),
+            columns: generateAggregateColumns(relatedActionView, index + 1),
             joins: [
               new InnerJoin({
                 target: relatedActionView.publicName,
@@ -365,6 +371,15 @@ function main() {
                     template: "DATE_DIFF(DATE(?), DATE(?), MONTH) <= 1",
                   }),
                 ],
+              }),
+            ],
+            conditions: [
+              new UnaryCondition({
+                template: 'DATE(?, "Asia/Tokyo") >= DATE("2020-10-01")',
+                value: new SelectValue({
+                  sourceColumnName: "タイムスタンプ",
+                  source: baseActionName,
+                }),
               }),
             ],
             groups: generateGroupBy(relatedActionView),
