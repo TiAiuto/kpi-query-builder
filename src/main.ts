@@ -147,7 +147,7 @@ function main() {
         alphabetName: "aggregate_base_period",
         pattern: new RoutinePattern({
           name: "期間集合生成",
-          args: ["週単位", "20210101", "20210331"],
+          args: ["週単位", "20210118", "20211231"],
         }),
       })
     );
@@ -216,7 +216,7 @@ function main() {
             groups: generateGroupBy(relatedActionView, true),
             conditions: [
               new RawCondition({
-                raw: 'DATE(time, "Asia/Tokyo") >= DATE("2021-01-01")',
+                raw: 'DATE(time, "Asia/Tokyo") >= DATE("2021-01-18")',
               }),
             ],
           });
@@ -390,8 +390,8 @@ function main() {
     resolver.addView(reportUnionView);
   };
 
-  usersAfterContract();
-  // usersContractedSourceParam();
+  // usersAfterContract();
+  usersContractedSourceParam();
 
   const bootstrapViewName = "集計クエリ";
 
