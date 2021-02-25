@@ -15,6 +15,9 @@ import { UnionView } from "./builder/view/union_view";
 import { DefinedMixins } from "./defined_mixins";
 import { DefinedViews } from "./defined_views";
 import { ResolvedView } from "./builder/resolved_view";
+import { RoutineView } from "./builder/view/routine_view";
+import { RoutinePattern } from "./builder/routine_pattern";
+import { RawCondition } from "./builder/condition/raw_condition";
 
 function main() {
   const resolver = new ViewResolver({
@@ -131,10 +134,60 @@ function main() {
       return result;
     };
 
+    resolver.addView(
+      new RoutineView({
+        name: "集計期間基準集合クエリ",
+        alphabetName: "aggregate_base_period",
+        pattern: new RoutinePattern({
+          name: "期間集合生成",
+          args: ["月単位", "20200401", "20210331"],
+        }),
+      })
+    );
+
     const reportUnionView = new UnionView({
       name: "集計クエリ",
       alphabetName: "aggregated_view",
       views: [
+        new QueryView({
+          name: "契約者分母",
+          alphabetName: "contracted_users",
+          source: "集計期間基準集合クエリ",
+          joins: [
+            new InnerJoin({
+              target: "ユーザコード付きPLUS契約",
+              conditions: [
+                new RawCondition({
+                  raw:
+                    'DATE(usage_start_date_timestamp, "Asia/Tokyo") <= date_range_end AND ' +
+                    '(usage_end_date_timestamp IS NULL OR date_range_end <= DATE(usage_end_date_timestamp, "Asia/Tokyo"))',
+                }),
+              ],
+            }),
+          ],
+          inheritColumns: ["期間生成値"],
+          columns: [
+            new ValueSurface({
+              name: "契約ユーザ数",
+              alphabetName: "action_aggregated_value",
+              value: new AggregateValue({
+                sourceColumnName: "契約ユーザコード",
+                pattern: new AggregatePattern({ name: "COUNT" }),
+              }),
+            }),
+
+            new ValueSurface({
+              name: "アクション種別ラベル",
+              alphabetName: "action_type_label",
+              value: new RawValue({ raw: `'期間内PLUS契約中'` }),
+            }),
+          ],
+          groups: [
+            new Group({
+              value: new SelectValue({ sourceColumnName: "期間生成値" }),
+            }),
+          ],
+        }),
         ...relatedActionNames.map((relatedActionName) => {
           const relatedActionView = resolver.resolve(relatedActionName);
           return new QueryView({
