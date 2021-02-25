@@ -15,6 +15,7 @@ import { UnionView } from "./builder/view/union_view";
 import { View } from "./builder/view/view";
 import { DefinedMixins } from "./defined_mixins";
 import { DefinedViews } from "./defined_views";
+import { ResolvedView } from "./builder/resolved_view";
 
 function main() {
   const resolver = new ViewResolver({
@@ -45,6 +46,62 @@ function main() {
     "A_勉強会参加",
   ];
 
+  const generateAggregateColumns = function (
+    view: ResolvedView
+  ): ValueSurface[] {
+    return [
+      new ValueSurface({
+        name: periodUnitName,
+        alphabetName: periodUnitAlphabetName,
+        value: new TransformValue({
+          sourceColumnName: timeColumnName,
+          source: baseActionName,
+          pattern: new TransformPattern({ name: periodUnitType }),
+        }),
+      }),
+      new ValueSurface({
+        name: `アクション集計値`,
+        alphabetName: `action_aggregated_value`,
+        value: new AggregateValue({
+          pattern: new AggregatePattern({ name: "COUNT" }),
+          source: view.publicName,
+          sourceColumnName: baseUnitName,
+        }),
+      }),
+      new ValueSurface({
+        name: `流入元パラメータ`,
+        alphabetName: `source_param`,
+        value: new SelectValue({
+          source: view.publicName,
+          sourceColumnName: "流入元パラメータ",
+        }),
+      }),
+      new ValueSurface({
+        name: "アクション種別ラベル",
+        alphabetName: "action_type_label",
+        value: new RawValue({ raw: `'${view.publicName}'` }),
+      }),
+    ];
+  };
+
+  const generateGroupBy = function (view: ResolvedView): Group[] {
+    return [
+      new Group({
+        value: new TransformValue({
+          sourceColumnName: timeColumnName,
+          source: baseActionName,
+          pattern: new TransformPattern({ name: periodUnitType }),
+        }),
+      }),
+      new Group({
+        value: new SelectValue({
+          sourceColumnName: "流入元パラメータ",
+          source: view.publicName,
+        }),
+      }),
+    ];
+  };
+
   const unionViewNames: string[] = [];
 
   const unionViews: View[] = [];
@@ -54,54 +111,8 @@ function main() {
       name: `${baseActionView.publicName}_集計用`,
       alphabetName: `${baseActionView.physicalName}_for_aggregation`,
       source: baseActionName,
-      columns: [
-        new ValueSurface({
-          name: periodUnitName,
-          alphabetName: periodUnitAlphabetName,
-          value: new TransformValue({
-            sourceColumnName: timeColumnName,
-            source: baseActionName,
-            pattern: new TransformPattern({ name: periodUnitType }),
-          }),
-        }),
-        new ValueSurface({
-          name: `${baseActionView.publicName}_集計値`,
-          alphabetName: `${baseActionView.physicalName}_aggregated_value`,
-          value: new AggregateValue({
-            pattern: new AggregatePattern({ name: "COUNT" }),
-            source: baseActionView.publicName,
-            sourceColumnName: baseUnitName,
-          }),
-        }),
-        new ValueSurface({
-          name: `${baseActionView.publicName}_流入元パラメータ`,
-          alphabetName: `${baseActionView.physicalName}_source_param`,
-          value: new SelectValue({
-            source: baseActionView.publicName,
-            sourceColumnName: "流入元パラメータ",
-          }),
-        }),
-        new ValueSurface({
-          name: "アクション種別ラベル",
-          alphabetName: "action_type_label",
-          value: new RawValue({ raw: `'${baseActionView.publicName}'` }),
-        }),
-      ],
-      groups: [
-        new Group({
-          value: new TransformValue({
-            sourceColumnName: timeColumnName,
-            source: baseActionName,
-            pattern: new TransformPattern({ name: periodUnitType }),
-          }),
-        }),
-        new Group({
-          value: new SelectValue({
-            sourceColumnName: "流入元パラメータ",
-            source: baseActionView.publicName,
-          }),
-        }),
-      ],
+      columns: generateAggregateColumns(baseActionView),
+      groups: generateGroupBy(baseActionView),
     })
   );
   unionViewNames.push(`${baseActionView.publicName}_集計用`);
@@ -114,39 +125,7 @@ function main() {
         name: `${relatedActionView.publicName}_集計用`,
         alphabetName: `${relatedActionView.physicalName}_for_aggregation`,
         source: baseActionName,
-        columns: [
-          new ValueSurface({
-            name: periodUnitName,
-            alphabetName: periodUnitAlphabetName,
-            value: new TransformValue({
-              sourceColumnName: timeColumnName,
-              source: baseActionName,
-              pattern: new TransformPattern({ name: periodUnitType }),
-            }),
-          }),
-          new ValueSurface({
-            name: `アクション集計値`,
-            alphabetName: `action_aggregated_value`,
-            value: new AggregateValue({
-              pattern: new AggregatePattern({ name: "COUNT" }),
-              source: relatedActionView.publicName,
-              sourceColumnName: baseUnitName,
-            }),
-          }),
-          new ValueSurface({
-            name: `${relatedActionView.publicName}_流入元パラメータ`,
-            alphabetName: `${relatedActionView.physicalName}_source_param`,
-            value: new SelectValue({
-              source: relatedActionView.publicName,
-              sourceColumnName: "流入元パラメータ",
-            }),
-          }),
-          new ValueSurface({
-            name: "アクション種別ラベル",
-            alphabetName: "action_type_label",
-            value: new RawValue({ raw: `'${relatedActionView.publicName}'` }),
-          }),
-        ],
+        columns: generateAggregateColumns(relatedActionView),
         joins: [
           new InnerJoin({
             target: relatedActionView.publicName,
@@ -175,21 +154,7 @@ function main() {
             ],
           }),
         ],
-        groups: [
-          new Group({
-            value: new TransformValue({
-              sourceColumnName: timeColumnName,
-              source: baseActionName,
-              pattern: new TransformPattern({ name: periodUnitType }),
-            }),
-          }),
-          new Group({
-            value: new SelectValue({
-              sourceColumnName: "流入元パラメータ",
-              source: relatedActionView.publicName,
-            }),
-          }),
-        ],
+        groups: generateGroupBy(relatedActionView),
       })
     );
   });
