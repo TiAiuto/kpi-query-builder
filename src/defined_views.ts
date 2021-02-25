@@ -323,6 +323,28 @@ export const DefinedViews: View[] = [
     ],
   }),
   new ActionView({
+    actionName: "A_TOP表示",
+    actionAlphabetName: "action_visit_top",
+    source: "PLUSユーザコード付きアクセスログ",
+    inheritAllColumnsEnabled: true,
+    conditions: [
+      new RawCondition({
+        raw: "REGEXP_CONTAINS(path, '^/plus$')",
+      }),
+    ],
+  }),
+  new ActionView({
+    actionName: "A_マイページ表示",
+    actionAlphabetName: "action_visit_mypage_top",
+    source: "PLUSユーザコード付きアクセスログ",
+    inheritAllColumnsEnabled: true,
+    conditions: [
+      new RawCondition({
+        raw: "REGEXP_CONTAINS(path, '^/plus/mypage$')",
+      }),
+    ],
+  }),
+  new ActionView({
     actionName: "A_ケース相談TOP表示",
     actionAlphabetName: "action_visit_counseling_top",
     source: "PLUSユーザコード付きアクセスログ",
