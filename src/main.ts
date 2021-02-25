@@ -25,42 +25,43 @@ function main() {
     views: DefinedViews,
   });
 
-  const timeColumnName = "タイムスタンプ";
-  const baseUnitName = "ユーザコード";
+  const usersContractedSourceParam = function () {
+    const timeColumnName = "タイムスタンプ";
+    const baseUnitName = "ユーザコード";
 
-  const periodUnitType = "タイムスタンプ_週抽出";
-  const periodUnitName = "基準アクション月";
-  const periodUnitAlphabetName = "base_action_month";
+    const periodUnitType = "タイムスタンプ_週抽出";
+    const periodUnitName = "基準アクション月";
+    const periodUnitAlphabetName = "base_action_month";
 
-  const baseActionName = "A_PLUS利用開始";
-  const relatedActionNames = [
-    // "A_概観_サイト内の任意ページ表示",
-    // "A_概観_勉強会内の任意ページ表示",
-    // "A_概観_勉強会過去動画内の任意ページ表示",
-    // "A_概観_個別ケース相談内の任意ページ表示",
-    // "A_概観_教材内の任意ページ表示",
-    // "A_概観_ヒント動画内の任意ページ表示",
-    // "A_概観_マイページ内の任意ページ表示",
-    "A_TOP表示",
-    "A_マイページTOP表示",
-    "A_ケース相談TOP表示",
-    "A_ケース相談詳細表示",
-    // "A_ケース相談一次相談作成",
-    // "A_ケース相談一次相談申込",
-    // "A_ケース相談申込詳細表示",
-    // "A_ケース相談二次相談作成",
-    // "A_ケース相談二次相談提出",
-    "A_勉強会TOP表示",
-    "A_勉強会詳細表示",
-    // "A_勉強会申込",
-    // "A_勉強会申込詳細表示",
-    // "A_勉強会参加",
-  ];
+    const baseActionName = "A_PLUS利用開始";
 
-  const usersContracted = function (countAll: boolean) {
+    const relatedActionNames = [
+      // "A_概観_サイト内の任意ページ表示",
+      // "A_概観_勉強会内の任意ページ表示",
+      // "A_概観_勉強会過去動画内の任意ページ表示",
+      // "A_概観_個別ケース相談内の任意ページ表示",
+      // "A_概観_教材内の任意ページ表示",
+      // "A_概観_ヒント動画内の任意ページ表示",
+      // "A_概観_マイページ内の任意ページ表示",
+      "A_TOP表示",
+      "A_マイページTOP表示",
+      "A_ケース相談TOP表示",
+      "A_ケース相談詳細表示",
+      // "A_ケース相談一次相談作成",
+      // "A_ケース相談一次相談申込",
+      // "A_ケース相談申込詳細表示",
+      // "A_ケース相談二次相談作成",
+      // "A_ケース相談二次相談提出",
+      "A_勉強会TOP表示",
+      "A_勉強会詳細表示",
+      // "A_勉強会申込",
+      // "A_勉強会申込詳細表示",
+      // "A_勉強会参加",
+    ];
+
     const generateAggregateColumns = function (
       view: ResolvedView,
-      withSourceParam: boolean, 
+      withSourceParam: boolean,
       index: number
     ): ValueSurface[] {
       const result = [
@@ -78,7 +79,7 @@ function main() {
           alphabetName: `action_aggregated_value`,
           value: new AggregateValue({
             pattern: new AggregatePattern({
-              name: countAll ? "COUNT" : "COUNT_DISTINCT",
+              name: "COUNT",
             }),
             source: view.publicName,
             sourceColumnName: baseUnitName,
@@ -206,11 +207,17 @@ function main() {
             name: `内側関連アクション集計用`,
             alphabetName: `inner_related_for_aggregation`,
             source: relatedActionView.publicName,
-            columns: generateAggregateColumns(relatedActionView, countAll, index + 1),
-            groups: generateGroupBy(relatedActionView, countAll),
+            columns: generateAggregateColumns(
+              relatedActionView,
+              true,
+              index + 1
+            ),
+            groups: generateGroupBy(relatedActionView, true),
             conditions: [
-              new RawCondition({raw: 'DATE(time, "Asia/Tokyo") >= DATE("2021-01-01")'})
-            ]
+              new RawCondition({
+                raw: 'DATE(time, "Asia/Tokyo") >= DATE("2021-01-01")',
+              }),
+            ],
           });
         }),
       ],
@@ -219,6 +226,39 @@ function main() {
   };
 
   const usersAfterContract = function () {
+    const timeColumnName = "タイムスタンプ";
+    const baseUnitName = "ユーザコード";
+
+    const periodUnitType = "タイムスタンプ_週抽出";
+    const periodUnitName = "基準アクション月";
+    const periodUnitAlphabetName = "base_action_month";
+
+    const baseActionName = "A_PLUS利用開始";
+
+    const relatedActionNames = [
+      // "A_概観_サイト内の任意ページ表示",
+      // "A_概観_勉強会内の任意ページ表示",
+      // "A_概観_勉強会過去動画内の任意ページ表示",
+      // "A_概観_個別ケース相談内の任意ページ表示",
+      // "A_概観_教材内の任意ページ表示",
+      // "A_概観_ヒント動画内の任意ページ表示",
+      // "A_概観_マイページ内の任意ページ表示",
+      "A_TOP表示",
+      "A_マイページTOP表示",
+      "A_ケース相談TOP表示",
+      "A_ケース相談詳細表示",
+      // "A_ケース相談一次相談作成",
+      // "A_ケース相談一次相談申込",
+      // "A_ケース相談申込詳細表示",
+      // "A_ケース相談二次相談作成",
+      // "A_ケース相談二次相談提出",
+      "A_勉強会TOP表示",
+      "A_勉強会詳細表示",
+      // "A_勉強会申込",
+      // "A_勉強会申込詳細表示",
+      // "A_勉強会参加",
+    ];
+
     const generateAggregateColumns = function (
       view: ResolvedView
     ): ValueSurface[] {
@@ -331,7 +371,7 @@ function main() {
   };
 
   // usersAfterContract();
-  usersContracted(true);
+  usersContractedSourceParam();
 
   const bootstrapViewName = "集計クエリ";
 
