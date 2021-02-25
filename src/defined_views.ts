@@ -111,6 +111,13 @@ END`,
         }),
       }),
       new ValueSurface({
+        name: "作成日時",
+        alphabetName: "created_on",
+        value: new RawValue({
+          raw: "application_tickets.created_on",
+        }),
+      }),
+      new ValueSurface({
         name: "流入元パラメータ",
         alphabetName: "source_param",
         value: new RawValue({
@@ -137,6 +144,13 @@ END`,
         alphabetName: "submitted_at",
         value: new RawValue({
           raw: "second_question_tickets.submitted_at",
+        }),
+      }),
+      new ValueSurface({
+        name: "作成日時",
+        alphabetName: "created_on",
+        value: new RawValue({
+          raw: "second_question_tickets.created_on",
         }),
       }),
       new ValueSurface({
@@ -367,7 +381,7 @@ END`,
       new ValueSurface({
         name: "タイムスタンプ",
         alphabetName: "time",
-        value: new SelectValue({ sourceColumnName: "申込日時" }),
+        value: new SelectValue({ sourceColumnName: "作成日時" }),
       }),
     ],
     inheritColumns: ["ユーザコード", "流入元パラメータ"],
@@ -407,7 +421,7 @@ END`,
       new ValueSurface({
         name: "タイムスタンプ",
         alphabetName: "time",
-        value: new SelectValue({ sourceColumnName: "提出日時" }),
+        value: new SelectValue({ sourceColumnName: "作成日時" }),
       }),
     ],
     inheritColumns: ["ユーザコード", "流入元パラメータ"],
