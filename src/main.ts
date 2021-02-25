@@ -168,19 +168,19 @@ function main() {
           name: `アクション集計値`,
           alphabetName: `action_aggregated_value`,
           value: new AggregateValue({
-            pattern: new AggregatePattern({ name: "COUNT" }),
+            pattern: new AggregatePattern({ name: "COUNT_DISTINCT" }),
             source: view.publicName,
             sourceColumnName: baseUnitName,
           }),
         }),
-        new ValueSurface({
-          name: `流入元パラメータ`,
-          alphabetName: `source_param`,
-          value: new SelectValue({
-            source: view.publicName,
-            sourceColumnName: "流入元パラメータ",
-          }),
-        }),
+        // new ValueSurface({
+        //   name: `流入元パラメータ`,
+        //   alphabetName: `source_param`,
+        //   value: new SelectValue({
+        //     source: view.publicName,
+        //     sourceColumnName: "流入元パラメータ",
+        //   }),
+        // }),
         new ValueSurface({
           name: "アクション種別ラベル",
           alphabetName: "action_type_label",
@@ -198,12 +198,12 @@ function main() {
             pattern: new TransformPattern({ name: periodUnitType }),
           }),
         }),
-        new Group({
-          value: new SelectValue({
-            sourceColumnName: "流入元パラメータ",
-            source: view.publicName,
-          }),
-        }),
+        // new Group({
+        //   value: new SelectValue({
+        //     sourceColumnName: "流入元パラメータ",
+        //     source: view.publicName,
+        //   }),
+        // }),
       ];
     };
 
