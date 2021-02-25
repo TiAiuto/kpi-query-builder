@@ -552,8 +552,8 @@ function main() {
             }),
           }),
           new ValueSurface({
-            name: `${relatedActionView.publicName}_集計値`,
-            alphabetName: `${relatedActionView.physicalName}_aggregated_value`,
+            name: `アクション集計値`,
+            alphabetName: `action_aggregated_value`,
             value: new AggregateValue({
               pattern: new AggregatePattern({ name: "COUNT_DISTINCT" }),
               source: relatedActionView.publicName,
@@ -623,19 +623,7 @@ function main() {
   const reportUnionView = new UnionView({
     name: "集計クエリ",
     alphabetName: "aggregated_view",
-    views: unionViews,
-    columns: [
-      new ValueSurface({
-        name: periodUnitName,
-        alphabetName: periodUnitAlphabetName,
-        value: new RawValue({ raw: "" }),
-      }),
-      new ValueSurface({
-        name: periodUnitName,
-        alphabetName: periodUnitAlphabetName,
-        value: new RawValue({ raw: "" }),
-      }),
-    ],
+    views: unionViews
   });
   resolver.addView(reportUnionView);
 
