@@ -191,31 +191,10 @@ export const DefinedViews: View[] = [
     name: "PLUS契約者アクセスログ",
     alphabetName: "plus_contracted_users_logs",
     source: "PLUSユーザコード付きアクセスログ",
-    columns: [
-      // テスト
-      new ValueSurface({
-        name: "新しい名前のユーザコード",
-        alphabetName: "user_code_alias",
-        value: new SelectValue({ sourceColumnName: "ユーザコード" }),
-      }),
-      new ValueSurface({
-        name: "月",
-        alphabetName: "month",
-        value: new TransformValue({
-          sourceColumnName: "タイムスタンプ",
-          pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
-        }),
-      }),
-    ],
     inheritAllColumnsEnabled: true,
     mixinUsages: [
       new MixinUsage({
         name: "PLUS契約ユーザ（解約済み含む）",
-      }),
-    ],
-    orders: [
-      new Order({
-        value: new SelectValue({ sourceColumnName: "タイムスタンプ" }),
       }),
     ],
   }),
@@ -248,7 +227,7 @@ export const DefinedViews: View[] = [
   new ActionView({
     actionName: "A_概観_サイト内の任意ページ表示",
     actionAlphabetName: "action_overview_visit_site",
-    source: "PLUSユーザコード付きアクセスログ",
+    source: "PLUS契約者アクセスログ",
     inheritAllColumnsEnabled: true,
     conditions: [
       new RawCondition({
@@ -259,7 +238,7 @@ export const DefinedViews: View[] = [
   new ActionView({
     actionName: "A_概観_勉強会内の任意ページ表示",
     actionAlphabetName: "action_overview_visit_study_meeting",
-    source: "PLUSユーザコード付きアクセスログ",
+    source: "PLUS契約者アクセスログ",
     inheritAllColumnsEnabled: true,
     conditions: [
       new RawCondition({
@@ -270,7 +249,7 @@ export const DefinedViews: View[] = [
   new ActionView({
     actionName: "A_概観_勉強会過去動画内の任意ページ表示",
     actionAlphabetName: "action_overview_visit_study_meeting_archive",
-    source: "PLUSユーザコード付きアクセスログ",
+    source: "PLUS契約者アクセスログ",
     inheritAllColumnsEnabled: true,
     conditions: [
       new RawCondition({
@@ -281,7 +260,7 @@ export const DefinedViews: View[] = [
   new ActionView({
     actionName: "A_概観_個別ケース相談内の任意ページ表示",
     actionAlphabetName: "action_overview_visit_counseling",
-    source: "PLUSユーザコード付きアクセスログ",
+    source: "PLUS契約者アクセスログ",
     inheritAllColumnsEnabled: true,
     conditions: [
       new RawCondition({
@@ -292,7 +271,7 @@ export const DefinedViews: View[] = [
   new ActionView({
     actionName: "A_概観_教材内の任意ページ表示",
     actionAlphabetName: "action_overview_visit_kyozai",
-    source: "PLUSユーザコード付きアクセスログ",
+    source: "PLUS契約者アクセスログ",
     inheritAllColumnsEnabled: true,
     conditions: [
       new RawCondition({
@@ -303,7 +282,7 @@ export const DefinedViews: View[] = [
   new ActionView({
     actionName: "A_概観_ヒント動画内の任意ページ表示",
     actionAlphabetName: "action_overview_visit_hint_videos",
-    source: "PLUSユーザコード付きアクセスログ",
+    source: "PLUS契約者アクセスログ",
     inheritAllColumnsEnabled: true,
     conditions: [
       new RawCondition({
@@ -314,7 +293,7 @@ export const DefinedViews: View[] = [
   new ActionView({
     actionName: "A_概観_マイページ内の任意ページ表示",
     actionAlphabetName: "action_overview_visit_mypage",
-    source: "PLUSユーザコード付きアクセスログ",
+    source: "PLUS契約者アクセスログ",
     inheritAllColumnsEnabled: true,
     conditions: [
       new RawCondition({
@@ -325,7 +304,7 @@ export const DefinedViews: View[] = [
   new ActionView({
     actionName: "A_TOP表示",
     actionAlphabetName: "action_visit_top",
-    source: "PLUSユーザコード付きアクセスログ",
+    source: "PLUS契約者アクセスログ",
     inheritAllColumnsEnabled: true,
     conditions: [
       new RawCondition({
@@ -336,7 +315,7 @@ export const DefinedViews: View[] = [
   new ActionView({
     actionName: "A_マイページ表示",
     actionAlphabetName: "action_visit_mypage_top",
-    source: "PLUSユーザコード付きアクセスログ",
+    source: "PLUS契約者アクセスログ",
     inheritAllColumnsEnabled: true,
     conditions: [
       new RawCondition({
@@ -347,7 +326,7 @@ export const DefinedViews: View[] = [
   new ActionView({
     actionName: "A_ケース相談TOP表示",
     actionAlphabetName: "action_visit_counseling_top",
-    source: "PLUSユーザコード付きアクセスログ",
+    source: "PLUS契約者アクセスログ",
     inheritAllColumnsEnabled: true,
     conditions: [
       new RawCondition({
@@ -358,7 +337,7 @@ export const DefinedViews: View[] = [
   new ActionView({
     actionName: "A_ケース相談詳細表示",
     actionAlphabetName: "action_visit_counseling_show",
-    source: "PLUSユーザコード付きアクセスログ",
+    source: "PLUS契約者アクセスログ",
     inheritAllColumnsEnabled: true,
     conditions: [
       new RawCondition({
@@ -396,7 +375,7 @@ export const DefinedViews: View[] = [
   new ActionView({
     actionName: "A_ケース相談申込詳細表示",
     actionAlphabetName: "action_visit_counseling_application_detail",
-    source: "PLUSユーザコード付きアクセスログ",
+    source: "PLUS契約者アクセスログ",
     inheritAllColumnsEnabled: true,
     conditions: [
       new RawCondition({
@@ -437,7 +416,7 @@ export const DefinedViews: View[] = [
   new ActionView({
     actionName: "A_勉強会TOP表示",
     actionAlphabetName: "action_visit_study_meeting_top",
-    source: "PLUSユーザコード付きアクセスログ",
+    source: "PLUS契約者アクセスログ",
     inheritAllColumnsEnabled: true,
     conditions: [
       new RawCondition({
@@ -448,7 +427,7 @@ export const DefinedViews: View[] = [
   new ActionView({
     actionName: "A_勉強会詳細表示",
     actionAlphabetName: "action_visit_study_meeting_detail",
-    source: "PLUSユーザコード付きアクセスログ",
+    source: "PLUS契約者アクセスログ",
     inheritAllColumnsEnabled: true,
     conditions: [
       new RawCondition({
@@ -473,7 +452,7 @@ export const DefinedViews: View[] = [
     actionName: "A_勉強会申込詳細表示",
     actionAlphabetName:
       "action_visit_mypage_study_meeting_application_detail",
-    source: "PLUSユーザコード付きアクセスログ",
+    source: "PLUS契約者アクセスログ",
     inheritAllColumnsEnabled: true,
     conditions: [
       new RawCondition({
