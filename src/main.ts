@@ -45,22 +45,23 @@ function main() {
     "A_マイページTOP表示",
     "A_ケース相談TOP表示",
     "A_ケース相談詳細表示",
-    "A_ケース相談一次相談作成",
-    "A_ケース相談一次相談申込",
-    "A_ケース相談申込詳細表示",
-    "A_ケース相談二次相談作成",
-    "A_ケース相談二次相談提出",
+    // "A_ケース相談一次相談作成",
+    // "A_ケース相談一次相談申込",
+    // "A_ケース相談申込詳細表示",
+    // "A_ケース相談二次相談作成",
+    // "A_ケース相談二次相談提出",
     "A_勉強会TOP表示",
     "A_勉強会詳細表示",
-    "A_勉強会申込",
-    "A_勉強会申込詳細表示",
-    "A_勉強会参加",
+    // "A_勉強会申込",
+    // "A_勉強会申込詳細表示",
+    // "A_勉強会参加",
   ];
 
   const usersContracted = function (countAll: boolean) {
     const generateAggregateColumns = function (
       view: ResolvedView,
-      withSourceParam: boolean
+      withSourceParam: boolean, 
+      index: number
     ): ValueSurface[] {
       const result = [
         new ValueSurface({
@@ -86,7 +87,7 @@ function main() {
         new ValueSurface({
           name: "アクション種別ラベル",
           alphabetName: "action_type_label",
-          value: new RawValue({ raw: `'${view.publicName}'` }),
+          value: new RawValue({ raw: `'${index}_${view.publicName}'` }),
         }),
       ];
 
@@ -95,9 +96,13 @@ function main() {
           new ValueSurface({
             name: `流入元パラメータ`,
             alphabetName: `source_param`,
-            value: new SelectValue({
+            value: new TransformValue({
               source: view.publicName,
               sourceColumnName: "流入元パラメータ",
+              pattern: new TransformPattern({
+                name: "空白変換",
+                args: ["その他"],
+              }),
             }),
           })
         );
@@ -179,7 +184,7 @@ function main() {
             new ValueSurface({
               name: "アクション種別ラベル",
               alphabetName: "action_type_label",
-              value: new RawValue({ raw: `'期間内PLUS契約中'` }),
+              value: new RawValue({ raw: `'0_期間内PLUS契約中'` }),
             }),
             new ValueSurface({
               name: "流入元パラメータ",
@@ -195,13 +200,13 @@ function main() {
             }),
           ],
         }),
-        ...relatedActionNames.map((relatedActionName) => {
+        ...relatedActionNames.map((relatedActionName, index) => {
           const relatedActionView = resolver.resolve(relatedActionName);
           return new QueryView({
             name: `内側関連アクション集計用`,
             alphabetName: `inner_related_for_aggregation`,
             source: relatedActionView.publicName,
-            columns: generateAggregateColumns(relatedActionView, countAll),
+            columns: generateAggregateColumns(relatedActionView, countAll, index + 1),
             groups: generateGroupBy(relatedActionView, countAll),
           });
         }),
