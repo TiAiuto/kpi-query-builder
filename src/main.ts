@@ -392,7 +392,7 @@ function main() {
     const timeColumnName = "タイムスタンプ";
     const baseUnitName = "ユーザコード";
 
-    const periodUnitType = "タイムスタンプ_週抽出";
+    const periodUnitType = "タイムスタンプ_月抽出";
     const periodUnitName = "基準アクション月";
     const periodUnitAlphabetName = "base_action_month";
 
@@ -509,7 +509,7 @@ function main() {
         alphabetName: "aggregate_base_period",
         pattern: new RoutinePattern({
           name: "期間集合生成",
-          args: ["週単位", "20210118", "20211231"],
+          args: ["月単位", "20210118", "20211231"],
         }),
       })
     );
@@ -592,11 +592,158 @@ function main() {
     resolver.addView(reportUnionView);
   };
 
-  const usersContractedSourceParamMoreThanMonth = function () {
+  const usersContractedSourceParamEachService = function () {
     const timeColumnName = "タイムスタンプ";
     const baseUnitName = "ユーザコード";
 
     const periodUnitType = "タイムスタンプ_週抽出";
+    const periodUnitName = "基準アクション月";
+    const periodUnitAlphabetName = "base_action_month";
+
+    const baseActionName = "A_PLUS利用開始";
+
+    const relatedActionNames = [
+      // "A_概観_サイト内の任意ページ表示",
+      // "A_概観_勉強会内の任意ページ表示",
+      // "A_概観_勉強会過去動画内の任意ページ表示",
+      // "A_概観_個別ケース相談内の任意ページ表示",
+      // "A_概観_教材内の任意ページ表示",
+      // "A_概観_ヒント動画内の任意ページ表示",
+      // "A_概観_マイページ内の任意ページ表示",
+      // "A_TOP表示",
+      "A_マイページTOP表示",
+      // "A_ケース相談TOP表示",
+      // "A_ケース相談詳細表示",
+      // "A_ケース相談一次相談作成",
+      // "A_ケース相談一次相談申込",
+      // "A_ケース相談申込詳細表示",
+      // "A_ケース相談二次相談作成",
+      // "A_ケース相談二次相談提出",
+      // "A_勉強会TOP表示",
+      // "A_勉強会詳細表示",
+      // "A_勉強会申込",
+      // "A_勉強会申込詳細表示",
+      // "A_勉強会参加",
+    ];
+
+    const generateAggregateColumns = function (
+      view: ResolvedView,
+      withSourceParam: boolean,
+      index: number
+    ): ValueSurface[] {
+      const result = [
+        new ValueSurface({
+          name: periodUnitName,
+          alphabetName: periodUnitAlphabetName,
+          value: new TransformValue({
+            sourceColumnName: timeColumnName,
+            source: view.publicName,
+            pattern: new TransformPattern({ name: periodUnitType }),
+          }),
+        }),
+        new ValueSurface({
+          name: `アクション集計値`,
+          alphabetName: `action_aggregated_value`,
+          value: new AggregateValue({
+            pattern: new AggregatePattern({
+              name: "COUNT",
+            }),
+            source: view.publicName,
+            sourceColumnName: baseUnitName,
+          }),
+        }),
+        new ValueSurface({
+          name: "アクション種別ラベル",
+          alphabetName: "action_type_label",
+          value: new RawValue({ raw: `'${index}_${view.publicName}'` }),
+        }),
+      ];
+
+      if (withSourceParam) {
+        result.push(
+          new ValueSurface({
+            name: `流入元パラメータ`,
+            alphabetName: `source_param`,
+            value: new TransformValue({
+              source: view.publicName,
+              sourceColumnName: "流入元パラメータ",
+              pattern: new TransformPattern({
+                name: "空白変換",
+                args: ["その他"],
+              }),
+            }),
+          })
+        );
+      }
+
+      return result;
+    };
+
+    const generateGroupBy = function (
+      view: ResolvedView,
+      withSourceParam: boolean
+    ): Group[] {
+      const result = [
+        new Group({
+          value: new TransformValue({
+            sourceColumnName: timeColumnName,
+            source: view.publicName,
+            pattern: new TransformPattern({ name: periodUnitType }),
+          }),
+        }),
+      ];
+
+      if (withSourceParam) {
+        result.push(
+          new Group({
+            value: new SelectValue({
+              sourceColumnName: "流入元パラメータ",
+              source: view.publicName,
+            }),
+          })
+        );
+      }
+
+      return result;
+    };
+
+    const reportUnionView = new UnionView({
+      name: "集計クエリ",
+      alphabetName: "aggregated_view",
+      views: [
+        ...relatedActionNames.map((relatedActionName, index) => {
+          const relatedActionView = resolver.resolve(relatedActionName);
+          return new QueryView({
+            name: `内側関連アクション集計用`,
+            alphabetName: `inner_related_for_aggregation`,
+            source: relatedActionView.publicName,
+            columns: generateAggregateColumns(
+              relatedActionView,
+              true,
+              index + 1
+            ),
+            groups: generateGroupBy(relatedActionView, true),
+            conditions: [
+              new UnaryCondition({
+                value: new SelectValue({
+                  source: relatedActionName,
+                  sourceColumnName: "タイムスタンプ",
+                }),
+                template: 'DATE(?, "Asia/Tokyo") >= DATE("2021-01-18")',
+              }),
+            ],
+          });
+        }),
+      ],
+    });
+    resolver.addView(reportUnionView);
+  };
+
+  const usersContractedSourceParamMoreThanMonth = function () {
+    const timeColumnName = "タイムスタンプ";
+    const baseUnitName = "ユーザコード";
+
+    const periodUnitType = "タイムスタンプ_月抽出";
     const periodUnitName = "基準アクション月";
     const periodUnitAlphabetName = "base_action_month";
 
@@ -713,7 +860,7 @@ function main() {
         alphabetName: "aggregate_base_period",
         pattern: new RoutinePattern({
           name: "期間集合生成",
-          args: ["週単位", "20210118", "20211231"],
+          args: ["月単位", "20210118", "20211231"],
         }),
       })
     );
@@ -992,8 +1139,9 @@ function main() {
   // usersAfterContract();
   // usersContractedSourceParam();
   // usersContractedUsageSummary();
-  // usersContractedSourceParamMoreThanMonth
-  usersContractedUsageSummaryMoreThanMonth();
+  // usersContractedSourceParamMoreThanMonth();
+  // usersContractedUsageSummaryMoreThanMonth();
+  usersContractedSourceParamEachService();
 
   const bootstrapViewName = "集計クエリ";
 
