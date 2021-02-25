@@ -12,7 +12,6 @@ import { AggregateValue } from "./builder/value/aggregate_value";
 import { AggregatePattern } from "./builder/aggregate_pattern";
 import { InnerJoin } from "./builder/join/inner_join";
 import { UnionView } from "./builder/view/union_view";
-import { View } from "./builder/view/view";
 import { DefinedMixins } from "./defined_mixins";
 import { DefinedViews } from "./defined_views";
 import { ResolvedView } from "./builder/resolved_view";
@@ -112,59 +111,56 @@ function main() {
   };
 
   const baseActionView = resolver.resolve(baseActionName);
-
-  const unionViews: View[] = [
-    new QueryView({
-      name: `内側基準集計用`,
-      alphabetName: `inner_base_for_aggregation`,
-      source: baseActionName,
-      columns: generateAggregateColumns(baseActionView),
-      groups: generateGroupBy(baseActionView),
-    }),
-    ...relatedActionNames.map((relatedActionName) => {
-      const relatedActionView = resolver.resolve(relatedActionName);
-      return new QueryView({
-        name: `内側関連アクション集計用`,
-        alphabetName: `inner_related_for_aggregation`,
-        source: baseActionName,
-        columns: generateAggregateColumns(relatedActionView),
-        joins: [
-          new InnerJoin({
-            target: relatedActionView.publicName,
-            conditions: [
-              new EqCondition({
-                value: new SelectValue({
-                  sourceColumnName: baseUnitName,
-                  source: baseActionName,
-                }),
-                otherValue: new SelectValue({
-                  sourceColumnName: baseUnitName,
-                  source: relatedActionView.publicName,
-                }),
-              }),
-              new BinomialCondition({
-                value: new SelectValue({
-                  sourceColumnName: timeColumnName,
-                  source: relatedActionView.publicName,
-                }),
-                otherValue: new SelectValue({
-                  sourceColumnName: timeColumnName,
-                  source: baseActionName,
-                }),
-                template: "DATE_DIFF(DATE(?), DATE(?), MONTH) <= 1",
-              }),
-            ],
-          }),
-        ],
-        groups: generateGroupBy(relatedActionView),
-      });
-    }),
-  ];
-
   const reportUnionView = new UnionView({
     name: "集計クエリ",
     alphabetName: "aggregated_view",
-    views: unionViews,
+    views: [
+      new QueryView({
+        name: `内側基準集計用`,
+        alphabetName: `inner_base_for_aggregation`,
+        source: baseActionName,
+        columns: generateAggregateColumns(baseActionView),
+        groups: generateGroupBy(baseActionView),
+      }),
+      ...relatedActionNames.map((relatedActionName) => {
+        const relatedActionView = resolver.resolve(relatedActionName);
+        return new QueryView({
+          name: `内側関連アクション集計用`,
+          alphabetName: `inner_related_for_aggregation`,
+          source: baseActionName,
+          columns: generateAggregateColumns(relatedActionView),
+          joins: [
+            new InnerJoin({
+              target: relatedActionView.publicName,
+              conditions: [
+                new EqCondition({
+                  value: new SelectValue({
+                    sourceColumnName: baseUnitName,
+                    source: baseActionName,
+                  }),
+                  otherValue: new SelectValue({
+                    sourceColumnName: baseUnitName,
+                    source: relatedActionView.publicName,
+                  }),
+                }),
+                new BinomialCondition({
+                  value: new SelectValue({
+                    sourceColumnName: timeColumnName,
+                    source: relatedActionView.publicName,
+                  }),
+                  otherValue: new SelectValue({
+                    sourceColumnName: timeColumnName,
+                    source: baseActionName,
+                  }),
+                  template: "DATE_DIFF(DATE(?), DATE(?), MONTH) <= 1",
+                }),
+              ],
+            }),
+          ],
+          groups: generateGroupBy(relatedActionView),
+        });
+      }),
+    ],
   });
   resolver.addView(reportUnionView);
 
