@@ -247,16 +247,16 @@ function main() {
       "A_マイページTOP表示",
       "A_ケース相談TOP表示",
       "A_ケース相談詳細表示",
-      // "A_ケース相談一次相談作成",
-      // "A_ケース相談一次相談申込",
-      // "A_ケース相談申込詳細表示",
-      // "A_ケース相談二次相談作成",
-      // "A_ケース相談二次相談提出",
+      "A_ケース相談一次相談作成",
+      "A_ケース相談一次相談申込",
+      "A_ケース相談申込詳細表示",
+      "A_ケース相談二次相談作成",
+      "A_ケース相談二次相談提出",
       "A_勉強会TOP表示",
       "A_勉強会詳細表示",
-      // "A_勉強会申込",
-      // "A_勉強会申込詳細表示",
-      // "A_勉強会参加",
+      "A_勉強会申込",
+      "A_勉強会申込詳細表示",
+      "A_勉強会参加",
     ];
 
     const generateAggregateColumns = function (
@@ -326,7 +326,12 @@ function main() {
           source: baseActionName,
           columns: generateAggregateColumns(baseActionView),
           groups: generateGroupBy(baseActionView),
-        }),
+          conditions: [
+            new RawCondition({
+              raw: 'DATE(time, "Asia/Tokyo") >= DATE("2021-01-01")',
+            }),
+          ],
+      }),
         ...relatedActionNames.map((relatedActionName) => {
           const relatedActionView = resolver.resolve(relatedActionName);
           return new QueryView({
@@ -370,8 +375,8 @@ function main() {
     resolver.addView(reportUnionView);
   };
 
-  // usersAfterContract();
-  usersContractedSourceParam();
+  usersAfterContract();
+  // usersContractedSourceParam();
 
   const bootstrapViewName = "集計クエリ";
 
