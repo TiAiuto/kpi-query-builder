@@ -21,6 +21,7 @@ import { AggregateValue } from "./builder/value/aggregate_value";
 import { AggregatePattern } from "./builder/aggregate_pattern";
 import { InnerJoin } from "./builder/join/inner_join";
 import { UnionView } from "./builder/view/union_view";
+import { View } from "./builder/view/view";
 
 function main() {
   const resolver = new ViewResolver({
@@ -473,8 +474,9 @@ function main() {
 
   const unionViewNames: string[] = [];
 
+  const unionViews: View[] = [];
   const baseActionView = resolver.resolve(baseActionName);
-  resolver.addView(
+  unionViews.push(
     new QueryView({
       name: `${baseActionView.publicName}_集計用`,
       alphabetName: `${baseActionView.physicalName}_for_aggregation`,
@@ -534,8 +536,7 @@ function main() {
   relatedActionNames.forEach((relatedActionName) => {
     const relatedActionView = resolver.resolve(relatedActionName);
 
-    unionViewNames.push(`${relatedActionView.publicName}_集計用`);
-    resolver.addView(
+    unionViews.push(
       new QueryView({
         name: `${relatedActionView.publicName}_集計用`,
         alphabetName: `${relatedActionView.physicalName}_for_aggregation`,
@@ -622,7 +623,19 @@ function main() {
   const reportUnionView = new UnionView({
     name: "集計クエリ",
     alphabetName: "aggregated_view",
-    viewNames: unionViewNames,
+    views: unionViews,
+    columns: [
+      new ValueSurface({
+        name: periodUnitName,
+        alphabetName: periodUnitAlphabetName,
+        value: new RawValue({ raw: "" }),
+      }),
+      new ValueSurface({
+        name: periodUnitName,
+        alphabetName: periodUnitAlphabetName,
+        value: new RawValue({ raw: "" }),
+      }),
+    ],
   });
   resolver.addView(reportUnionView);
 
