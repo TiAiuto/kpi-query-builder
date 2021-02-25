@@ -54,11 +54,12 @@ function main() {
     "A_勉強会参加",
   ];
 
-  const usersContractedCountAll = function() {
+  const usersContracted = function (countAll: boolean) {
     const generateAggregateColumns = function (
-      view: ResolvedView
+      view: ResolvedView,
+      withSourceParam: boolean
     ): ValueSurface[] {
-      return [
+      const result = [
         new ValueSurface({
           name: periodUnitName,
           alphabetName: periodUnitAlphabetName,
@@ -72,17 +73,11 @@ function main() {
           name: `アクション集計値`,
           alphabetName: `action_aggregated_value`,
           value: new AggregateValue({
-            pattern: new AggregatePattern({ name: "COUNT" }),
+            pattern: new AggregatePattern({
+              name: countAll ? "COUNT" : "COUNT_DISTINCT",
+            }),
             source: view.publicName,
             sourceColumnName: baseUnitName,
-          }),
-        }),
-        new ValueSurface({
-          name: `流入元パラメータ`,
-          alphabetName: `source_param`,
-          value: new SelectValue({
-            source: view.publicName,
-            sourceColumnName: "流入元パラメータ",
           }),
         }),
         new ValueSurface({
@@ -91,10 +86,28 @@ function main() {
           value: new RawValue({ raw: `'${view.publicName}'` }),
         }),
       ];
+
+      if (withSourceParam) {
+        result.push(
+          new ValueSurface({
+            name: `流入元パラメータ`,
+            alphabetName: `source_param`,
+            value: new SelectValue({
+              source: view.publicName,
+              sourceColumnName: "流入元パラメータ",
+            }),
+          })
+        );
+      }
+
+      return result;
     };
 
-    const generateGroupBy = function (view: ResolvedView): Group[] {
-      return [
+    const generateGroupBy = function (
+      view: ResolvedView,
+      withSourceParam: boolean
+    ): Group[] {
+      const result = [
         new Group({
           value: new TransformValue({
             sourceColumnName: timeColumnName,
@@ -102,16 +115,22 @@ function main() {
             pattern: new TransformPattern({ name: periodUnitType }),
           }),
         }),
-        new Group({
-          value: new SelectValue({
-            sourceColumnName: "流入元パラメータ",
-            source: view.publicName,
-          }),
-        }),
       ];
+
+      if (withSourceParam) {
+        result.push(
+          new Group({
+            value: new SelectValue({
+              sourceColumnName: "流入元パラメータ",
+              source: view.publicName,
+            }),
+          })
+        );
+      }
+
+      return result;
     };
 
-    const baseActionView = resolver.resolve(baseActionName);
     const reportUnionView = new UnionView({
       name: "集計クエリ",
       alphabetName: "aggregated_view",
@@ -122,14 +141,14 @@ function main() {
             name: `内側関連アクション集計用`,
             alphabetName: `inner_related_for_aggregation`,
             source: relatedActionView.publicName,
-            columns: generateAggregateColumns(relatedActionView),
-            groups: generateGroupBy(relatedActionView),
+            columns: generateAggregateColumns(relatedActionView, countAll),
+            groups: generateGroupBy(relatedActionView, countAll),
           });
         }),
       ],
     });
     resolver.addView(reportUnionView);
-  }
+  };
 
   const usersAfterContract = function () {
     const generateAggregateColumns = function (
@@ -244,7 +263,7 @@ function main() {
   };
 
   // usersAfterContract();
-  usersContractedCountAll();
+  usersContracted(false);
 
   const bootstrapViewName = "集計クエリ";
 
