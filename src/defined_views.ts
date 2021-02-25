@@ -313,7 +313,7 @@ export const DefinedViews: View[] = [
     ],
   }),
   new ActionView({
-    actionName: "A_マイページ表示",
+    actionName: "A_マイページTOP表示",
     actionAlphabetName: "action_visit_mypage_top",
     source: "PLUS契約者アクセスログ",
     inheritAllColumnsEnabled: true,
