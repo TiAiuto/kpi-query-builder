@@ -31,7 +31,7 @@ export class TransformValue extends Value implements SourceColumn {
     } else if (this.pattern.name === "タイムスタンプ_日抽出") {
       return `FORMAT_TIMESTAMP('%Y-%m-%d', ${resolvedColumn.fullPhysicalName}, 'Asia/Tokyo')`;
     } else if (this.pattern.name === "空白変換") {
-      return `IF(${resolvedColumn.fullPhysicalName} IS NULL OR ${resolvedColumn.fullPhysicalName} = '', ${this.pattern.args[0]}, ${resolvedColumn.fullPhysicalName})`; // TODO: 本当はこういうところエスケープしないといけない
+      return `IF(${resolvedColumn.fullPhysicalName} IS NULL OR ${resolvedColumn.fullPhysicalName} = '', '${this.pattern.args[0]}', ${resolvedColumn.fullPhysicalName})`; // TODO: 本当はこういうところエスケープしないといけない
     } else {
       throw new Error(`${this.pattern.name}は未実装`);
     }
