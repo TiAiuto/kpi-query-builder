@@ -102,28 +102,21 @@ function main() {
     ];
   };
 
-  const unionViewNames: string[] = [];
-
-  const unionViews: View[] = [];
   const baseActionView = resolver.resolve(baseActionName);
-  unionViews.push(
+
+  const unionViews: View[] = [
     new QueryView({
-      name: `${baseActionView.publicName}_集計用`,
-      alphabetName: `${baseActionView.physicalName}_for_aggregation`,
+      name: `内側基準集計用`,
+      alphabetName: `inner_base_for_aggregation`,
       source: baseActionName,
       columns: generateAggregateColumns(baseActionView),
       groups: generateGroupBy(baseActionView),
-    })
-  );
-  unionViewNames.push(`${baseActionView.publicName}_集計用`);
-
-  relatedActionNames.forEach((relatedActionName) => {
-    const relatedActionView = resolver.resolve(relatedActionName);
-
-    unionViews.push(
-      new QueryView({
-        name: `${relatedActionView.publicName}_集計用`,
-        alphabetName: `${relatedActionView.physicalName}_for_aggregation`,
+    }),
+    ...relatedActionNames.map((relatedActionName) => {
+      const relatedActionView = resolver.resolve(relatedActionName);
+      return new QueryView({
+        name: `内側関連アクション集計用`,
+        alphabetName: `inner_related_for_aggregation`,
         source: baseActionName,
         columns: generateAggregateColumns(relatedActionView),
         joins: [
@@ -155,9 +148,10 @@ function main() {
           }),
         ],
         groups: generateGroupBy(relatedActionView),
-      })
-    );
-  });
+      });
+    }),
+  ];
+
   const reportUnionView = new UnionView({
     name: "集計クエリ",
     alphabetName: "aggregated_view",
