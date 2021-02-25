@@ -1,11 +1,8 @@
 import { RawCondition } from "./builder/condition/raw_condition";
 import { RawJoin } from "./builder/join/raw_join";
 import { MixinUsage } from "./builder/mixin_usage";
-import { Order } from "./builder/order";
-import { TransformPattern } from "./builder/transform_pattern";
 import { RawValue } from "./builder/value/raw_value";
 import { SelectValue } from "./builder/value/select_value";
-import { TransformValue } from "./builder/value/transform_value";
 import { ValueSurface } from "./builder/value_surface";
 import { ActionView } from "./builder/view/action_view";
 import { QueryView } from "./builder/view/query_view";
@@ -79,8 +76,11 @@ export const DefinedViews: View[] = [
         name: "流入元パラメータ",
         alphabetName: "source_param",
         value: new RawValue({
-          raw:
-            'IF(referrer = "https://h-navi.jp/plus/welcome", "welcome", JSON_EXTRACT_SCALAR(message, "$.params.s"))',
+          raw: `CASE
+WHEN REGEXP_CONTAINS(referrer, "/plus/registers/complete") THEN "contract-completed"
+WHEN REGEXP_CONTAINS(referrer, "/plus/welcome") THEN "welcome"
+ELSE JSON_EXTRACT_SCALAR(message, "$.params.s")
+END`,
         }), // WELCOMEスライドの場合はブックマークされることを考慮してパラメータを仕込んでいない
       }),
     ],
@@ -152,8 +152,7 @@ export const DefinedViews: View[] = [
   new RootView({
     name: "オンライン勉強会申込",
     alphabetName: "plus_study_meeting_applications",
-    physicalSource:
-      "`h-navi.lo_production.plus_study_meeting_applications`",
+    physicalSource: "`h-navi.lo_production.plus_study_meeting_applications`",
     physicalSourceAlias: "study_meeting_applications",
     columns: [
       new ValueSurface({
@@ -202,7 +201,7 @@ export const DefinedViews: View[] = [
     name: "PLUS契約者アクセスログ流入元パラメータ除外",
     alphabetName: "plus_contracted_users_logs_without_source_param",
     source: "PLUSユーザコード付きアクセスログ",
-    inheritColumns: ['ユーザコード', 'path', 'タイムスタンプ'], 
+    inheritColumns: ["ユーザコード", "path", "タイムスタンプ"],
     columns: [
       new ValueSurface({
         name: "流入元パラメータ",
@@ -211,7 +210,7 @@ export const DefinedViews: View[] = [
           raw: "''",
         }),
       }),
-    ]
+    ],
   }),
   new ActionView({
     actionName: "A_PLUS利用開始",
@@ -465,8 +464,7 @@ export const DefinedViews: View[] = [
   }),
   new ActionView({
     actionName: "A_勉強会申込詳細表示",
-    actionAlphabetName:
-      "action_visit_mypage_study_meeting_application_detail",
+    actionAlphabetName: "action_visit_mypage_study_meeting_application_detail",
     source: "PLUS契約者アクセスログ",
     inheritAllColumnsEnabled: true,
     conditions: [
