@@ -16,7 +16,7 @@ export class UnionView extends View {
     const sql = this.viewNames
       .map((viewName) => {
         const resolvedView = resolver.resolve(viewName);
-        return resolvedView.sql + "\n";
+        return `SELECT * FROM ${resolvedView.physicalName} \n `;
       })
       .join("\nUNION ALL\n");
     return new ResolvedView({
