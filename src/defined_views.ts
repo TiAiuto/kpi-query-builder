@@ -246,6 +246,83 @@ export const DefinedViews: View[] = [
     ],
   }),
   new ActionView({
+    actionName: "A_概観_サイト内の任意ページ表示",
+    actionAlphabetName: "action_overview_visit_site",
+    source: "PLUSユーザコード付きアクセスログ",
+    inheritAllColumnsEnabled: true,
+    conditions: [
+      new RawCondition({
+        raw: "REGEXP_CONTAINS(path, '^/plus')",
+      }),
+    ],
+  }),
+  new ActionView({
+    actionName: "A_概観_勉強会内の任意ページ表示",
+    actionAlphabetName: "action_overview_visit_study_meeting",
+    source: "PLUSユーザコード付きアクセスログ",
+    inheritAllColumnsEnabled: true,
+    conditions: [
+      new RawCondition({
+        raw: "REGEXP_CONTAINS(path, '^/plus/study_meeting[^_]')",
+      }),
+    ],
+  }),
+  new ActionView({
+    actionName: "A_概観_勉強会過去動画内の任意ページ表示",
+    actionAlphabetName: "action_overview_visit_study_meeting_archive",
+    source: "PLUSユーザコード付きアクセスログ",
+    inheritAllColumnsEnabled: true,
+    conditions: [
+      new RawCondition({
+        raw: "REGEXP_CONTAINS(path, '^/plus/study_meeting_archive')",
+      }),
+    ],
+  }),
+  new ActionView({
+    actionName: "A_概観_個別ケース相談内の任意ページ表示",
+    actionAlphabetName: "action_overview_visit_counseling",
+    source: "PLUSユーザコード付きアクセスログ",
+    inheritAllColumnsEnabled: true,
+    conditions: [
+      new RawCondition({
+        raw: "REGEXP_CONTAINS(path, '^/plus/counseling')",
+      }),
+    ],
+  }),
+  new ActionView({
+    actionName: "A_概観_教材内の任意ページ表示",
+    actionAlphabetName: "action_overview_visit_kyozai",
+    source: "PLUSユーザコード付きアクセスログ",
+    inheritAllColumnsEnabled: true,
+    conditions: [
+      new RawCondition({
+        raw: "REGEXP_CONTAINS(path, '^/plus/kyozai')",
+      }),
+    ],
+  }),
+  new ActionView({
+    actionName: "A_概観_ヒント動画内の任意ページ表示",
+    actionAlphabetName: "action_overview_visit_hint_videos",
+    source: "PLUSユーザコード付きアクセスログ",
+    inheritAllColumnsEnabled: true,
+    conditions: [
+      new RawCondition({
+        raw: "REGEXP_CONTAINS(path, '^/plus/hint_videos')",
+      }),
+    ],
+  }),
+  new ActionView({
+    actionName: "A_概観_マイページ内の任意ページ表示",
+    actionAlphabetName: "action_overview_visit_mypage",
+    source: "PLUSユーザコード付きアクセスログ",
+    inheritAllColumnsEnabled: true,
+    conditions: [
+      new RawCondition({
+        raw: "REGEXP_CONTAINS(path, '^/plus/mypage')",
+      }),
+    ],
+  }),
+  new ActionView({
     actionName: "A_ケース相談TOP表示",
     actionAlphabetName: "action_visit_counseling_top",
     source: "PLUSユーザコード付きアクセスログ",
