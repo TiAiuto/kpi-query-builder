@@ -396,20 +396,20 @@ function main() {
     const timeColumnName = "タイムスタンプ";
     const baseUnitName = "ユーザコード";
 
-    const periodUnitType = "タイムスタンプ_月抽出"; // 週単位も可
+    const periodUnitType = "タイムスタンプ_週抽出"; // 週単位も可
     const periodUnitName = "基準アクション月";
     const periodUnitAlphabetName = "base_action_month";
 
     const baseActionName = "A_PLUS利用開始";
 
     const relatedActionNames = [
-      // "A_概観_サイト内の任意ページ表示",
-      // "A_概観_勉強会内の任意ページ表示",
-      // "A_概観_勉強会過去動画内の任意ページ表示",
-      // "A_概観_個別ケース相談内の任意ページ表示",
-      // "A_概観_教材内の任意ページ表示",
-      // "A_概観_ヒント動画内の任意ページ表示",
-      // "A_概観_マイページ内の任意ページ表示",
+      "A_概観_サイト内の任意ページ表示",
+      "A_概観_勉強会内の任意ページ表示",
+      "A_概観_勉強会過去動画内の任意ページ表示",
+      "A_概観_個別ケース相談内の任意ページ表示",
+      "A_概観_教材内の任意ページ表示",
+      "A_概観_ヒント動画内の任意ページ表示",
+      "A_概観_マイページ内の任意ページ表示",
       "A_TOP表示",
       "A_マイページTOP表示",
       "A_ケース相談TOP表示",
@@ -556,9 +556,9 @@ function main() {
     resolver.addView(reportUnionView);
   };
 
-  // usersAfterContract();
+  usersAfterContract();
   // usersContractedSourceParam();
-  usersContractedUsageSummary();
+  // usersContractedUsageSummary();
 
   const bootstrapViewName = "集計クエリ";
 
