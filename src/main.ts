@@ -54,115 +54,197 @@ function main() {
     "A_勉強会参加",
   ];
 
-  const generateAggregateColumns = function (
-    view: ResolvedView
-  ): ValueSurface[] {
-    return [
-      new ValueSurface({
-        name: periodUnitName,
-        alphabetName: periodUnitAlphabetName,
-        value: new TransformValue({
-          sourceColumnName: timeColumnName,
+  const usersContractedCountAll = function() {
+    const generateAggregateColumns = function (
+      view: ResolvedView
+    ): ValueSurface[] {
+      return [
+        new ValueSurface({
+          name: periodUnitName,
+          alphabetName: periodUnitAlphabetName,
+          value: new TransformValue({
+            sourceColumnName: timeColumnName,
+            source: view.publicName,
+            pattern: new TransformPattern({ name: periodUnitType }),
+          }),
+        }),
+        new ValueSurface({
+          name: `アクション集計値`,
+          alphabetName: `action_aggregated_value`,
+          value: new AggregateValue({
+            pattern: new AggregatePattern({ name: "COUNT" }),
+            source: view.publicName,
+            sourceColumnName: baseUnitName,
+          }),
+        }),
+        new ValueSurface({
+          name: `流入元パラメータ`,
+          alphabetName: `source_param`,
+          value: new SelectValue({
+            source: view.publicName,
+            sourceColumnName: "流入元パラメータ",
+          }),
+        }),
+        new ValueSurface({
+          name: "アクション種別ラベル",
+          alphabetName: "action_type_label",
+          value: new RawValue({ raw: `'${view.publicName}'` }),
+        }),
+      ];
+    };
+
+    const generateGroupBy = function (view: ResolvedView): Group[] {
+      return [
+        new Group({
+          value: new TransformValue({
+            sourceColumnName: timeColumnName,
+            source: view.publicName,
+            pattern: new TransformPattern({ name: periodUnitType }),
+          }),
+        }),
+        new Group({
+          value: new SelectValue({
+            sourceColumnName: "流入元パラメータ",
+            source: view.publicName,
+          }),
+        }),
+      ];
+    };
+
+    const baseActionView = resolver.resolve(baseActionName);
+    const reportUnionView = new UnionView({
+      name: "集計クエリ",
+      alphabetName: "aggregated_view",
+      views: [
+        ...relatedActionNames.map((relatedActionName) => {
+          const relatedActionView = resolver.resolve(relatedActionName);
+          return new QueryView({
+            name: `内側関連アクション集計用`,
+            alphabetName: `inner_related_for_aggregation`,
+            source: relatedActionView.publicName,
+            columns: generateAggregateColumns(relatedActionView),
+            groups: generateGroupBy(relatedActionView),
+          });
+        }),
+      ],
+    });
+    resolver.addView(reportUnionView);
+  }
+
+  const usersAfterContract = function () {
+    const generateAggregateColumns = function (
+      view: ResolvedView
+    ): ValueSurface[] {
+      return [
+        new ValueSurface({
+          name: periodUnitName,
+          alphabetName: periodUnitAlphabetName,
+          value: new TransformValue({
+            sourceColumnName: timeColumnName,
+            source: baseActionName,
+            pattern: new TransformPattern({ name: periodUnitType }),
+          }),
+        }),
+        new ValueSurface({
+          name: `アクション集計値`,
+          alphabetName: `action_aggregated_value`,
+          value: new AggregateValue({
+            pattern: new AggregatePattern({ name: "COUNT" }),
+            source: view.publicName,
+            sourceColumnName: baseUnitName,
+          }),
+        }),
+        new ValueSurface({
+          name: `流入元パラメータ`,
+          alphabetName: `source_param`,
+          value: new SelectValue({
+            source: view.publicName,
+            sourceColumnName: "流入元パラメータ",
+          }),
+        }),
+        new ValueSurface({
+          name: "アクション種別ラベル",
+          alphabetName: "action_type_label",
+          value: new RawValue({ raw: `'${view.publicName}'` }),
+        }),
+      ];
+    };
+
+    const generateGroupBy = function (view: ResolvedView): Group[] {
+      return [
+        new Group({
+          value: new TransformValue({
+            sourceColumnName: timeColumnName,
+            source: baseActionName,
+            pattern: new TransformPattern({ name: periodUnitType }),
+          }),
+        }),
+        new Group({
+          value: new SelectValue({
+            sourceColumnName: "流入元パラメータ",
+            source: view.publicName,
+          }),
+        }),
+      ];
+    };
+
+    const baseActionView = resolver.resolve(baseActionName);
+    const reportUnionView = new UnionView({
+      name: "集計クエリ",
+      alphabetName: "aggregated_view",
+      views: [
+        new QueryView({
+          name: `内側基準集計用`,
+          alphabetName: `inner_base_for_aggregation`,
           source: baseActionName,
-          pattern: new TransformPattern({ name: periodUnitType }),
+          columns: generateAggregateColumns(baseActionView),
+          groups: generateGroupBy(baseActionView),
         }),
-      }),
-      new ValueSurface({
-        name: `アクション集計値`,
-        alphabetName: `action_aggregated_value`,
-        value: new AggregateValue({
-          pattern: new AggregatePattern({ name: "COUNT" }),
-          source: view.publicName,
-          sourceColumnName: baseUnitName,
+        ...relatedActionNames.map((relatedActionName) => {
+          const relatedActionView = resolver.resolve(relatedActionName);
+          return new QueryView({
+            name: `内側関連アクション集計用`,
+            alphabetName: `inner_related_for_aggregation`,
+            source: baseActionName,
+            columns: generateAggregateColumns(relatedActionView),
+            joins: [
+              new InnerJoin({
+                target: relatedActionView.publicName,
+                conditions: [
+                  new EqCondition({
+                    value: new SelectValue({
+                      sourceColumnName: baseUnitName,
+                      source: baseActionName,
+                    }),
+                    otherValue: new SelectValue({
+                      sourceColumnName: baseUnitName,
+                      source: relatedActionView.publicName,
+                    }),
+                  }),
+                  new BinomialCondition({
+                    value: new SelectValue({
+                      sourceColumnName: timeColumnName,
+                      source: relatedActionView.publicName,
+                    }),
+                    otherValue: new SelectValue({
+                      sourceColumnName: timeColumnName,
+                      source: baseActionName,
+                    }),
+                    template: "DATE_DIFF(DATE(?), DATE(?), MONTH) <= 1",
+                  }),
+                ],
+              }),
+            ],
+            groups: generateGroupBy(relatedActionView),
+          });
         }),
-      }),
-      new ValueSurface({
-        name: `流入元パラメータ`,
-        alphabetName: `source_param`,
-        value: new SelectValue({
-          source: view.publicName,
-          sourceColumnName: "流入元パラメータ",
-        }),
-      }),
-      new ValueSurface({
-        name: "アクション種別ラベル",
-        alphabetName: "action_type_label",
-        value: new RawValue({ raw: `'${view.publicName}'` }),
-      }),
-    ];
+      ],
+    });
+    resolver.addView(reportUnionView);
   };
 
-  const generateGroupBy = function (view: ResolvedView): Group[] {
-    return [
-      new Group({
-        value: new TransformValue({
-          sourceColumnName: timeColumnName,
-          source: baseActionName,
-          pattern: new TransformPattern({ name: periodUnitType }),
-        }),
-      }),
-      new Group({
-        value: new SelectValue({
-          sourceColumnName: "流入元パラメータ",
-          source: view.publicName,
-        }),
-      }),
-    ];
-  };
-
-  const baseActionView = resolver.resolve(baseActionName);
-  const reportUnionView = new UnionView({
-    name: "集計クエリ",
-    alphabetName: "aggregated_view",
-    views: [
-      new QueryView({
-        name: `内側基準集計用`,
-        alphabetName: `inner_base_for_aggregation`,
-        source: baseActionName,
-        columns: generateAggregateColumns(baseActionView),
-        groups: generateGroupBy(baseActionView),
-      }),
-      ...relatedActionNames.map((relatedActionName) => {
-        const relatedActionView = resolver.resolve(relatedActionName);
-        return new QueryView({
-          name: `内側関連アクション集計用`,
-          alphabetName: `inner_related_for_aggregation`,
-          source: baseActionName,
-          columns: generateAggregateColumns(relatedActionView),
-          joins: [
-            new InnerJoin({
-              target: relatedActionView.publicName,
-              conditions: [
-                new EqCondition({
-                  value: new SelectValue({
-                    sourceColumnName: baseUnitName,
-                    source: baseActionName,
-                  }),
-                  otherValue: new SelectValue({
-                    sourceColumnName: baseUnitName,
-                    source: relatedActionView.publicName,
-                  }),
-                }),
-                new BinomialCondition({
-                  value: new SelectValue({
-                    sourceColumnName: timeColumnName,
-                    source: relatedActionView.publicName,
-                  }),
-                  otherValue: new SelectValue({
-                    sourceColumnName: timeColumnName,
-                    source: baseActionName,
-                  }),
-                  template: "DATE_DIFF(DATE(?), DATE(?), MONTH) <= 1",
-                }),
-              ],
-            }),
-          ],
-          groups: generateGroupBy(relatedActionView),
-        });
-      }),
-    ],
-  });
-  resolver.addView(reportUnionView);
+  // usersAfterContract();
+  usersContractedCountAll();
 
   const bootstrapViewName = "集計クエリ";
 
