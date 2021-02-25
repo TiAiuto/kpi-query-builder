@@ -230,7 +230,7 @@ function main() {
     const timeColumnName = "タイムスタンプ";
     const baseUnitName = "ユーザコード";
 
-    const periodUnitType = "タイムスタンプ_週抽出";
+    const periodUnitType = "タイムスタンプ_月抽出"; // 週単位も可
     const periodUnitName = "基準アクション月";
     const periodUnitAlphabetName = "base_action_month";
 
