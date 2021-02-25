@@ -90,6 +90,7 @@ END`,
           "JOIN `h-navi.lo_production.users` users ON rack_plus.user_id = users.id",
       }),
     ],
+    mixinUsages: [new MixinUsage({ name: "成功リクエスト" })],
   }),
   new RootView({
     name: "個別ケース相談一次相談",
