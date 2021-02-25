@@ -198,6 +198,21 @@ export const DefinedViews: View[] = [
       }),
     ],
   }),
+  new QueryView({
+    name: "PLUS契約者アクセスログ流入元パラメータ除外",
+    alphabetName: "plus_contracted_users_logs_without_source_param",
+    source: "PLUSユーザコード付きアクセスログ",
+    inheritColumns: ['ユーザコード', 'path', 'タイムスタンプ'], 
+    columns: [
+      new ValueSurface({
+        name: "流入元パラメータ",
+        alphabetName: "source_param",
+        value: new RawValue({
+          raw: "''",
+        }),
+      }),
+    ]
+  }),
   new ActionView({
     actionName: "A_PLUS利用開始",
     actionAlphabetName: "action_start_using_plus",
@@ -227,7 +242,7 @@ export const DefinedViews: View[] = [
   new ActionView({
     actionName: "A_概観_サイト内の任意ページ表示",
     actionAlphabetName: "action_overview_visit_site",
-    source: "PLUS契約者アクセスログ",
+    source: "PLUS契約者アクセスログ流入元パラメータ除外",
     inheritAllColumnsEnabled: true,
     conditions: [
       new RawCondition({
@@ -238,7 +253,7 @@ export const DefinedViews: View[] = [
   new ActionView({
     actionName: "A_概観_勉強会内の任意ページ表示",
     actionAlphabetName: "action_overview_visit_study_meeting",
-    source: "PLUS契約者アクセスログ",
+    source: "PLUS契約者アクセスログ流入元パラメータ除外",
     inheritAllColumnsEnabled: true,
     conditions: [
       new RawCondition({
@@ -249,7 +264,7 @@ export const DefinedViews: View[] = [
   new ActionView({
     actionName: "A_概観_勉強会過去動画内の任意ページ表示",
     actionAlphabetName: "action_overview_visit_study_meeting_archive",
-    source: "PLUS契約者アクセスログ",
+    source: "PLUS契約者アクセスログ流入元パラメータ除外",
     inheritAllColumnsEnabled: true,
     conditions: [
       new RawCondition({
@@ -260,7 +275,7 @@ export const DefinedViews: View[] = [
   new ActionView({
     actionName: "A_概観_個別ケース相談内の任意ページ表示",
     actionAlphabetName: "action_overview_visit_counseling",
-    source: "PLUS契約者アクセスログ",
+    source: "PLUS契約者アクセスログ流入元パラメータ除外",
     inheritAllColumnsEnabled: true,
     conditions: [
       new RawCondition({
@@ -271,7 +286,7 @@ export const DefinedViews: View[] = [
   new ActionView({
     actionName: "A_概観_教材内の任意ページ表示",
     actionAlphabetName: "action_overview_visit_kyozai",
-    source: "PLUS契約者アクセスログ",
+    source: "PLUS契約者アクセスログ流入元パラメータ除外",
     inheritAllColumnsEnabled: true,
     conditions: [
       new RawCondition({
@@ -282,7 +297,7 @@ export const DefinedViews: View[] = [
   new ActionView({
     actionName: "A_概観_ヒント動画内の任意ページ表示",
     actionAlphabetName: "action_overview_visit_hint_videos",
-    source: "PLUS契約者アクセスログ",
+    source: "PLUS契約者アクセスログ流入元パラメータ除外",
     inheritAllColumnsEnabled: true,
     conditions: [
       new RawCondition({
@@ -293,7 +308,7 @@ export const DefinedViews: View[] = [
   new ActionView({
     actionName: "A_概観_マイページ内の任意ページ表示",
     actionAlphabetName: "action_overview_visit_mypage",
-    source: "PLUS契約者アクセスログ",
+    source: "PLUS契約者アクセスログ流入元パラメータ除外",
     inheritAllColumnsEnabled: true,
     conditions: [
       new RawCondition({
