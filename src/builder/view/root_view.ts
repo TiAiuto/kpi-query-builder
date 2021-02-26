@@ -50,8 +50,8 @@ export class RootView extends View {
     this.columns = columns;
   }
 
-  private buildColumns(context: ViewResolutionContext): SelectColumn[] {
-    return this.columns.map((column) => {
+  private buildColumns(joinsColumns: ValueSurface[],  context: ViewResolutionContext): SelectColumn[] {
+    return joinsColumns.map((column) => {
       if (column.value instanceof RawValue) {
         return new SelectColumn({
           publicName: column.name,
@@ -59,18 +59,20 @@ export class RootView extends View {
           selectSQL: `${column.value.toSQLForRoot(context)} AS ${column.alphabetName}`, // RawValueはselectを想定しているがWHEREなどでも動くはず
         });
       } else {
-        throw new Error("Raw Value以外のcolumn指定は未対応");
+        throw new Error("Raw Value以外のcolumn指定はRoot Viewでは未対応");
       }
     });
   }
 
   private buildResolvedReference(resolver: ViewResolver): ResolvedQuery {
+    const jointColumns = [...this.columns];
     const jointConditions = [...this.conditions];
     const jointJoins = [...this.joins];
     this.mixinUsages.forEach((mixinUsage) => {
       const mixin = resolver.findMixin(mixinUsage.name);
       jointConditions.push(...mixin.conditions);
       jointJoins.push(...mixin.joins);
+      jointColumns.push(...mixin.columns);
     });
 
     // rootではraw以外のjoin, conditionは使わない想定
@@ -86,7 +88,7 @@ export class RootView extends View {
     });
 
     return new ResolvedQuery({
-      columns: this.buildColumns(phraseResolutionContext),
+      columns: this.buildColumns(jointColumns, phraseResolutionContext),
       physicalSource: this.physicalSource,
       physicalSourceAlias: this.physicalSourceAlias,
       joinPhrases,
