@@ -257,7 +257,7 @@ function main() {
         }),
         new ValueSurface({
           name: "アクション種別ラベル",
-          alphabetName: "action_type_label",
+          alphabetName: "action",
           value: new RawValue({ raw: `'${index}_${view.publicName}'` }),
         }),
       ];
@@ -310,6 +310,10 @@ function main() {
                     'DATE(usage_start_date_timestamp, "Asia/Tokyo") <= date_range_end AND ' +
                     '(usage_end_date_timestamp IS NULL OR date_range_end <= DATE(usage_end_date_timestamp, "Asia/Tokyo"))',
                 }),
+                new RawCondition({
+                  raw:
+                    'DATE_DIFF(date_range_end, DATE(usage_start_date_timestamp, "Asia/Tokyo"), DAY) > 31',
+                }),
               ],
             }),
           ],
@@ -326,8 +330,8 @@ function main() {
 
             new ValueSurface({
               name: "アクション種別ラベル",
-              alphabetName: "action_type_label",
-              value: new RawValue({ raw: `'0_期間内PLUS契約中'` }),
+              alphabetName: "action",
+              value: new RawValue({ raw: `'0_期間内PLUS契約31日経過'` }),
             }),
           ],
           groups: [
@@ -380,7 +384,7 @@ function main() {
                       sourceColumnName: timeColumnName,
                       source: baseActionName,
                     }),
-                    template: "DATE_DIFF(DATE(?), DATE(?), MONTH) >= 1",
+                    template: "DATE_DIFF(DATE(?), DATE(?), DAY) > 31",
                   }),
                 ],
               }),
@@ -708,11 +712,9 @@ function main() {
     resolver.addView(reportUnionView);
   };
 
-  usersAfterContract();
-  // usersContractedSourceParam();
+  // usersAfterContract();
   // usersContractedUsageSummary();
-  // usersContractedSourceParamMoreThanMonth();
-  // usersContractedUsageSummaryMoreThanMonth();
+  usersContractedUsageSummaryMoreThanMonth();
   // usersContractedSourceParamEachService();
 
   const bootstrapViewName = "集計クエリ";
