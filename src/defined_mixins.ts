@@ -88,4 +88,31 @@ export const DefinedMixins: Mixin[] = [
       }),
     ],
   }),
+  new Mixin({
+    name: "お知らせ_開封済み",
+    conditions: [
+      new UnaryCondition({
+        template: '? IS NOT NULL',
+        value: new SelectValue({ sourceColumnName: "開封日時" }),
+      }),
+    ]
+  }),
+  new Mixin({
+    name: "お知らせ_勉強会",
+    conditions: [
+      new UnaryCondition({
+        template: '? = "study_meeting"',
+        value: new SelectValue({ sourceColumnName: "コーナー名" }),
+      }),
+    ]
+  }),
+  new Mixin({
+    name: "お知らせ_コンテンツリリース",
+    conditions: [
+      new UnaryCondition({
+        template: '? = "content_release"',
+        value: new SelectValue({ sourceColumnName: "お知らせ種別" }),
+      }),
+    ]
+  }),
 ];

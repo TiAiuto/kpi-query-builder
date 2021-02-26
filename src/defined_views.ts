@@ -338,6 +338,26 @@ END`,
     ],
   }),
   new ActionView({
+    actionName: "A_勉強会リリースお知らせ開封",
+    actionAlphabetName: "action_open_new_study_meeting_notice",
+    source: "PLUSお知らせ",
+    columns: [
+      new ValueSurface({
+        name: "タイムスタンプ",
+        alphabetName: "time",
+        value: new SelectValue({
+          sourceColumnName: "開封日時",
+        }),
+      }),
+    ],
+    inheritColumns: ["ユーザコード", "流入元パラメータ"],
+    mixinUsages: [
+      new MixinUsage({ name: "お知らせ_開封済み" }),
+      new MixinUsage({ name: "お知らせ_勉強会" }),
+      new MixinUsage({ name: "お知らせ_コンテンツリリース" }),
+    ],
+  }),
+  new ActionView({
     actionName: "A_PLUS利用開始",
     actionAlphabetName: "action_start_using_plus",
     source: "ユーザコード付きPLUS契約",
