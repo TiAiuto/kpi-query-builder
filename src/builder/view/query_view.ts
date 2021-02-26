@@ -73,6 +73,7 @@ export class QueryView extends ReferenceView {
       const mixin = resolver.findMixin(mixinUsage.name);
       jointConditions.push(...mixin.conditions);
       jointJoins.push(...mixin.joins);
+      jointColumns.push(...mixin.columns);
     });
 
     const dependentView = resolver.resolve(this.source);
