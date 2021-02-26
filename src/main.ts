@@ -53,6 +53,7 @@ function main() {
       "A_ケース相談申込詳細表示",
       "A_ケース相談二次相談作成",
       "A_ケース相談二次相談提出",
+      "A_勉強会リリースお知らせ開封",
       "A_勉強会TOP表示",
       "A_勉強会詳細表示",
       "A_勉強会申込",
@@ -218,6 +219,7 @@ function main() {
       "A_ケース相談申込詳細表示",
       "A_ケース相談二次相談作成",
       "A_ケース相談二次相談提出",
+      "A_勉強会リリースお知らせ開封",
       "A_勉強会TOP表示",
       "A_勉強会詳細表示",
       "A_勉強会申込",
@@ -978,7 +980,7 @@ function main() {
 
     const periodUnitType = "タイムスタンプ_月抽出"; // 週単位も可
     const periodUnitName = "基準アクション月";
-    const periodUnitAlphabetName = "base_action_month";
+    const periodUnitAlphabetName = "month";
 
     const baseActionName = "A_PLUS利用開始";
 
@@ -1002,6 +1004,7 @@ function main() {
       "A_ケース相談申込詳細表示",
       "A_ケース相談二次相談作成",
       "A_ケース相談二次相談提出",
+      "A_勉強会リリースお知らせ開封",
       "A_勉強会TOP表示",
       "A_勉強会詳細表示",
       "A_勉強会申込",
@@ -1042,7 +1045,7 @@ function main() {
         // }),
         new ValueSurface({
           name: "アクション種別ラベル",
-          alphabetName: "action_type_label",
+          alphabetName: "action",
           value: new RawValue({ raw: `'${index}_${view.publicName}'` }),
         }),
       ];
