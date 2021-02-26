@@ -1,5 +1,4 @@
 import { RawCondition } from "./builder/condition/raw_condition";
-import { UnaryCondition } from "./builder/condition/unary_condition";
 import { RawJoin } from "./builder/join/raw_join";
 import { MixinUsage } from "./builder/mixin_usage";
 import { RawValue } from "./builder/value/raw_value";
