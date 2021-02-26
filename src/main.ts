@@ -984,12 +984,15 @@ function main() {
 
     const relatedActionNames = [
       "A_概観_サイト内の任意ページ表示",
-      "A_概観_勉強会内の任意ページ表示",
-      "A_概観_勉強会過去動画内の任意ページ表示",
-      "A_概観_個別ケース相談内の任意ページ表示",
+      // "A_概観_勉強会内の任意ページ表示",
+      // "A_概観_勉強会過去動画内の任意ページ表示",
+      // "A_概観_個別ケース相談内の任意ページ表示",
       "A_概観_教材内の任意ページ表示",
       "A_概観_ヒント動画内の任意ページ表示",
-      "A_概観_マイページ内の任意ページ表示",
+      // "A_概観_マイページ内の任意ページ表示",
+      "A_WELCOMEスライド完了",
+      "A_勉強会モーダル完了",
+      "A_個別ケース相談モーダル完了",
       "A_TOP表示",
       "A_マイページTOP表示",
       "A_ケース相談TOP表示",
@@ -1136,12 +1139,12 @@ function main() {
     resolver.addView(reportUnionView);
   };
 
-  // usersAfterContract();
+  usersAfterContract();
   // usersContractedSourceParam();
   // usersContractedUsageSummary();
   // usersContractedSourceParamMoreThanMonth();
   // usersContractedUsageSummaryMoreThanMonth();
-  usersContractedSourceParamEachService();
+  // usersContractedSourceParamEachService();
 
   const bootstrapViewName = "集計クエリ";
 
