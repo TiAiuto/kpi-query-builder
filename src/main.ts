@@ -312,7 +312,7 @@ function main() {
                 }),
                 new RawCondition({
                   raw:
-                    'DATE_DIFF(date_range_end, DATE(usage_start_date_timestamp, "Asia/Tokyo"), DAY) > 31',
+                    'DATE_DIFF(date_range_begin, DATE(usage_start_date_timestamp, "Asia/Tokyo"), MONTH) >= 2',
                 }),
               ],
             }),
@@ -384,7 +384,7 @@ function main() {
                       sourceColumnName: timeColumnName,
                       source: baseActionName,
                     }),
-                    template: "DATE_DIFF(DATE(?), DATE(?), DAY) > 31",
+                    template: "DATE_DIFF(DATE(?), DATE(?), MONTH) >= 2",
                   }),
                 ],
               }),
@@ -725,8 +725,8 @@ function main() {
 
   // usersAfterContract();
   // usersContractedUsageSummary();
-  // usersContractedUsageSummaryMoreThanMonth();
-  usersContractedSourceParamEachService();
+  usersContractedUsageSummaryMoreThanMonth();
+  // usersContractedSourceParamEachService();
 
   const bootstrapViewName = "集計クエリ";
 
