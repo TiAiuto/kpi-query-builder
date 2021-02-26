@@ -46,7 +46,7 @@ export class ResolvedQuery {
     sql += this.joinPhrases.join(" \n ");
     sql += " \n ";
     if (this.conditionsPhrases.length) {
-      sql += `WHERE ${this.conditionsPhrases.join("AND \n ")} \n`;
+      sql += `WHERE ${this.conditionsPhrases.join(" AND \n ")} \n`;
     }
     if (this.groupPhrases.length) {
       sql += `GROUP BY ${this.groupPhrases.join(", \n ")} \n`;
