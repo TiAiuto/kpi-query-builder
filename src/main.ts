@@ -46,6 +46,7 @@ function main() {
       "A_マイページ内のどこかしらのページ表示",
       "A_TOP表示",
       "A_マイページTOP表示",
+      "A_何かしらのお知らせ開封",
       "A_ケース相談TOP表示",
       "A_ケース相談詳細表示",
       "A_ケース相談一次相談作成",
@@ -212,6 +213,7 @@ function main() {
       "A_マイページ内のどこかしらのページ表示",
       "A_TOP表示",
       "A_マイページTOP表示",
+      "A_何かしらのお知らせ開封",
       "A_ケース相談TOP表示",
       "A_ケース相談詳細表示",
       "A_ケース相談一次相談作成",
@@ -972,7 +974,6 @@ function main() {
     });
     resolver.addView(reportUnionView);
   };
-
 
   const usersAfterContract = function () {
     const timeColumnName = "タイムスタンプ";
