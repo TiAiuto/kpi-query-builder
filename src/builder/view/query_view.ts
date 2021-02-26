@@ -7,6 +7,7 @@ import { ResolvedQuery } from "../resolved_query";
 import { ResolvedView } from "../resolved_view";
 import { ViewResolver } from "../view_resolver";
 import { ReferenceView, ReferenceViewArgs } from "./reference_view";
+import { ValueSurface } from "../value_surface";
 
 export class QueryView extends ReferenceView {
   groups: Group[];
@@ -32,6 +33,7 @@ export class QueryView extends ReferenceView {
   }
 
   private buildColumns(
+    joinColumns: ValueSurface[], 
     dependentView: ResolvedView,
     context: ViewResolutionContext
   ): SelectColumn[] {
@@ -51,7 +53,7 @@ export class QueryView extends ReferenceView {
         );
       });
     }
-    this.columns.forEach((column) => {
+    joinColumns.forEach((column) => {
       columns.push(
         new SelectColumn({
           publicName: column.name,
@@ -64,6 +66,7 @@ export class QueryView extends ReferenceView {
   }
 
   private buildResolvedReference(resolver: ViewResolver): ResolvedQuery {
+    const jointColumns = [...this.columns];
     const jointConditions = [...this.conditions];
     const jointJoins = [...this.joins];
     this.mixinUsages.forEach((mixinUsage) => {
@@ -101,7 +104,7 @@ export class QueryView extends ReferenceView {
     const orderPhrases = this.orders.map((order) => order.toSQL(context));
 
     return new ResolvedQuery({
-      columns: this.buildColumns(dependentView, context),
+      columns: this.buildColumns(jointColumns, dependentView, context),
       physicalSource: dependentView.physicalName,
       joinPhrases,
       conditionPhrases,
