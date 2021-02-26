@@ -251,8 +251,7 @@ END`,
   new RootView({
     name: "PLUSお知らせ",
     alphabetName: "plus_notices",
-    physicalSource:
-      "`h-navi.lo_production.plus_notices`",
+    physicalSource: "`h-navi.lo_production.plus_notices`",
     physicalSourceAlias: "plus_notices",
     columns: [
       new ValueSurface({
@@ -333,15 +332,9 @@ END`,
       }),
     ],
     inheritColumns: ["ユーザコード", "流入元パラメータ"],
-    conditions: [
-      new UnaryCondition({
-        template: '? = "welcome_slide"',
-        value: new SelectValue({ sourceColumnName: "コンテンツ名" }),
-      }),
-      new UnaryCondition({
-        template: '? IS NOT NULL',
-        value: new SelectValue({ sourceColumnName: "完了日時" }),
-      }),
+    mixinUsages: [
+      new MixinUsage({ name: "完了済みオンボコンテンツ" }),
+      new MixinUsage({ name: "オンボコンテンツ_WELCOMEスライド" }),
     ],
   }),
   new ActionView({
@@ -358,15 +351,9 @@ END`,
       }),
     ],
     inheritColumns: ["ユーザコード", "流入元パラメータ"],
-    conditions: [
-      new UnaryCondition({
-        template: '? = "study_meeting_introduction_modal"',
-        value: new SelectValue({ sourceColumnName: "コンテンツ名" }),
-      }),
-      new UnaryCondition({
-        template: '? IS NOT NULL',
-        value: new SelectValue({ sourceColumnName: "完了日時" }),
-      }),
+    mixinUsages: [
+      new MixinUsage({ name: "完了済みオンボコンテンツ" }),
+      new MixinUsage({ name: "オンボコンテンツ_勉強会モーダル" }),
     ],
   }),
   new ActionView({
@@ -383,15 +370,9 @@ END`,
       }),
     ],
     inheritColumns: ["ユーザコード", "流入元パラメータ"],
-    conditions: [
-      new UnaryCondition({
-        template: '? = "counseling_introduction_modal"',
-        value: new SelectValue({ sourceColumnName: "コンテンツ名" }),
-      }),
-      new UnaryCondition({
-        template: '? IS NOT NULL',
-        value: new SelectValue({ sourceColumnName: "完了日時" }),
-      }),
+    mixinUsages: [
+      new MixinUsage({ name: "完了済みオンボコンテンツ" }),
+      new MixinUsage({ name: "オンボコンテンツ_ケース相談モーダル" }),
     ],
   }),
   new ActionView({

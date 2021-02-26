@@ -1,5 +1,6 @@
 import { InCondition } from "./builder/condition/in_condition";
 import { RawCondition } from "./builder/condition/raw_condition";
+import { UnaryCondition } from "./builder/condition/unary_condition";
 import { Mixin } from "./builder/mixin";
 import { SelectValue } from "./builder/value/select_value";
 import { SelectValueSet } from "./builder/value_set/select_value_set";
@@ -38,5 +39,41 @@ export const DefinedMixins: Mixin[] = [
   new Mixin({
     name: "勉強会参加済み申込",
     conditions: [new RawCondition({ raw: "attended_at IS NOT NULL" })],
+  }),
+  new Mixin({
+    name: "完了済みオンボコンテンツ",
+    conditions: [
+      new UnaryCondition({
+        template: '? IS NOT NULL',
+        value: new SelectValue({ sourceColumnName: "完了日時" }),
+      }),
+    ],
+  }),
+  new Mixin({
+    name: "オンボコンテンツ_WELCOMEスライド",
+    conditions: [
+      new UnaryCondition({
+        template: '? = "welcome_slide"',
+        value: new SelectValue({ sourceColumnName: "コンテンツ名" }),
+      }),
+    ],
+  }),
+  new Mixin({
+    name: "オンボコンテンツ_ケース相談モーダル",
+    conditions: [
+      new UnaryCondition({
+        template: '? = "counseling_introduction_modal"',
+        value: new SelectValue({ sourceColumnName: "コンテンツ名" }),
+      }),
+    ],
+  }),
+  new Mixin({
+    name: "オンボコンテンツ_勉強会モーダル",
+    conditions: [
+      new UnaryCondition({
+        template: '? = "study_meeting_introduction_modal"',
+        value: new SelectValue({ sourceColumnName: "コンテンツ名" }),
+      }),
+    ],
   }),
 ];
