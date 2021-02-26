@@ -89,7 +89,7 @@ function main() {
         }),
         new ValueSurface({
           name: "アクション種別ラベル",
-          alphabetName: "action_type_label",
+          alphabetName: "action",
           value: new RawValue({ raw: `'${index}_${view.publicName}'` }),
         }),
       ];
@@ -158,7 +158,7 @@ function main() {
 
             new ValueSurface({
               name: "アクション種別ラベル",
-              alphabetName: "action_type_label",
+              alphabetName: "action",
               value: new RawValue({ raw: `'0_期間内PLUS契約中'` }),
             }),
           ],
@@ -978,7 +978,7 @@ function main() {
     const timeColumnName = "タイムスタンプ";
     const baseUnitName = "ユーザコード";
 
-    const periodUnitType = "タイムスタンプ_週抽出"; // 週単位も可
+    const periodUnitType = "タイムスタンプ_月抽出"; // 週単位も可
     const periodUnitName = "基準アクション月";
     const periodUnitAlphabetName = "month";
 
@@ -1142,9 +1142,9 @@ function main() {
     resolver.addView(reportUnionView);
   };
 
-  usersAfterContract();
+  // usersAfterContract();
   // usersContractedSourceParam();
-  // usersContractedUsageSummary();
+  usersContractedUsageSummary();
   // usersContractedSourceParamMoreThanMonth();
   // usersContractedUsageSummaryMoreThanMonth();
   // usersContractedSourceParamEachService();
