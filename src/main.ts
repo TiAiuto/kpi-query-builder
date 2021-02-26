@@ -558,7 +558,7 @@ function main() {
     const timeColumnName = "タイムスタンプ";
     const baseUnitName = "ユーザコード";
 
-    const periodUnitType = "タイムスタンプ_週抽出"; // 週単位も可
+    const periodUnitType = "タイムスタンプ_月抽出"; // 週単位も可
     const periodUnitName = "基準アクション月";
     const periodUnitAlphabetName = "month";
 
@@ -701,7 +701,7 @@ function main() {
                       sourceColumnName: timeColumnName,
                       source: baseActionName,
                     }),
-                    template: "DATE_DIFF(DATE(?), DATE(?), DAY) <= 31",
+                    template: "DATE_DIFF(DATE(?), DATE(?), DAY) <= 31", // 31 * 3 も計算可能
                   }),
                 ],
               }),
@@ -723,9 +723,9 @@ function main() {
     resolver.addView(reportUnionView);
   };
 
-  // usersAfterContract();
+  usersAfterContract();
   // usersContractedUsageSummary();
-  usersContractedUsageSummaryMoreThanMonth();
+  // usersContractedUsageSummaryMoreThanMonth();
   // usersContractedSourceParamEachService();
 
   const bootstrapViewName = "集計クエリ";
