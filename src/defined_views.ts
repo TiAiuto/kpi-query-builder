@@ -202,6 +202,44 @@ END`,
     ],
     dateSuffixEnabled: false,
   }),
+  new RootView({
+    name: "オンボWELCOMEスライド閲覧履歴",
+    alphabetName: "plus_featured_content_check_histories",
+    physicalSource:
+      "`h-navi.lo_production.plus_featured_content_check_histories`",
+    physicalSourceAlias: "plus_featured_content_check_histories",
+    columns: [
+      new ValueSurface({
+        name: "ユーザコード",
+        alphabetName: "user_code",
+        value: new RawValue({
+          raw: "plus_featured_content_check_histories.user_code",
+        }),
+      }),
+      new ValueSurface({
+        name: "完了日時",
+        alphabetName: "completed_at",
+        value: new RawValue({
+          raw: "plus_featured_content_check_histories.completed_at",
+        }),
+      }),
+      new ValueSurface({
+        name: "最終表示日時",
+        alphabetName: "last_displayed_at",
+        value: new RawValue({
+          raw: "plus_featured_content_check_histories.last_displayed_at",
+        }),
+      }),
+      new ValueSurface({
+        name: "コンテンツ名",
+        alphabetName: "content_name",
+        value: new RawValue({
+          raw: "plus_featured_content_check_histories.content_name",
+        }),
+      }),
+    ],
+    dateSuffixEnabled: false,
+  }),
   new QueryView({
     name: "PLUS契約者アクセスログ",
     alphabetName: "plus_contracted_users_logs",
