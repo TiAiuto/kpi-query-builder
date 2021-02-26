@@ -248,6 +248,51 @@ END`,
     ],
     dateSuffixEnabled: false,
   }),
+  new RootView({
+    name: "PLUSお知らせ",
+    alphabetName: "plus_notices",
+    physicalSource:
+      "`h-navi.lo_production.plus_notices`",
+    physicalSourceAlias: "plus_notices",
+    columns: [
+      new ValueSurface({
+        name: "ユーザコード",
+        alphabetName: "user_code",
+        value: new RawValue({
+          raw: "plus_notices.user_code",
+        }),
+      }),
+      new ValueSurface({
+        name: "開封日時",
+        alphabetName: "opened_at",
+        value: new RawValue({
+          raw: "plus_notices.opened_at",
+        }),
+      }),
+      new ValueSurface({
+        name: "コーナー名",
+        alphabetName: "corner_name",
+        value: new RawValue({
+          raw: "plus_notices.corner_name",
+        }),
+      }),
+      new ValueSurface({
+        name: "お知らせ種別",
+        alphabetName: "notice_type",
+        value: new RawValue({
+          raw: "plus_notices.notice_type",
+        }),
+      }),
+      new ValueSurface({
+        name: "流入元パラメータ",
+        alphabetName: "source_param",
+        value: new RawValue({
+          raw: "CAST(NULL AS STRING)",
+        }),
+      }),
+    ],
+    dateSuffixEnabled: false,
+  }),
   new QueryView({
     name: "PLUS契約者アクセスログ",
     alphabetName: "plus_contracted_users_logs",
