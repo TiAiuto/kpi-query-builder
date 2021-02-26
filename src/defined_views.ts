@@ -120,14 +120,8 @@ END`,
           raw: "application_tickets.created_on",
         }),
       }),
-      new ValueSurface({
-        name: "流入元パラメータ",
-        alphabetName: "source_param",
-        value: new RawValue({
-          raw: "CAST(NULL AS STRING)",
-        }),
-      }),
     ],
+    mixinUsages: [new MixinUsage({ name: "ダミー流入元パラメータ" })],
     dateSuffixEnabled: false,
   }),
   new RootView({
@@ -156,14 +150,8 @@ END`,
           raw: "second_question_tickets.created_on",
         }),
       }),
-      new ValueSurface({
-        name: "流入元パラメータ",
-        alphabetName: "source_param",
-        value: new RawValue({
-          raw: "CAST(NULL AS STRING)",
-        }),
-      }),
     ],
+    mixinUsages: [new MixinUsage({ name: "ダミー流入元パラメータ" })],
     dateSuffixEnabled: false,
   }),
   new RootView({
@@ -193,14 +181,8 @@ END`,
           raw: "study_meeting_applications.attended_at",
         }),
       }),
-      new ValueSurface({
-        name: "流入元パラメータ",
-        alphabetName: "source_param",
-        value: new RawValue({
-          raw: "CAST(NULL AS STRING)",
-        }),
-      }),
     ],
+    mixinUsages: [new MixinUsage({ name: "ダミー流入元パラメータ" })],
     dateSuffixEnabled: false,
   }),
   new RootView({
@@ -238,14 +220,8 @@ END`,
           raw: "plus_featured_content_check_histories.content_name",
         }),
       }),
-      new ValueSurface({
-        name: "流入元パラメータ",
-        alphabetName: "source_param",
-        value: new RawValue({
-          raw: "CAST(NULL AS STRING)",
-        }),
-      }),
     ],
+    mixinUsages: [new MixinUsage({ name: "ダミー流入元パラメータ" })],
     dateSuffixEnabled: false,
   }),
   new RootView({
@@ -282,14 +258,8 @@ END`,
           raw: "plus_notices.notice_type",
         }),
       }),
-      new ValueSurface({
-        name: "流入元パラメータ",
-        alphabetName: "source_param",
-        value: new RawValue({
-          raw: "CAST(NULL AS STRING)",
-        }),
-      }),
     ],
+    mixinUsages: [new MixinUsage({ name: "ダミー流入元パラメータ" })],
     dateSuffixEnabled: false,
   }),
   new QueryView({
@@ -308,15 +278,7 @@ END`,
     alphabetName: "plus_contracted_users_logs_without_source_param",
     source: "PLUS契約者アクセスログ",
     inheritColumns: ["ユーザコード", "path", "タイムスタンプ"],
-    columns: [
-      new ValueSurface({
-        name: "流入元パラメータ",
-        alphabetName: "source_param",
-        value: new RawValue({
-          raw: "CAST(NULL AS STRING)",
-        }),
-      }),
-    ],
+    mixinUsages: [new MixinUsage({ name: "ダミー流入元パラメータ" })],
   }),
   new ActionView({
     actionName: "A_WELCOMEスライド完了",
@@ -392,14 +354,8 @@ END`,
           sourceColumnName: "利用開始日タイムスタンプ",
         }),
       }),
-      new ValueSurface({
-        name: "流入元パラメータ",
-        alphabetName: "source_param",
-        value: new RawValue({
-          raw: "CAST(NULL AS STRING)",
-        }),
-      }),
     ],
+    mixinUsages: [new MixinUsage({ name: "ダミー流入元パラメータ" })],
   }),
   new ActionView({
     actionName: "A_概観_サイト内の任意ページ表示",
