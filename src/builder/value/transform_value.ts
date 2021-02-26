@@ -27,7 +27,7 @@ export class TransformValue extends Value implements SourceColumn {
     if (this.pattern.name === "タイムスタンプ_月抽出") {
       return `FORMAT_TIMESTAMP('%Y-%m', ${resolvedColumn.fullPhysicalName}, 'Asia/Tokyo')`;
     } else if (this.pattern.name === "タイムスタンプ_週抽出") {
-      return `FORMAT_TIMESTAMP('%Y-%m-%d', TIMESTAMP_TRUNC(${resolvedColumn.fullPhysicalName}, WEEK(MONDAY), 'Asia/Tokyo'), 'Asia/Tokyo')`;
+      return `CONCAT(FORMAT_TIMESTAMP('%Y-%m-%d', TIMESTAMP_TRUNC(${resolvedColumn.fullPhysicalName}, WEEK(MONDAY), 'Asia/Tokyo'), 'Asia/Tokyo'), ', ', FORMAT_TIMESTAMP('%Y-%m-%d', TIMESTAMP_ADD(TIMESTAMP_TRUNC(${resolvedColumn.fullPhysicalName}, WEEK(MONDAY), 'Asia/Tokyo'), INTERVAL 6 DAY), 'Asia/Tokyo'))`;
     } else if (this.pattern.name === "タイムスタンプ_日抽出") {
       return `FORMAT_TIMESTAMP('%Y-%m-%d', ${resolvedColumn.fullPhysicalName}, 'Asia/Tokyo')`;
     } else if (this.pattern.name === "空白変換") {
