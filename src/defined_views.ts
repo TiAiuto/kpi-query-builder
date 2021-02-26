@@ -1,4 +1,5 @@
 import { RawCondition } from "./builder/condition/raw_condition";
+import { UnaryCondition } from "./builder/condition/unary_condition";
 import { RawJoin } from "./builder/join/raw_join";
 import { MixinUsage } from "./builder/mixin_usage";
 import { RawValue } from "./builder/value/raw_value";
@@ -237,6 +238,13 @@ END`,
           raw: "plus_featured_content_check_histories.content_name",
         }),
       }),
+      new ValueSurface({
+        name: "流入元パラメータ",
+        alphabetName: "source_param",
+        value: new RawValue({
+          raw: "CAST(NULL AS STRING)",
+        }),
+      }),
     ],
     dateSuffixEnabled: false,
   }),
@@ -263,6 +271,81 @@ END`,
         value: new RawValue({
           raw: "CAST(NULL AS STRING)",
         }),
+      }),
+    ],
+  }),
+  new ActionView({
+    actionName: "A_WELCOMEスライド完了",
+    actionAlphabetName: "action_complete_welcome_slide",
+    source: "オンボWELCOMEスライド閲覧履歴",
+    columns: [
+      new ValueSurface({
+        name: "タイムスタンプ",
+        alphabetName: "time",
+        value: new SelectValue({
+          sourceColumnName: "完了日時",
+        }),
+      }),
+    ],
+    inheritColumns: ["ユーザコード", "流入元パラメータ"],
+    conditions: [
+      new UnaryCondition({
+        template: '? = "welcome_slide"',
+        value: new SelectValue({ sourceColumnName: "コンテンツ名" }),
+      }),
+      new UnaryCondition({
+        template: '? IS NOT NULL',
+        value: new SelectValue({ sourceColumnName: "完了日時" }),
+      }),
+    ],
+  }),
+  new ActionView({
+    actionName: "A_勉強会モーダル完了",
+    actionAlphabetName: "action_complete_study_modal",
+    source: "オンボWELCOMEスライド閲覧履歴",
+    columns: [
+      new ValueSurface({
+        name: "タイムスタンプ",
+        alphabetName: "time",
+        value: new SelectValue({
+          sourceColumnName: "完了日時",
+        }),
+      }),
+    ],
+    inheritColumns: ["ユーザコード", "流入元パラメータ"],
+    conditions: [
+      new UnaryCondition({
+        template: '? = "study_meeting_introduction_modal"',
+        value: new SelectValue({ sourceColumnName: "コンテンツ名" }),
+      }),
+      new UnaryCondition({
+        template: '? IS NOT NULL',
+        value: new SelectValue({ sourceColumnName: "完了日時" }),
+      }),
+    ],
+  }),
+  new ActionView({
+    actionName: "A_個別ケース相談モーダル完了",
+    actionAlphabetName: "action_complete_counseling_modal",
+    source: "オンボWELCOMEスライド閲覧履歴",
+    columns: [
+      new ValueSurface({
+        name: "タイムスタンプ",
+        alphabetName: "time",
+        value: new SelectValue({
+          sourceColumnName: "完了日時",
+        }),
+      }),
+    ],
+    inheritColumns: ["ユーザコード", "流入元パラメータ"],
+    conditions: [
+      new UnaryCondition({
+        template: '? = "counseling_introduction_modal"',
+        value: new SelectValue({ sourceColumnName: "コンテンツ名" }),
+      }),
+      new UnaryCondition({
+        template: '? IS NOT NULL',
+        value: new SelectValue({ sourceColumnName: "完了日時" }),
       }),
     ],
   }),
