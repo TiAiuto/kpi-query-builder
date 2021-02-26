@@ -415,7 +415,7 @@ function main() {
       // "A_ヒント動画内のどこかしらのページ表示",
       // "A_マイページ内のどこかしらのページ表示",
       // "A_TOP表示",
-      "A_マイページTOP表示",
+      // "A_マイページTOP表示",
       // "A_ケース相談TOP表示",
       // "A_ケース相談詳細表示",
       // "A_ケース相談一次相談作成",
@@ -423,7 +423,7 @@ function main() {
       // "A_ケース相談申込詳細表示",
       // "A_ケース相談二次相談作成",
       // "A_ケース相談二次相談提出",
-      // "A_勉強会TOP表示",
+      "A_勉強会TOP表示",
       // "A_勉強会詳細表示",
       // "A_勉強会申込",
       // "A_勉強会申込詳細表示",
@@ -447,10 +447,21 @@ function main() {
         }),
         new ValueSurface({
           name: `アクション集計値`,
-          alphabetName: `action_aggregated_value`,
+          alphabetName: `action_pv`,
           value: new AggregateValue({
             pattern: new AggregatePattern({
               name: "COUNT",
+            }),
+            source: view.publicName,
+            sourceColumnName: baseUnitName,
+          }),
+        }),
+        new ValueSurface({
+          name: `アクション集計値`,
+          alphabetName: `action_uu`,
+          value: new AggregateValue({
+            pattern: new AggregatePattern({
+              name: "COUNT_DISTINCT",
             }),
             source: view.publicName,
             sourceColumnName: baseUnitName,
@@ -714,8 +725,8 @@ function main() {
 
   // usersAfterContract();
   // usersContractedUsageSummary();
-  usersContractedUsageSummaryMoreThanMonth();
-  // usersContractedSourceParamEachService();
+  // usersContractedUsageSummaryMoreThanMonth();
+  usersContractedSourceParamEachService();
 
   const bootstrapViewName = "集計クエリ";
 
