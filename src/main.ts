@@ -979,7 +979,7 @@ function main() {
     const timeColumnName = "タイムスタンプ";
     const baseUnitName = "ユーザコード";
 
-    const periodUnitType = "タイムスタンプ_月抽出"; // 週単位も可
+    const periodUnitType = "タイムスタンプ_週抽出"; // 週単位も可
     const periodUnitName = "基準アクション月";
     const periodUnitAlphabetName = "month";
 
@@ -998,6 +998,7 @@ function main() {
       "A_個別ケース相談モーダル完了",
       "A_TOP表示",
       "A_マイページTOP表示",
+      "A_何かしらのお知らせ開封",
       "A_ケース相談TOP表示",
       "A_ケース相談詳細表示",
       "A_ケース相談一次相談作成",
@@ -1143,9 +1144,9 @@ function main() {
     resolver.addView(reportUnionView);
   };
 
-  // usersAfterContract();
+  usersAfterContract();
   // usersContractedSourceParam();
-  usersContractedUsageSummary();
+  // usersContractedUsageSummary();
   // usersContractedSourceParamMoreThanMonth();
   // usersContractedUsageSummaryMoreThanMonth();
   // usersContractedSourceParamEachService();
