@@ -5,7 +5,6 @@ import { QueryView } from "./builder/view/query_view";
 import { SelectValue } from "./builder/value/select_value";
 import { TransformValue } from "./builder/value/transform_value";
 import { TransformPattern } from "./builder/transform_pattern";
-import { BinomialCondition } from "./builder/condition/binomial_condition";
 import { Group } from "./builder/group";
 import { AggregateValue } from "./builder/value/aggregate_value";
 import { AggregatePattern } from "./builder/aggregate_pattern";
@@ -383,15 +382,17 @@ function main() {
                       }),
                     ],
                   }),
-                  new BinomialCondition({
-                    value: new SelectValue({
-                      sourceColumnName: timeColumnName,
-                      source: relatedActionView.publicName,
-                    }),
-                    otherValue: new SelectValue({
-                      sourceColumnName: timeColumnName,
-                      source: baseActionName,
-                    }),
+                  new PlaceholderCondition({
+                    values: [
+                      new SelectValue({
+                        sourceColumnName: timeColumnName,
+                        source: relatedActionView.publicName,
+                      }),
+                      new SelectValue({
+                        sourceColumnName: timeColumnName,
+                        source: baseActionName,
+                      }),
+                    ],
                     template: "DATE_DIFF(DATE(?), DATE(?), MONTH) >= 2",
                   }),
                 ],
@@ -867,15 +868,17 @@ function main() {
                       }),
                     ],
                   }),
-                  new BinomialCondition({
-                    value: new SelectValue({
-                      sourceColumnName: timeColumnName,
-                      source: relatedActionView.publicName,
-                    }),
-                    otherValue: new SelectValue({
-                      sourceColumnName: timeColumnName,
-                      source: baseActionName,
-                    }),
+                  new PlaceholderCondition({
+                    values: [
+                      new SelectValue({
+                        sourceColumnName: timeColumnName,
+                        source: relatedActionView.publicName,
+                      }),
+                      new SelectValue({
+                        sourceColumnName: timeColumnName,
+                        source: baseActionName,
+                      }),
+                    ],
                     template: "DATE_DIFF(DATE(?), DATE(?), DAY) <= 31", // 31 * 3 も計算可能
                   }),
                 ],
