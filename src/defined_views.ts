@@ -224,6 +224,42 @@ END`,
     dateSuffixEnabled: false,
   }),
   new RootView({
+    name: "過去動画視聴履歴",
+    alphabetName: "action_plus_archive_videos_playback_logs",
+    physicalSource:
+      "`h-navi.lo_applog.action_plus_archive_videos_playback_logs_*`",
+    physicalSourceAlias: "playback_logs",
+    columns: [
+      new ValueSurface({
+        name: "ユーザコード",
+        alphabetName: "user_code",
+        value: new RawValue({ raw: "users.code" }),
+      }),
+      new ValueSurface({
+        name: "イベント種別",
+        alphabetName: "event_name",
+        value: new RawValue({
+          raw: "JSON_EXTRACT_SCALAR(playback_logs.message, '$.eventName')",
+        }),
+      }),
+      new ValueSurface({
+        name: "過去動画コード",
+        alphabetName: "archive_video_code",
+        value: new RawValue({
+          raw: "JSON_EXTRACT_SCALAR(playback_logs.message, '$.code')",
+        }),
+      }),
+    ],
+    joins: [
+      new RawJoin({
+        raw:
+          "JOIN `h-navi.lo_production.users` users ON CAST(JSON_EXTRACT_SCALAR(playback_logs.message, '$.user_id') AS INT64) = users.id",
+      }),
+    ],
+    mixinUsages: [new MixinUsage({ name: "ダミー流入元パラメータ" })],
+    dateSuffixEnabled: true,
+  }),
+  new RootView({
     name: "PLUSお知らせ",
     alphabetName: "plus_notices",
     physicalSource: "`h-navi.lo_production.plus_notices`",
@@ -350,9 +386,7 @@ END`,
       }),
     ],
     inheritColumns: ["ユーザコード", "流入元パラメータ"],
-    mixinUsages: [
-      new MixinUsage({ name: "お知らせ_開封済み" }),
-    ],
+    mixinUsages: [new MixinUsage({ name: "お知らせ_開封済み" })],
   }),
   new ActionView({
     actionName: "A_勉強会リリースお知らせ開封",
