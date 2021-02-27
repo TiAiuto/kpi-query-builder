@@ -115,4 +115,13 @@ export const DefinedMixins: Mixin[] = [
       }),
     ]
   }),
+  new Mixin({
+    name: "動画再生履歴_視聴開始",
+    conditions: [
+      new UnaryCondition({
+        template: '? = "play"',
+        value: new SelectValue({ sourceColumnName: "イベント種別" }),
+      }),
+    ]
+  }),
 ];

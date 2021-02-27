@@ -224,7 +224,7 @@ END`,
     dateSuffixEnabled: false,
   }),
   new RootView({
-    name: "過去動画視聴履歴",
+    name: "勉強会過去動画視聴履歴",
     alphabetName: "action_plus_archive_videos_playback_logs",
     physicalSource:
       "`h-navi.lo_applog.action_plus_archive_videos_playback_logs_*`",
@@ -247,6 +247,13 @@ END`,
         alphabetName: "archive_video_code",
         value: new RawValue({
           raw: "JSON_EXTRACT_SCALAR(playback_logs.message, '$.code')",
+        }),
+      }),
+      new ValueSurface({
+        name: "タイムスタンプ",
+        alphabetName: "time",
+        value: new RawValue({
+          raw: "TIMESTAMP_SECONDS(playback_logs.time)",
         }),
       }),
     ],
@@ -677,5 +684,12 @@ END`,
     ],
     inheritColumns: ["ユーザコード", "流入元パラメータ"],
     mixinUsages: [new MixinUsage({ name: "勉強会参加済み申込" })],
+  }),
+  new ActionView({
+    actionName: "A_勉強会過去動画再生開始",
+    actionAlphabetName: "action_play_study_meeting_archive_video",
+    source: "勉強会過去動画視聴履歴",
+    inheritColumns: ["ユーザコード", "流入元パラメータ", "タイムスタンプ"],
+    mixinUsages: [new MixinUsage({ name: "動画再生履歴_視聴開始" })],
   }),
 ];
