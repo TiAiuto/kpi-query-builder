@@ -686,6 +686,17 @@ END`,
     mixinUsages: [new MixinUsage({ name: "勉強会参加済み申込" })],
   }),
   new ActionView({
+    actionName: "A_過去動画TOP表示",
+    actionAlphabetName: "action_visit_study_meeting_archive_top",
+    source: "PLUS契約者アクセスログ",
+    inheritAllColumnsEnabled: true,
+    conditions: [
+      new RawCondition({
+        raw: "REGEXP_CONTAINS(path, '^/plus/study_meeting_archive$')",
+      }),
+    ],
+  }),
+  new ActionView({
     actionName: "A_勉強会過去動画再生開始",
     actionAlphabetName: "action_play_study_meeting_archive_video",
     source: "勉強会過去動画視聴履歴",
