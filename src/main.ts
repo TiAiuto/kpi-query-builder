@@ -18,7 +18,7 @@ import { ResolvedView } from "./builder/resolved_view";
 import { RoutineView } from "./builder/view/routine_view";
 import { RoutinePattern } from "./builder/routine_pattern";
 import { RawCondition } from "./builder/condition/raw_condition";
-import { UnaryCondition } from "./builder/condition/unary_condition";
+import { PlaceholderCondition } from "./builder/condition/placeholder_condition";
 
 function main() {
   const resolver = new ViewResolver({
@@ -357,11 +357,13 @@ function main() {
             ),
             groups: generateGroupBy(relatedActionView, true),
             conditions: [
-              new UnaryCondition({
-                value: new SelectValue({
-                  source: relatedActionName,
-                  sourceColumnName: "タイムスタンプ",
-                }),
+              new PlaceholderCondition({
+                values: [
+                  new SelectValue({
+                    source: relatedActionName,
+                    sourceColumnName: "タイムスタンプ",
+                  }),
+                ],
                 template: 'DATE(?, "Asia/Tokyo") >= DATE("2020-10-01")',
               }),
             ],
@@ -528,11 +530,13 @@ function main() {
             ),
             groups: generateGroupBy(relatedActionView, true),
             conditions: [
-              new UnaryCondition({
-                value: new SelectValue({
-                  source: relatedActionName,
-                  sourceColumnName: "タイムスタンプ",
-                }),
+              new PlaceholderCondition({
+                values: [
+                  new SelectValue({
+                    source: relatedActionName,
+                    sourceColumnName: "タイムスタンプ",
+                  }),
+                ],
                 template: 'DATE(?, "Asia/Tokyo") >= DATE("2021-01-18")',
               }),
             ],
@@ -700,11 +704,13 @@ function main() {
             ),
             groups: generateGroupBy(relatedActionView, true),
             conditions: [
-              new UnaryCondition({
-                value: new SelectValue({
-                  source: relatedActionName,
-                  sourceColumnName: "タイムスタンプ",
-                }),
+              new PlaceholderCondition({
+                values: [
+                  new SelectValue({
+                    source: relatedActionName,
+                    sourceColumnName: "タイムスタンプ",
+                  }),
+                ],
                 template: 'DATE(?, "Asia/Tokyo") >= DATE("2021-01-18")',
               }),
             ],
@@ -825,12 +831,14 @@ function main() {
           columns: generateAggregateColumns(baseActionView, 0),
           groups: generateGroupBy(baseActionView),
           conditions: [
-            new UnaryCondition({
+            new PlaceholderCondition({
               template: 'DATE(?, "Asia/Tokyo") >= DATE("2020-10-01")',
-              value: new SelectValue({
-                sourceColumnName: "タイムスタンプ",
-                source: baseActionName,
-              }),
+              values: [
+                new SelectValue({
+                  sourceColumnName: "タイムスタンプ",
+                  source: baseActionName,
+                }),
+              ],
             }),
           ],
         }),
@@ -870,12 +878,14 @@ function main() {
               }),
             ],
             conditions: [
-              new UnaryCondition({
+              new PlaceholderCondition({
                 template: 'DATE(?, "Asia/Tokyo") >= DATE("2020-10-01")',
-                value: new SelectValue({
-                  sourceColumnName: "タイムスタンプ",
-                  source: baseActionName,
-                }),
+                values: [
+                  new SelectValue({
+                    sourceColumnName: "タイムスタンプ",
+                    source: baseActionName,
+                  }),
+                ],
               }),
             ],
             groups: generateGroupBy(relatedActionView),

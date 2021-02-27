@@ -1,6 +1,6 @@
 import { InCondition } from "./builder/condition/in_condition";
+import { PlaceholderCondition } from "./builder/condition/placeholder_condition";
 import { RawCondition } from "./builder/condition/raw_condition";
-import { UnaryCondition } from "./builder/condition/unary_condition";
 import { Mixin } from "./builder/mixin";
 import { RawValue } from "./builder/value/raw_value";
 import { SelectValue } from "./builder/value/select_value";
@@ -43,36 +43,36 @@ export const DefinedMixins: Mixin[] = [
   new Mixin({
     name: "完了済みオンボコンテンツ",
     conditions: [
-      new UnaryCondition({
+      new PlaceholderCondition({
         template: "? IS NOT NULL",
-        value: new SelectValue({ sourceColumnName: "完了日時" }),
+        values: [new SelectValue({ sourceColumnName: "完了日時" })],
       }),
     ],
   }),
   new Mixin({
     name: "オンボコンテンツ_WELCOMEスライド",
     conditions: [
-      new UnaryCondition({
+      new PlaceholderCondition({
         template: '? = "welcome_slide"',
-        value: new SelectValue({ sourceColumnName: "コンテンツ名" }),
+        values: [new SelectValue({ sourceColumnName: "コンテンツ名" })],
       }),
     ],
   }),
   new Mixin({
     name: "オンボコンテンツ_ケース相談モーダル",
     conditions: [
-      new UnaryCondition({
+      new PlaceholderCondition({
         template: '? = "counseling_introduction_modal"',
-        value: new SelectValue({ sourceColumnName: "コンテンツ名" }),
+        values: [new SelectValue({ sourceColumnName: "コンテンツ名" })],
       }),
     ],
   }),
   new Mixin({
     name: "オンボコンテンツ_勉強会モーダル",
     conditions: [
-      new UnaryCondition({
+      new PlaceholderCondition({
         template: '? = "study_meeting_introduction_modal"',
-        value: new SelectValue({ sourceColumnName: "コンテンツ名" }),
+        values: [new SelectValue({ sourceColumnName: "コンテンツ名" })],
       }),
     ],
   }),
@@ -91,37 +91,37 @@ export const DefinedMixins: Mixin[] = [
   new Mixin({
     name: "お知らせ_開封済み",
     conditions: [
-      new UnaryCondition({
-        template: '? IS NOT NULL',
-        value: new SelectValue({ sourceColumnName: "開封日時" }),
+      new PlaceholderCondition({
+        template: "? IS NOT NULL",
+        values: [new SelectValue({ sourceColumnName: "開封日時" })],
       }),
-    ]
+    ],
   }),
   new Mixin({
     name: "お知らせ_勉強会",
     conditions: [
-      new UnaryCondition({
+      new PlaceholderCondition({
         template: '? = "study_meeting"',
-        value: new SelectValue({ sourceColumnName: "コーナー名" }),
+        values: [new SelectValue({ sourceColumnName: "コーナー名" })],
       }),
-    ]
+    ],
   }),
   new Mixin({
     name: "お知らせ_コンテンツリリース",
     conditions: [
-      new UnaryCondition({
+      new PlaceholderCondition({
         template: '? = "content_release"',
-        value: new SelectValue({ sourceColumnName: "お知らせ種別" }),
+        values: [new SelectValue({ sourceColumnName: "お知らせ種別" })],
       }),
-    ]
+    ],
   }),
   new Mixin({
     name: "動画再生履歴_視聴開始",
     conditions: [
-      new UnaryCondition({
+      new PlaceholderCondition({
         template: '? = "play"',
-        value: new SelectValue({ sourceColumnName: "イベント種別" }),
+        values: [new SelectValue({ sourceColumnName: "イベント種別" })],
       }),
-    ]
+    ],
   }),
 ];
