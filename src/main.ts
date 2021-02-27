@@ -51,7 +51,7 @@ function main() {
       "A_ケース相談詳細表示",
       "A_ケース相談一次相談作成",
       "A_ケース相談一次相談申込",
-      "A_ケース相談申込詳細表示",
+      // "A_ケース相談申込詳細表示",
       "A_ケース相談二次相談作成",
       "A_ケース相談二次相談提出",
       "A_勉強会リリースお知らせ開封",
@@ -60,6 +60,8 @@ function main() {
       "A_勉強会申込",
       "A_勉強会申込詳細表示",
       "A_勉強会参加",
+      "A_過去動画TOP表示",
+      "A_勉強会過去動画再生開始",
     ];
 
     const generateAggregateColumns = function (
@@ -218,7 +220,7 @@ function main() {
       "A_ケース相談詳細表示",
       "A_ケース相談一次相談作成",
       "A_ケース相談一次相談申込",
-      "A_ケース相談申込詳細表示",
+      // "A_ケース相談申込詳細表示",
       "A_ケース相談二次相談作成",
       "A_ケース相談二次相談提出",
       "A_勉強会リリースお知らせ開封",
@@ -227,6 +229,8 @@ function main() {
       "A_勉強会申込",
       "A_勉強会申込詳細表示",
       "A_勉強会参加",
+      "A_過去動画TOP表示",
+      "A_勉強会過去動画再生開始",
     ];
 
     const generateAggregateColumns = function (
@@ -331,7 +335,7 @@ function main() {
             new ValueSurface({
               name: "アクション種別ラベル",
               alphabetName: "action",
-              value: new RawValue({ raw: `'0_期間内PLUS契約31日経過'` }),
+              value: new RawValue({ raw: `'0_期間内PLUS契約2ヶ月目以降'` }),
             }),
           ],
           groups: [
@@ -882,9 +886,9 @@ function main() {
     resolver.addView(reportUnionView);
   };
 
-  usersAfterContract();
+  // usersAfterContract();
   // usersContractedUsageSummary();
-  // usersContractedUsageSummaryMoreThanMonth();
+  usersContractedUsageSummaryMoreThanMonth();
   // usersContractedSourceParamAfterMonth();
   // usersContractedSourceParamEachService();
 
