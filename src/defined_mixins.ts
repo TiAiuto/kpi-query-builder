@@ -1,7 +1,6 @@
 import { EqCondition } from "./builder/condition/eq_condition";
 import { InCondition } from "./builder/condition/in_condition";
 import { NotNullCondition } from "./builder/condition/not_null_condition";
-import { PlaceholderCondition } from "./builder/condition/placeholder_condition";
 import { RawCondition } from "./builder/condition/raw_condition";
 import { Mixin } from "./builder/mixin";
 import { ConstStringValue } from "./builder/value/const_string_value";
