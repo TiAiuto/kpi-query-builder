@@ -1,7 +1,9 @@
+import { EqCondition } from "./builder/condition/eq_condition";
 import { InCondition } from "./builder/condition/in_condition";
 import { PlaceholderCondition } from "./builder/condition/placeholder_condition";
 import { RawCondition } from "./builder/condition/raw_condition";
 import { Mixin } from "./builder/mixin";
+import { ConstStringValue } from "./builder/value/const_string_value";
 import { RawValue } from "./builder/value/raw_value";
 import { SelectValue } from "./builder/value/select_value";
 import { SelectValueSet } from "./builder/value_set/select_value_set";
@@ -52,27 +54,33 @@ export const DefinedMixins: Mixin[] = [
   new Mixin({
     name: "オンボコンテンツ_WELCOMEスライド",
     conditions: [
-      new PlaceholderCondition({
-        template: '? = "welcome_slide"',
-        values: [new SelectValue({ sourceColumnName: "コンテンツ名" })],
+      new EqCondition({
+        values: [
+          new SelectValue({ sourceColumnName: "コンテンツ名" }),
+          new ConstStringValue({ value: "welcome_slide" }),
+        ],
       }),
     ],
   }),
   new Mixin({
     name: "オンボコンテンツ_ケース相談モーダル",
     conditions: [
-      new PlaceholderCondition({
-        template: '? = "counseling_introduction_modal"',
-        values: [new SelectValue({ sourceColumnName: "コンテンツ名" })],
+      new EqCondition({
+        values: [
+          new SelectValue({ sourceColumnName: "コンテンツ名" }),
+          new ConstStringValue({ value: "counseling_introduction_modal" }),
+        ],
       }),
     ],
   }),
   new Mixin({
     name: "オンボコンテンツ_勉強会モーダル",
     conditions: [
-      new PlaceholderCondition({
-        template: '? = "study_meeting_introduction_modal"',
-        values: [new SelectValue({ sourceColumnName: "コンテンツ名" })],
+      new EqCondition({
+        values: [
+          new SelectValue({ sourceColumnName: "コンテンツ名" }),
+          new ConstStringValue({ value: "study_meeting_introduction_modal" }),
+        ],
       }),
     ],
   }),
@@ -100,27 +108,33 @@ export const DefinedMixins: Mixin[] = [
   new Mixin({
     name: "お知らせ_勉強会",
     conditions: [
-      new PlaceholderCondition({
-        template: '? = "study_meeting"',
-        values: [new SelectValue({ sourceColumnName: "コーナー名" })],
+      new EqCondition({
+        values: [
+          new SelectValue({ sourceColumnName: "コーナー名" }),
+          new ConstStringValue({ value: "study_meeting" }),
+        ],
       }),
     ],
   }),
   new Mixin({
     name: "お知らせ_コンテンツリリース",
     conditions: [
-      new PlaceholderCondition({
-        template: '? = "content_release"',
-        values: [new SelectValue({ sourceColumnName: "お知らせ種別" })],
+      new EqCondition({
+        values: [
+          new SelectValue({ sourceColumnName: "お知らせ種別" }),
+          new ConstStringValue({ value: "content_release" }),
+        ],
       }),
     ],
   }),
   new Mixin({
     name: "動画再生履歴_視聴開始",
     conditions: [
-      new PlaceholderCondition({
-        template: '? = "play"',
-        values: [new SelectValue({ sourceColumnName: "イベント種別" })],
+      new EqCondition({
+        values: [
+          new SelectValue({ sourceColumnName: "イベント種別" }),
+          new ConstStringValue({ value: "play" }),
+        ],
       }),
     ],
   }),
