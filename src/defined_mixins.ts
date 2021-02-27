@@ -1,5 +1,6 @@
 import { EqCondition } from "./builder/condition/eq_condition";
 import { InCondition } from "./builder/condition/in_condition";
+import { NotNullCondition } from "./builder/condition/not_null_condition";
 import { PlaceholderCondition } from "./builder/condition/placeholder_condition";
 import { RawCondition } from "./builder/condition/raw_condition";
 import { Mixin } from "./builder/mixin";
@@ -32,21 +33,32 @@ export const DefinedMixins: Mixin[] = [
   }),
   new Mixin({
     name: "申込済み一時相談",
-    conditions: [new RawCondition({ raw: "application_datetime IS NOT NULL" })],
+    conditions: [
+      new NotNullCondition({
+        values: [new SelectValue({ sourceColumnName: "申込日時" })],
+      }),
+    ],
   }),
   new Mixin({
     name: "申込済み二次相談",
-    conditions: [new RawCondition({ raw: "submitted_at IS NOT NULL" })],
+    conditions: [
+      new NotNullCondition({
+        values: [new SelectValue({ sourceColumnName: "提出日時" })],
+      }),
+    ],
   }),
   new Mixin({
     name: "勉強会参加済み申込",
-    conditions: [new RawCondition({ raw: "attended_at IS NOT NULL" })],
+    conditions: [
+      new NotNullCondition({
+        values: [new SelectValue({ sourceColumnName: "参加日時" })],
+      }),
+    ],
   }),
   new Mixin({
     name: "完了済みオンボコンテンツ",
     conditions: [
-      new PlaceholderCondition({
-        template: "? IS NOT NULL",
+      new NotNullCondition({
         values: [new SelectValue({ sourceColumnName: "完了日時" })],
       }),
     ],
@@ -99,8 +111,7 @@ export const DefinedMixins: Mixin[] = [
   new Mixin({
     name: "お知らせ_開封済み",
     conditions: [
-      new PlaceholderCondition({
-        template: "? IS NOT NULL",
+      new NotNullCondition({
         values: [new SelectValue({ sourceColumnName: "開封日時" })],
       }),
     ],
