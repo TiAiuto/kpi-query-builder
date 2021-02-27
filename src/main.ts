@@ -6,7 +6,6 @@ import { SelectValue } from "./builder/value/select_value";
 import { TransformValue } from "./builder/value/transform_value";
 import { TransformPattern } from "./builder/transform_pattern";
 import { BinomialCondition } from "./builder/condition/binomial_condition";
-import { EqCondition } from "./builder/condition/eq_condition";
 import { Group } from "./builder/group";
 import { AggregateValue } from "./builder/value/aggregate_value";
 import { AggregatePattern } from "./builder/aggregate_pattern";
@@ -19,6 +18,7 @@ import { RoutineView } from "./builder/view/routine_view";
 import { RoutinePattern } from "./builder/routine_pattern";
 import { RawCondition } from "./builder/condition/raw_condition";
 import { PlaceholderCondition } from "./builder/condition/placeholder_condition";
+import { EqCondition } from "./builder/condition/eq_condition";
 
 function main() {
   const resolver = new ViewResolver({
@@ -372,14 +372,16 @@ function main() {
                 target: baseActionName,
                 conditions: [
                   new EqCondition({
-                    value: new SelectValue({
-                      sourceColumnName: baseUnitName,
-                      source: baseActionName,
-                    }),
-                    otherValue: new SelectValue({
-                      sourceColumnName: baseUnitName,
-                      source: relatedActionView.publicName,
-                    }),
+                    values: [
+                      new SelectValue({
+                        sourceColumnName: baseUnitName,
+                        source: baseActionName,
+                      }),
+                      new SelectValue({
+                        sourceColumnName: baseUnitName,
+                        source: relatedActionView.publicName,
+                      }),
+                    ],
                   }),
                   new BinomialCondition({
                     value: new SelectValue({
@@ -854,14 +856,16 @@ function main() {
                 target: relatedActionView.publicName,
                 conditions: [
                   new EqCondition({
-                    value: new SelectValue({
-                      sourceColumnName: baseUnitName,
-                      source: baseActionName,
-                    }),
-                    otherValue: new SelectValue({
-                      sourceColumnName: baseUnitName,
-                      source: relatedActionView.publicName,
-                    }),
+                    values: [
+                      new SelectValue({
+                        sourceColumnName: baseUnitName,
+                        source: baseActionName,
+                      }),
+                      new SelectValue({
+                        sourceColumnName: baseUnitName,
+                        source: relatedActionView.publicName,
+                      }),
+                    ],
                   }),
                   new BinomialCondition({
                     value: new SelectValue({
