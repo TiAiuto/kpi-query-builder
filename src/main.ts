@@ -759,7 +759,7 @@ function main() {
       "A_教材内のどこかしらのページ表示",
       "A_ヒント動画内のどこかしらのページ表示",
       // "A_マイページ内のどこかしらのページ表示",
-      "A_WELCOMEスライド完了",
+      "A_ウェルカムスライド完了",
       "A_勉強会モーダル完了",
       "A_個別ケース相談モーダル完了",
       "A_TOP表示",
@@ -769,7 +769,7 @@ function main() {
       "A_ケース相談詳細表示",
       "A_ケース相談一次相談作成",
       "A_ケース相談一次相談申込",
-      "A_ケース相談申込詳細表示",
+      // "A_ケース相談申込詳細表示",
       "A_ケース相談二次相談作成",
       "A_ケース相談二次相談提出",
       "A_勉強会リリースお知らせ開封",
@@ -778,6 +778,8 @@ function main() {
       "A_勉強会申込",
       "A_勉強会申込詳細表示",
       "A_勉強会参加",
+      "A_過去動画TOP表示",
+      "A_勉強会過去動画再生開始",
     ];
 
     const generateAggregateColumns = function (
@@ -910,10 +912,10 @@ function main() {
     resolver.addView(reportUnionView);
   };
 
-  // usersAfterContract();
+  usersAfterContract();
   // usersContractedUsageSummary();
   // usersContractedUsageSummaryMoreThanMonth();
-  usersContractedSourceParamAfterMonth();
+  // usersContractedSourceParamAfterMonth();
   // usersContractedSourceParamEachService();
 
   const bootstrapViewName = "集計クエリ";

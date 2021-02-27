@@ -323,7 +323,7 @@ END`,
     mixinUsages: [new MixinUsage({ name: "ダミー流入元パラメータ" })],
   }),
   new ActionView({
-    actionName: "A_WELCOMEスライド完了",
+    actionName: "A_ウェルカムスライド完了",
     actionAlphabetName: "action_complete_welcome_slide",
     source: "オンボWELCOMEスライド閲覧履歴",
     columns: [
