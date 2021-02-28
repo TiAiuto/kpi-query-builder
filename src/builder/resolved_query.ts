@@ -8,6 +8,7 @@ export class ResolvedQuery {
   conditionsPhrases: string[];
   groupPhrases: string[];
   orderPhrases: string[];
+  distinct: boolean;
 
   constructor({
     columns,
@@ -17,6 +18,7 @@ export class ResolvedQuery {
     conditionPhrases,
     groupPhrases,
     orderPhrases,
+    distinct
   }: {
     columns: SelectColumn[];
     physicalSource: string;
@@ -25,6 +27,7 @@ export class ResolvedQuery {
     conditionPhrases: string[];
     groupPhrases: string[];
     orderPhrases: string[];
+    distinct: boolean;
   }) {
     this.columns = columns;
     this.physicalSource = physicalSource;
@@ -33,10 +36,14 @@ export class ResolvedQuery {
     this.conditionsPhrases = conditionPhrases;
     this.groupPhrases = groupPhrases;
     this.orderPhrases = orderPhrases;
+    this.distinct = distinct;
   }
 
   toSQL(): string {
     let sql = "SELECT \n ";
+    if (this.distinct) {
+      sql += " DISTINCT ";
+    }
     sql += this.columns.map((item) => item.selectSQL).join(", \n");
     sql += " \n FROM ";
     sql += `${this.physicalSource} `;

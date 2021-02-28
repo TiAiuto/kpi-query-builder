@@ -18,6 +18,7 @@ export class RootView extends View {
   physicalSourceAlias: string;
   dateSuffixEnabled: boolean;
   columns: ValueSurface[];
+  distinct: boolean;
 
   constructor({
     mixinUsages = [],
@@ -27,6 +28,7 @@ export class RootView extends View {
     physicalSourceAlias,
     dateSuffixEnabled,
     columns,
+    distinct = false,
     ...args
   }: ViewArgs & {
     mixinUsages?: MixinUsage[];
@@ -36,6 +38,7 @@ export class RootView extends View {
     physicalSourceAlias: string;
     dateSuffixEnabled: boolean;
     columns: ValueSurface[];
+    distinct?: boolean;
   }) {
     super({
       ...args,
@@ -48,9 +51,10 @@ export class RootView extends View {
     this.physicalSourceAlias = physicalSourceAlias;
     this.dateSuffixEnabled = dateSuffixEnabled;
     this.columns = columns;
+    this.distinct = distinct;
   }
 
-  private buildColumns(joinsColumns: ValueSurface[],  context: ViewResolutionContext): SelectColumn[] {
+  private buildColumns(joinsColumns: ValueSurface[], context: ViewResolutionContext): SelectColumn[] {
     return joinsColumns.map((column) => {
       if (column.value instanceof RawValue) {
         return new SelectColumn({
@@ -95,6 +99,7 @@ export class RootView extends View {
       conditionPhrases,
       groupPhrases: [],
       orderPhrases: [],
+      distinct: this.distinct
     });
   }
 

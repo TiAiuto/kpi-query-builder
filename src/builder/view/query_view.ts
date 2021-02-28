@@ -13,6 +13,7 @@ export class QueryView extends ReferenceView {
   groups: Group[];
   inheritAllColumnsEnabled: boolean;
   inheritColumns: string[];
+  distinct: boolean;
 
   // TODO: ここでsource指定かsourceView指定か切り替えれるようにしたい
 
@@ -20,20 +21,23 @@ export class QueryView extends ReferenceView {
     inheritAllColumnsEnabled = false,
     groups = [],
     inheritColumns = [],
+    distinct = false,
     ...args
   }: ReferenceViewArgs & {
     inheritAllColumnsEnabled?: boolean;
     inheritColumns?: string[];
     groups?: Group[];
+    distinct?: boolean;
   }) {
     super({ type: "query", ...args });
     this.inheritAllColumnsEnabled = inheritAllColumnsEnabled;
     this.inheritColumns = inheritColumns;
     this.groups = groups;
+    this.distinct = distinct;
   }
 
   private buildColumns(
-    joinColumns: ValueSurface[], 
+    joinColumns: ValueSurface[],
     dependentView: ResolvedView,
     context: ViewResolutionContext
   ): SelectColumn[] {
@@ -111,6 +115,7 @@ export class QueryView extends ReferenceView {
       conditionPhrases,
       groupPhrases,
       orderPhrases,
+      distinct: this.distinct
     });
   }
 
