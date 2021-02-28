@@ -913,8 +913,8 @@ function main() {
   };
 
   // usersAfterContract();
-  // usersContractedUsageSummary();
-  usersContractedUsageSummaryMoreThanMonth();
+  usersContractedUsageSummary();
+  // usersContractedUsageSummaryMoreThanMonth();
   // usersContractedSourceParamAfterMonth();
   // usersContractedSourceParamEachService();
 
