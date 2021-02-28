@@ -142,7 +142,7 @@ function main() {
                 new RawCondition({
                   raw:
                     'DATE(usage_start_date_timestamp, "Asia/Tokyo") <= date_range_end AND ' +
-                    '(usage_end_date_timestamp IS NULL OR date_range_end <= DATE(usage_end_date_timestamp, "Asia/Tokyo"))',
+                    'date_range_end <= IFNULL(DATE(usage_end_date_timestamp, "Asia/Tokyo"), DATE("2099-12-31"))',
                 }),
               ],
             }),
