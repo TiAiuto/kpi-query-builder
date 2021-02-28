@@ -4,30 +4,24 @@ import { ViewResolutionContext } from "../view_resolution_context";
 import { Value } from "./value";
 
 export class AggregateValue extends Value {
-  source?: string;
-  sourceColumnName: string;
+  value: Value;
   pattern: AggregatePattern;
 
   constructor({
-    source,
-    sourceColumnName,
+    value,
     pattern,
-  }: SourceColumn & { pattern: AggregatePattern }) {
+  }: { value: Value; pattern: AggregatePattern }) {
     super({ type: "transform" });
-    this.source = source;
-    this.sourceColumnName = sourceColumnName;
+    this.value = value;
     this.pattern = pattern;
   }
 
   toSQL(context: ViewResolutionContext): string {
-    const resolvedColumn = context.findColumnByName(
-      this.sourceColumnName,
-      this.source
-    );
+    const valueSql = this.value.toSQL(context);
     if (this.pattern.name === "COUNT") {
-      return `COUNT(${resolvedColumn.fullPhysicalName})`;
+      return `COUNT(${valueSql})`;
     } else if (this.pattern.name === "COUNT_DISTINCT") {
-      return `COUNT(DISTINCT ${resolvedColumn.fullPhysicalName})`;
+      return `COUNT(DISTINCT ${valueSql})`;
     } else {
       throw new Error(`${this.pattern.name}は未実装`);
     }
