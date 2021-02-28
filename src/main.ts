@@ -139,10 +139,19 @@ function main() {
             new InnerJoin({
               target: "ユーザコード付きPLUS契約",
               conditions: [
-                new RawCondition({
-                  raw:
-                    'DATE(usage_start_date_timestamp, "Asia/Tokyo") <= date_range_end AND ' +
-                    'date_range_end <= IFNULL(DATE(usage_end_date_timestamp, "Asia/Tokyo"), DATE("2099-12-31"))',
+                new PlaceholderCondition({
+                  template: 'DATE(?, "Asia/Tokyo") <= ?',
+                  values: [
+                    new SelectValue({ sourceColumnName: '利用開始日タイムスタンプ' }),
+                    new SelectValue({ sourceColumnName: '終端日付' }),
+                  ]
+                }),
+                new PlaceholderCondition({
+                  template: '? <= IFNULL(DATE(?, "Asia/Tokyo"), DATE("2099-12-31"))',
+                  values: [
+                    new SelectValue({ sourceColumnName: '終端日付' }),
+                    new SelectValue({ sourceColumnName: '利用終了日タイムスタンプ' }),
+                  ]
                 }),
               ],
             }),
