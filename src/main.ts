@@ -73,8 +73,10 @@ function main() {
           name: periodUnitName,
           alphabetName: periodUnitAlphabetName,
           value: new TransformValue({
-            sourceColumnName: timeColumnName,
-            source: view.publicName,
+            value: new SelectValue({
+              sourceColumnName: timeColumnName,
+              source: view.publicName,  
+            }), 
             pattern: new TransformPattern({ name: periodUnitType }),
           }),
         }),
@@ -85,8 +87,10 @@ function main() {
             pattern: new AggregatePattern({
               name: "COUNT_DISTINCT",
             }),
-            source: view.publicName,
-            sourceColumnName: baseUnitName,
+            value: new SelectValue({
+              source: view.publicName,
+              sourceColumnName: baseUnitName,  
+            })
           }),
         }),
         new ValueSurface({
@@ -106,8 +110,10 @@ function main() {
       const result = [
         new Group({
           value: new TransformValue({
-            sourceColumnName: timeColumnName,
-            source: view.publicName,
+            value: new SelectValue({
+              sourceColumnName: timeColumnName,
+              source: view.publicName,  
+            }), 
             pattern: new TransformPattern({ name: periodUnitType }),
           }),
         }),
@@ -162,7 +168,9 @@ function main() {
               name: "契約ユーザ数",
               alphabetName: "action_aggregated_value",
               value: new AggregateValue({
-                sourceColumnName: "契約ユーザコード",
+                value: new SelectValue({
+                  sourceColumnName: "契約ユーザコード",
+                }), 
                 pattern: new AggregatePattern({ name: "COUNT" }),
               }),
             }),
@@ -251,8 +259,10 @@ function main() {
           name: periodUnitName,
           alphabetName: periodUnitAlphabetName,
           value: new TransformValue({
-            sourceColumnName: timeColumnName,
-            source: view.publicName,
+            value: new SelectValue({
+              sourceColumnName: timeColumnName,
+              source: view.publicName,
+            }), 
             pattern: new TransformPattern({ name: periodUnitType }),
           }),
         }),
@@ -263,8 +273,10 @@ function main() {
             pattern: new AggregatePattern({
               name: "COUNT_DISTINCT",
             }),
-            source: view.publicName,
-            sourceColumnName: baseUnitName,
+            value: new SelectValue({
+              source: view.publicName,
+              sourceColumnName: baseUnitName,  
+            })
           }),
         }),
         new ValueSurface({
@@ -284,9 +296,11 @@ function main() {
       const result = [
         new Group({
           value: new TransformValue({
-            sourceColumnName: timeColumnName,
-            source: view.publicName,
             pattern: new TransformPattern({ name: periodUnitType }),
+            value: new SelectValue({
+              sourceColumnName: timeColumnName,
+              source: view.publicName,  
+            })
           }),
         }),
       ];
@@ -335,8 +349,10 @@ function main() {
               name: "契約ユーザ数",
               alphabetName: "action_aggregated_value",
               value: new AggregateValue({
-                sourceColumnName: "契約ユーザコード",
                 pattern: new AggregatePattern({ name: "COUNT" }),
+                value: new SelectValue({
+                  sourceColumnName: "契約ユーザコード",
+                })
               }),
             }),
 
@@ -443,9 +459,11 @@ function main() {
           name: periodUnitName,
           alphabetName: periodUnitAlphabetName,
           value: new TransformValue({
-            sourceColumnName: timeColumnName,
-            source: view.publicName,
             pattern: new TransformPattern({ name: periodUnitType }),
+            value: new SelectValue({
+              sourceColumnName: timeColumnName,
+              source: view.publicName,  
+            })
           }),
         }),
         new ValueSurface({
@@ -455,8 +473,10 @@ function main() {
             pattern: new AggregatePattern({
               name: "COUNT",
             }),
-            source: view.publicName,
-            sourceColumnName: baseUnitName,
+            value: new SelectValue({
+              source: view.publicName,
+              sourceColumnName: baseUnitName,  
+            })
           }),
         }),
         new ValueSurface({
@@ -466,8 +486,10 @@ function main() {
             pattern: new AggregatePattern({
               name: "COUNT_DISTINCT",
             }),
-            source: view.publicName,
-            sourceColumnName: baseUnitName,
+            value: new SelectValue({
+              source: view.publicName,
+              sourceColumnName: baseUnitName,  
+            })
           }),
         }),
         new ValueSurface({
@@ -483,12 +505,14 @@ function main() {
             name: `流入元パラメータ`,
             alphabetName: `source`,
             value: new TransformValue({
-              source: view.publicName,
-              sourceColumnName: "流入元パラメータ",
               pattern: new TransformPattern({
                 name: "空白変換",
                 args: ["その他"],
               }),
+              value: new SelectValue({
+                source: view.publicName,
+                sourceColumnName: "流入元パラメータ",  
+              })
             }),
           })
         );
@@ -504,9 +528,11 @@ function main() {
       const result = [
         new Group({
           value: new TransformValue({
-            sourceColumnName: timeColumnName,
-            source: view.publicName,
             pattern: new TransformPattern({ name: periodUnitType }),
+            value: new SelectValue({
+              sourceColumnName: timeColumnName,
+              source: view.publicName,  
+            })
           }),
         }),
       ];
@@ -617,9 +643,11 @@ function main() {
           name: periodUnitName,
           alphabetName: periodUnitAlphabetName,
           value: new TransformValue({
-            sourceColumnName: timeColumnName,
-            source: view.publicName,
             pattern: new TransformPattern({ name: periodUnitType }),
+            value: new SelectValue({
+              sourceColumnName: timeColumnName,
+              source: view.publicName,  
+            })
           }),
         }),
         new ValueSurface({
@@ -629,8 +657,10 @@ function main() {
             pattern: new AggregatePattern({
               name: "COUNT",
             }),
-            source: view.publicName,
-            sourceColumnName: baseUnitName,
+            value: new SelectValue({
+              source: view.publicName,
+              sourceColumnName: baseUnitName,  
+            })
           }),
         }),
         new ValueSurface({
@@ -640,8 +670,10 @@ function main() {
             pattern: new AggregatePattern({
               name: "COUNT_DISTINCT",
             }),
-            source: view.publicName,
-            sourceColumnName: baseUnitName,
+            value: new SelectValue({
+              source: view.publicName,
+              sourceColumnName: baseUnitName,  
+            })
           }),
         }),
         new ValueSurface({
@@ -657,12 +689,14 @@ function main() {
             name: `流入元パラメータ`,
             alphabetName: `source_param`,
             value: new TransformValue({
-              source: view.publicName,
-              sourceColumnName: "流入元パラメータ",
               pattern: new TransformPattern({
                 name: "空白変換",
                 args: ["その他"],
               }),
+              value: new SelectValue({
+                source: view.publicName,
+                sourceColumnName: "流入元パラメータ",  
+              })
             }),
           })
         );
@@ -678,9 +712,11 @@ function main() {
       const result = [
         new Group({
           value: new TransformValue({
-            sourceColumnName: timeColumnName,
-            source: view.publicName,
             pattern: new TransformPattern({ name: periodUnitType }),
+            value: new SelectValue({
+              sourceColumnName: timeColumnName,
+              source: view.publicName,  
+            })
           }),
         }),
       ];
@@ -783,9 +819,11 @@ function main() {
           name: periodUnitName,
           alphabetName: periodUnitAlphabetName,
           value: new TransformValue({
-            sourceColumnName: timeColumnName,
-            source: baseActionName,
             pattern: new TransformPattern({ name: periodUnitType }),
+            value: new SelectValue({
+              sourceColumnName: timeColumnName,
+              source: baseActionName,  
+            })
           }),
         }),
         new ValueSurface({
@@ -793,8 +831,10 @@ function main() {
           alphabetName: `action_aggregated_value`,
           value: new AggregateValue({
             pattern: new AggregatePattern({ name: "COUNT_DISTINCT" }),
-            source: view.publicName,
-            sourceColumnName: baseUnitName,
+            value: new SelectValue({
+              source: view.publicName,
+              sourceColumnName: baseUnitName,  
+            })
           }),
         }),
         // new ValueSurface({
@@ -817,9 +857,11 @@ function main() {
       return [
         new Group({
           value: new TransformValue({
-            sourceColumnName: timeColumnName,
-            source: baseActionName,
             pattern: new TransformPattern({ name: periodUnitType }),
+            value: new SelectValue({
+              sourceColumnName: timeColumnName,
+              source: baseActionName,  
+            })
           }),
         }),
         // new Group({
