@@ -345,10 +345,13 @@ function main() {
                     new SelectValue({ sourceColumnName: '利用終了日タイムスタンプ' }),
                   ]
                 }),
-                new RawCondition({
-                  raw:
-                    'DATE_DIFF(date_range_begin, DATE(usage_start_date_timestamp, "Asia/Tokyo"), MONTH) >= 2',
-                }),
+                new PlaceholderCondition({
+                  template: 'DATE_DIFF(?, DATE(?, "Asia/Tokyo"), MONTH) >= 2', 
+                  values: [
+                    new SelectValue({sourceColumnName: '始端日付'}), 
+                    new SelectValue({sourceColumnName: '利用開始日タイムスタンプ'})
+                  ]
+                }), 
               ],
             }),
           ],
