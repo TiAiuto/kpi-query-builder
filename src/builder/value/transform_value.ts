@@ -25,6 +25,8 @@ export class TransformValue extends Value {
       return `FORMAT_TIMESTAMP('%Y-%m-%d', ${valueSql}, 'Asia/Tokyo')`;
     } else if (this.pattern.name === "空白変換") {
       return `IF(${valueSql} IS NULL OR ${valueSql} = '', '${this.pattern.args[0]}', ${valueSql})`; // TODO: 本当はこういうところエスケープしないといけない
+    } else if (this.pattern.name === "変換_文字列") {
+      return `CAST(${valueSql} AS STRING)`;
     } else {
       throw new Error(`${this.pattern.name}は未実装`);
     }
