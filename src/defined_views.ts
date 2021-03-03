@@ -782,4 +782,17 @@ END`,
     inheritColumns: ["ユーザコード", "流入元パラメータ", "タイムスタンプ"],
     mixinUsages: [new MixinUsage({ name: "動画再生履歴_視聴開始" })],
   }),
+  new ActionView({
+    actionName: "A_教材PDFクリック",
+    actionAlphabetName: "action_click_kyozai_pdf",
+    source: "PLUS教材PDFクリック",
+    inheritColumns: ["ユーザコード", "流入元パラメータ", "タイムスタンプ"],
+  }),
+  new ActionView({
+    actionName: "A_ヒント動画再生開始",
+    actionAlphabetName: "action_play_hint_video",
+    source: "ヒント動画視聴履歴",
+    inheritColumns: ["ユーザコード", "流入元パラメータ", "タイムスタンプ"],
+    mixinUsages: [new MixinUsage({ name: "動画再生履歴_視聴開始" })],
+  }),
 ];
