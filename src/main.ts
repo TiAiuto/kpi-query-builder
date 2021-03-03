@@ -18,6 +18,7 @@ import { RoutinePattern } from "./builder/routine_pattern";
 import { RawCondition } from "./builder/condition/raw_condition";
 import { PlaceholderCondition } from "./builder/condition/placeholder_condition";
 import { EqCondition } from "./builder/condition/eq_condition";
+import { ConstStringValue } from "./builder/value/const_string_value";
 
 function main() {
   const resolver = new ViewResolver({
@@ -75,8 +76,8 @@ function main() {
           value: new TransformValue({
             value: new SelectValue({
               sourceColumnName: timeColumnName,
-              source: view.publicName,  
-            }), 
+              source: view.publicName,
+            }),
             pattern: new TransformPattern({ name: periodUnitType }),
           }),
         }),
@@ -89,8 +90,8 @@ function main() {
             }),
             value: new SelectValue({
               source: view.publicName,
-              sourceColumnName: baseUnitName,  
-            })
+              sourceColumnName: baseUnitName,
+            }),
           }),
         }),
         new ValueSurface({
@@ -112,8 +113,8 @@ function main() {
           value: new TransformValue({
             value: new SelectValue({
               sourceColumnName: timeColumnName,
-              source: view.publicName,  
-            }), 
+              source: view.publicName,
+            }),
             pattern: new TransformPattern({ name: periodUnitType }),
           }),
         }),
@@ -148,16 +149,21 @@ function main() {
                 new PlaceholderCondition({
                   template: 'DATE(?, "Asia/Tokyo") <= ?',
                   values: [
-                    new SelectValue({ sourceColumnName: '利用開始日タイムスタンプ' }),
-                    new SelectValue({ sourceColumnName: '終端日付' }),
-                  ]
+                    new SelectValue({
+                      sourceColumnName: "利用開始日タイムスタンプ",
+                    }),
+                    new SelectValue({ sourceColumnName: "終端日付" }),
+                  ],
                 }),
                 new PlaceholderCondition({
-                  template: '? <= IFNULL(DATE(?, "Asia/Tokyo"), DATE("2099-12-31"))',
+                  template:
+                    '? <= IFNULL(DATE(?, "Asia/Tokyo"), DATE("2099-12-31"))',
                   values: [
-                    new SelectValue({ sourceColumnName: '終端日付' }),
-                    new SelectValue({ sourceColumnName: '利用終了日タイムスタンプ' }),
-                  ]
+                    new SelectValue({ sourceColumnName: "終端日付" }),
+                    new SelectValue({
+                      sourceColumnName: "利用終了日タイムスタンプ",
+                    }),
+                  ],
                 }),
               ],
             }),
@@ -170,7 +176,7 @@ function main() {
               value: new AggregateValue({
                 value: new SelectValue({
                   sourceColumnName: "契約ユーザコード",
-                }), 
+                }),
                 pattern: new AggregatePattern({ name: "COUNT" }),
               }),
             }),
@@ -262,7 +268,7 @@ function main() {
             value: new SelectValue({
               sourceColumnName: timeColumnName,
               source: view.publicName,
-            }), 
+            }),
             pattern: new TransformPattern({ name: periodUnitType }),
           }),
         }),
@@ -275,8 +281,8 @@ function main() {
             }),
             value: new SelectValue({
               source: view.publicName,
-              sourceColumnName: baseUnitName,  
-            })
+              sourceColumnName: baseUnitName,
+            }),
           }),
         }),
         new ValueSurface({
@@ -299,8 +305,8 @@ function main() {
             pattern: new TransformPattern({ name: periodUnitType }),
             value: new SelectValue({
               sourceColumnName: timeColumnName,
-              source: view.publicName,  
-            })
+              source: view.publicName,
+            }),
           }),
         }),
       ];
@@ -334,24 +340,31 @@ function main() {
                 new PlaceholderCondition({
                   template: 'DATE(?, "Asia/Tokyo") <= ?',
                   values: [
-                    new SelectValue({ sourceColumnName: '利用開始日タイムスタンプ' }),
-                    new SelectValue({ sourceColumnName: '終端日付' }),
-                  ]
+                    new SelectValue({
+                      sourceColumnName: "利用開始日タイムスタンプ",
+                    }),
+                    new SelectValue({ sourceColumnName: "終端日付" }),
+                  ],
                 }),
                 new PlaceholderCondition({
-                  template: '? <= IFNULL(DATE(?, "Asia/Tokyo"), DATE("2099-12-31"))',
+                  template:
+                    '? <= IFNULL(DATE(?, "Asia/Tokyo"), DATE("2099-12-31"))',
                   values: [
-                    new SelectValue({ sourceColumnName: '終端日付' }),
-                    new SelectValue({ sourceColumnName: '利用終了日タイムスタンプ' }),
-                  ]
+                    new SelectValue({ sourceColumnName: "終端日付" }),
+                    new SelectValue({
+                      sourceColumnName: "利用終了日タイムスタンプ",
+                    }),
+                  ],
                 }),
                 new PlaceholderCondition({
-                  template: 'DATE_DIFF(?, DATE(?, "Asia/Tokyo"), MONTH) >= 2', 
+                  template: 'DATE_DIFF(?, DATE(?, "Asia/Tokyo"), MONTH) >= 2',
                   values: [
-                    new SelectValue({sourceColumnName: '始端日付'}), 
-                    new SelectValue({sourceColumnName: '利用開始日タイムスタンプ'})
-                  ]
-                }), 
+                    new SelectValue({ sourceColumnName: "始端日付" }),
+                    new SelectValue({
+                      sourceColumnName: "利用開始日タイムスタンプ",
+                    }),
+                  ],
+                }),
               ],
             }),
           ],
@@ -364,7 +377,7 @@ function main() {
                 pattern: new AggregatePattern({ name: "COUNT" }),
                 value: new SelectValue({
                   sourceColumnName: "契約ユーザコード",
-                })
+                }),
               }),
             }),
 
@@ -474,8 +487,8 @@ function main() {
             pattern: new TransformPattern({ name: periodUnitType }),
             value: new SelectValue({
               sourceColumnName: timeColumnName,
-              source: view.publicName,  
-            })
+              source: view.publicName,
+            }),
           }),
         }),
         new ValueSurface({
@@ -487,8 +500,8 @@ function main() {
             }),
             value: new SelectValue({
               source: view.publicName,
-              sourceColumnName: baseUnitName,  
-            })
+              sourceColumnName: baseUnitName,
+            }),
           }),
         }),
         new ValueSurface({
@@ -500,8 +513,8 @@ function main() {
             }),
             value: new SelectValue({
               source: view.publicName,
-              sourceColumnName: baseUnitName,  
-            })
+              sourceColumnName: baseUnitName,
+            }),
           }),
         }),
         new ValueSurface({
@@ -523,8 +536,8 @@ function main() {
               }),
               value: new SelectValue({
                 source: view.publicName,
-                sourceColumnName: "流入元パラメータ",  
-              })
+                sourceColumnName: "流入元パラメータ",
+              }),
             }),
           })
         );
@@ -543,8 +556,8 @@ function main() {
             pattern: new TransformPattern({ name: periodUnitType }),
             value: new SelectValue({
               sourceColumnName: timeColumnName,
-              source: view.publicName,  
-            })
+              source: view.publicName,
+            }),
           }),
         }),
       ];
@@ -658,8 +671,8 @@ function main() {
             pattern: new TransformPattern({ name: periodUnitType }),
             value: new SelectValue({
               sourceColumnName: timeColumnName,
-              source: view.publicName,  
-            })
+              source: view.publicName,
+            }),
           }),
         }),
         new ValueSurface({
@@ -671,8 +684,8 @@ function main() {
             }),
             value: new SelectValue({
               source: view.publicName,
-              sourceColumnName: baseUnitName,  
-            })
+              sourceColumnName: baseUnitName,
+            }),
           }),
         }),
         new ValueSurface({
@@ -684,8 +697,8 @@ function main() {
             }),
             value: new SelectValue({
               source: view.publicName,
-              sourceColumnName: baseUnitName,  
-            })
+              sourceColumnName: baseUnitName,
+            }),
           }),
         }),
         new ValueSurface({
@@ -707,8 +720,8 @@ function main() {
               }),
               value: new SelectValue({
                 source: view.publicName,
-                sourceColumnName: "流入元パラメータ",  
-              })
+                sourceColumnName: "流入元パラメータ",
+              }),
             }),
           })
         );
@@ -727,8 +740,8 @@ function main() {
             pattern: new TransformPattern({ name: periodUnitType }),
             value: new SelectValue({
               sourceColumnName: timeColumnName,
-              source: view.publicName,  
-            })
+              source: view.publicName,
+            }),
           }),
         }),
       ];
@@ -834,8 +847,8 @@ function main() {
             pattern: new TransformPattern({ name: periodUnitType }),
             value: new SelectValue({
               sourceColumnName: timeColumnName,
-              source: baseActionName,  
-            })
+              source: baseActionName,
+            }),
           }),
         }),
         new ValueSurface({
@@ -845,8 +858,8 @@ function main() {
             pattern: new AggregatePattern({ name: "COUNT_DISTINCT" }),
             value: new SelectValue({
               source: view.publicName,
-              sourceColumnName: baseUnitName,  
-            })
+              sourceColumnName: baseUnitName,
+            }),
           }),
         }),
         // new ValueSurface({
@@ -872,8 +885,8 @@ function main() {
             pattern: new TransformPattern({ name: periodUnitType }),
             value: new SelectValue({
               sourceColumnName: timeColumnName,
-              source: baseActionName,  
-            })
+              source: baseActionName,
+            }),
           }),
         }),
         // new Group({
@@ -966,11 +979,61 @@ function main() {
     resolver.addView(reportUnionView);
   };
 
+  const userHealthScoreStatistics = function () {
+    const logTimeCondition = new PlaceholderCondition({
+      template: 'DATE(?, "Asia/Tokyo") >= DATE("2020-10-01")',
+      values: [
+        new SelectValue({
+          sourceColumnName: "タイムスタンプ",
+        }),
+      ],
+    });
+
+    const reportUnionView = new UnionView({
+      name: "集計クエリ",
+      alphabetName: "aggregated_view",
+      views: [
+        new QueryView({
+          name: "",
+          alphabetName: "",
+          source: "A_サイト内のどこかしらのページ表示",
+          columns: [
+            new ValueSurface({
+              name: "PLUS全体_最終閲覧日",
+              alphabetName: "plus_last_visit",
+              value: new AggregateValue({
+                pattern: new AggregatePattern({
+                  name: "MAX",
+                }),
+                value: new SelectValue({
+                  sourceColumnName: "タイムスタンプ",
+                }),
+              }),
+            }),
+            new ValueSurface({
+              name: "統計種別ラベル",
+              alphabetName: "stat_label",
+              value: new ConstStringValue({ value: "PLUS全体_最終閲覧日" }),
+            }),
+          ],
+          inheritColumns: ["ユーザコード"],
+          groups: [
+            new Group({
+              value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+            }),
+          ],
+        }),
+      ],
+    });
+    resolver.addView(reportUnionView);
+  };
+
   // usersAfterContract();
-  usersContractedUsageSummary();
+  // usersContractedUsageSummary();
   // usersContractedUsageSummaryMoreThanMonth();
   // usersContractedSourceParamAfterMonth();
   // usersContractedSourceParamEachService();
+  userHealthScoreStatistics();
 
   const bootstrapViewName = "集計クエリ";
 
