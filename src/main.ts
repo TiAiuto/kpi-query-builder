@@ -1290,6 +1290,39 @@ function main() {
             }),
           ],
         }),
+        new QueryView({
+          name: "",
+          alphabetName: "",
+          source: "A_ヒント動画再生開始",
+          columns: [
+            new ValueSurface({
+              name: "統計値",
+              alphabetName: "stat_value",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "変換_文字列" }),
+                value: new AggregateValue({
+                  pattern: new AggregatePattern({
+                    name: "COUNT",
+                  }),
+                  value: new SelectValue({
+                    sourceColumnName: "タイムスタンプ",
+                  }),
+                }),
+              }),
+            }),
+            new ValueSurface({
+              name: "統計種別ラベル",
+              alphabetName: "stat_label",
+              value: new ConstStringValue({ value: "ヒント動画_累計視聴回数" }),
+            }),
+          ],
+          inheritColumns: ["ユーザコード"],
+          groups: [
+            new Group({
+              value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+            }),
+          ],
+        }),
       ],
     });
     resolver.addView(reportUnionView);
