@@ -304,6 +304,42 @@ END`,
     mixinUsages: [new MixinUsage({ name: "ダミー流入元パラメータ" })],
     dateSuffixEnabled: false,
   }),
+  new RootView({
+    name: "PLUS教材PDFクリック",
+    alphabetName: "plus_kyozai_doc_pdf_click",
+    physicalSource:
+      "`h-navi.lo_applog_stg.action_plus_kyozai_doc_pdf_click_*`",
+    physicalSourceAlias: "plus_kyozai_doc_pdf_click",
+    columns: [
+      new ValueSurface({
+        name: "ユーザコード",
+        alphabetName: "user_code",
+        value: new RawValue({ raw: "users.code" }),
+      }),
+      new ValueSurface({
+        name: "教材資料ID",
+        alphabetName: "kyozai_doc_id",
+        value: new RawValue({
+          raw: "CAST(JSON_EXTRACT_SCALAR(plus_kyozai_doc_pdf_click.message, '$.doc_id') AS INT64)",
+        }),
+      }),
+      new ValueSurface({
+        name: "タイムスタンプ",
+        alphabetName: "time",
+        value: new RawValue({
+          raw: "TIMESTAMP_SECONDS(playback_logs.time)",
+        }),
+      }),
+    ],
+    joins: [
+      new RawJoin({
+        raw:
+          "JOIN `h-navi.lo_production.users` users ON CAST(JSON_EXTRACT_SCALAR(playback_logs.message, '$.user_id') AS INT64) = users.id",
+      }),
+    ],
+    mixinUsages: [new MixinUsage({ name: "ダミー流入元パラメータ" })],
+    dateSuffixEnabled: true,
+  }),
   new QueryView({
     name: "PLUS契約者アクセスログ",
     alphabetName: "plus_contracted_users_logs",
