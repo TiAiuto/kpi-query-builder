@@ -1161,6 +1161,39 @@ function main() {
         new QueryView({
           name: "",
           alphabetName: "",
+          source: "A_勉強会過去動画再生開始",
+          columns: [
+            new ValueSurface({
+              name: "統計値",
+              alphabetName: "stat_value",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "変換_文字列" }),
+                value: new AggregateValue({
+                  pattern: new AggregatePattern({
+                    name: "COUNT_DISTINCT",
+                  }),
+                  value: new SelectValue({
+                    sourceColumnName: "過去動画コード",
+                  }),
+                }),
+              }),
+            }),
+            new ValueSurface({
+              name: "統計種別ラベル",
+              alphabetName: "stat_label",
+              value: new ConstStringValue({ value: "勉強会_過去動画累計視聴タイトル数" }),
+            }),
+          ],
+          inheritColumns: ["ユーザコード"],
+          groups: [
+            new Group({
+              value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+            }),
+          ],
+        }),
+        new QueryView({
+          name: "",
+          alphabetName: "",
           source: "A_勉強会申込",
           columns: [
             new ValueSurface({
