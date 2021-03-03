@@ -1181,7 +1181,9 @@ function main() {
             new ValueSurface({
               name: "統計種別ラベル",
               alphabetName: "stat_label",
-              value: new ConstStringValue({ value: "勉強会_過去動画累計視聴回数" }),
+              value: new ConstStringValue({
+                value: "勉強会_過去動画累計視聴回数",
+              }),
             }),
           ],
           inheritColumns: ["ユーザコード"],
@@ -1280,7 +1282,9 @@ function main() {
             new ValueSurface({
               name: "統計種別ラベル",
               alphabetName: "stat_label",
-              value: new ConstStringValue({ value: "教材_教材PDF累計クリック数" }),
+              value: new ConstStringValue({
+                value: "教材_教材PDF累計クリック数",
+              }),
             }),
           ],
           inheritColumns: ["ユーザコード"],
@@ -1314,6 +1318,72 @@ function main() {
               name: "統計種別ラベル",
               alphabetName: "stat_label",
               value: new ConstStringValue({ value: "ヒント動画_累計視聴回数" }),
+            }),
+          ],
+          inheritColumns: ["ユーザコード"],
+          groups: [
+            new Group({
+              value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+            }),
+          ],
+        }),
+        new QueryView({
+          name: "",
+          alphabetName: "",
+          source: "A_マイページ内のどこかしらのページ表示",
+          columns: [
+            new ValueSurface({
+              name: "統計値",
+              alphabetName: "stat_value",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "変換_文字列" }),
+                value: new AggregateValue({
+                  pattern: new AggregatePattern({
+                    name: "MAX",
+                  }),
+                  value: new SelectValue({
+                    sourceColumnName: "タイムスタンプ",
+                  }),
+                }),
+              }),
+            }),
+            new ValueSurface({
+              name: "統計種別ラベル",
+              alphabetName: "stat_label",
+              value: new ConstStringValue({ value: "マイページ_最終閲覧日" }),
+            }),
+          ],
+          inheritColumns: ["ユーザコード"],
+          groups: [
+            new Group({
+              value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+            }),
+          ],
+        }),
+        new QueryView({
+          name: "",
+          alphabetName: "",
+          source: "A_マイページ内のどこかしらのページ表示",
+          columns: [
+            new ValueSurface({
+              name: "統計値",
+              alphabetName: "stat_value",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "変換_文字列" }),
+                value: new AggregateValue({
+                  pattern: new AggregatePattern({
+                    name: "COUNT",
+                  }),
+                  value: new SelectValue({
+                    sourceColumnName: "タイムスタンプ",
+                  }),
+                }),
+              }),
+            }),
+            new ValueSurface({
+              name: "統計種別ラベル",
+              alphabetName: "stat_label",
+              value: new ConstStringValue({ value: "マイページ_累計PV" }),
             }),
           ],
           inheritColumns: ["ユーザコード"],
