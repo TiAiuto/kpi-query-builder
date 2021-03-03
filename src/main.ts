@@ -1170,10 +1170,10 @@ function main() {
                 pattern: new TransformPattern({ name: "変換_文字列" }),
                 value: new AggregateValue({
                   pattern: new AggregatePattern({
-                    name: "COUNT_DISTINCT",
+                    name: "COUNT",
                   }),
                   value: new SelectValue({
-                    sourceColumnName: "過去動画コード",
+                    sourceColumnName: "タイムスタンプ",
                   }),
                 }),
               }),
@@ -1181,7 +1181,7 @@ function main() {
             new ValueSurface({
               name: "統計種別ラベル",
               alphabetName: "stat_label",
-              value: new ConstStringValue({ value: "勉強会_過去動画累計視聴タイトル数" }),
+              value: new ConstStringValue({ value: "勉強会_過去動画累計視聴回数" }),
             }),
           ],
           inheritColumns: ["ユーザコード"],
@@ -1215,6 +1215,72 @@ function main() {
               name: "統計種別ラベル",
               alphabetName: "stat_label",
               value: new ConstStringValue({ value: "勉強会_最終申込日" }),
+            }),
+          ],
+          inheritColumns: ["ユーザコード"],
+          groups: [
+            new Group({
+              value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+            }),
+          ],
+        }),
+        new QueryView({
+          name: "",
+          alphabetName: "",
+          source: "A_教材レッスンページ表示",
+          columns: [
+            new ValueSurface({
+              name: "統計値",
+              alphabetName: "stat_value",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "変換_文字列" }),
+                value: new AggregateValue({
+                  pattern: new AggregatePattern({
+                    name: "COUNT",
+                  }),
+                  value: new SelectValue({
+                    sourceColumnName: "タイムスタンプ",
+                  }),
+                }),
+              }),
+            }),
+            new ValueSurface({
+              name: "統計種別ラベル",
+              alphabetName: "stat_label",
+              value: new ConstStringValue({ value: "教材_教材レッスン累計PV" }),
+            }),
+          ],
+          inheritColumns: ["ユーザコード"],
+          groups: [
+            new Group({
+              value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+            }),
+          ],
+        }),
+        new QueryView({
+          name: "",
+          alphabetName: "",
+          source: "A_教材PDFクリック",
+          columns: [
+            new ValueSurface({
+              name: "統計値",
+              alphabetName: "stat_value",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "変換_文字列" }),
+                value: new AggregateValue({
+                  pattern: new AggregatePattern({
+                    name: "COUNT",
+                  }),
+                  value: new SelectValue({
+                    sourceColumnName: "タイムスタンプ",
+                  }),
+                }),
+              }),
+            }),
+            new ValueSurface({
+              name: "統計種別ラベル",
+              alphabetName: "stat_label",
+              value: new ConstStringValue({ value: "教材_教材PDF累計クリック数" }),
             }),
           ],
           inheritColumns: ["ユーザコード"],
