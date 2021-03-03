@@ -783,6 +783,18 @@ END`,
     mixinUsages: [new MixinUsage({ name: "動画再生履歴_視聴開始" })],
   }),
   new ActionView({
+    actionName: "A_教材レッスンページ表示",
+    actionAlphabetName: "action_visit_kyozai_lesson",
+    source: "PLUS契約者アクセスログ",
+    inheritAllColumnsEnabled: true,
+    conditions: [
+      new RawCondition({
+        raw:
+          "REGEXP_CONTAINS(path, '^/plus/kyozai/lessons/\\\\w+?')",
+      }),
+    ],
+  }),
+  new ActionView({
     actionName: "A_教材PDFクリック",
     actionAlphabetName: "action_click_kyozai_pdf",
     source: "PLUS教材PDFクリック",
