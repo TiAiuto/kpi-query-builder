@@ -1001,12 +1001,15 @@ function main() {
             new ValueSurface({
               name: "統計値",
               alphabetName: "stat_value",
-              value: new AggregateValue({
-                pattern: new AggregatePattern({
-                  name: "MAX",
-                }),
-                value: new SelectValue({
-                  sourceColumnName: "タイムスタンプ",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "変換_文字列" }),
+                value: new AggregateValue({
+                  pattern: new AggregatePattern({
+                    name: "MAX",
+                  }),
+                  value: new SelectValue({
+                    sourceColumnName: "タイムスタンプ",
+                  }),
                 }),
               }),
             }),
@@ -1031,12 +1034,15 @@ function main() {
             new ValueSurface({
               name: "統計値",
               alphabetName: "stat_value",
-              value: new AggregateValue({
-                pattern: new AggregatePattern({
-                  name: "COUNT",
-                }),
-                value: new SelectValue({
-                  sourceColumnName: "タイムスタンプ",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "変換_文字列" }),
+                value: new AggregateValue({
+                  pattern: new AggregatePattern({
+                    name: "COUNT",
+                  }),
+                  value: new SelectValue({
+                    sourceColumnName: "タイムスタンプ",
+                  }),
                 }),
               }),
             }),
@@ -1061,12 +1067,15 @@ function main() {
             new ValueSurface({
               name: "統計値",
               alphabetName: "stat_value",
-              value: new AggregateValue({
-                pattern: new AggregatePattern({
-                  name: "MAX",
-                }),
-                value: new SelectValue({
-                  sourceColumnName: "タイムスタンプ",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "変換_文字列" }),
+                value: new AggregateValue({
+                  pattern: new AggregatePattern({
+                    name: "MAX",
+                  }),
+                  value: new SelectValue({
+                    sourceColumnName: "タイムスタンプ",
+                  }),
                 }),
               }),
             }),
@@ -1091,12 +1100,15 @@ function main() {
             new ValueSurface({
               name: "統計値",
               alphabetName: "stat_value",
-              value: new AggregateValue({
-                pattern: new AggregatePattern({
-                  name: "COUNT",
-                }),
-                value: new SelectValue({
-                  sourceColumnName: "タイムスタンプ",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "変換_文字列" }),
+                value: new AggregateValue({
+                  pattern: new AggregatePattern({
+                    name: "COUNT",
+                  }),
+                  value: new SelectValue({
+                    sourceColumnName: "タイムスタンプ",
+                  }),
                 }),
               }),
             }),
@@ -1121,12 +1133,15 @@ function main() {
             new ValueSurface({
               name: "統計値",
               alphabetName: "stat_value",
-              value: new AggregateValue({
-                pattern: new AggregatePattern({
-                  name: "COUNT",
-                }),
-                value: new SelectValue({
-                  sourceColumnName: "タイムスタンプ",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "変換_文字列" }),
+                value: new AggregateValue({
+                  pattern: new AggregatePattern({
+                    name: "COUNT",
+                  }),
+                  value: new SelectValue({
+                    sourceColumnName: "タイムスタンプ",
+                  }),
                 }),
               }),
             }),
@@ -1151,12 +1166,15 @@ function main() {
             new ValueSurface({
               name: "統計値",
               alphabetName: "stat_value",
-              value: new AggregateValue({
-                pattern: new AggregatePattern({
-                  name: "MAX",
-                }),
-                value: new SelectValue({
-                  sourceColumnName: "タイムスタンプ",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "変換_文字列" }),
+                value: new AggregateValue({
+                  pattern: new AggregatePattern({
+                    name: "MAX",
+                  }),
+                  value: new SelectValue({
+                    sourceColumnName: "タイムスタンプ",
+                  }),
                 }),
               }),
             }),
