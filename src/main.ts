@@ -1073,7 +1073,97 @@ function main() {
             new ValueSurface({
               name: "統計種別ラベル",
               alphabetName: "stat_label",
-              value: new ConstStringValue({ value: "PLUS全体_累計PV" }),
+              value: new ConstStringValue({ value: "勉強会_最終閲覧日" }),
+            }),
+          ],
+          inheritColumns: ["ユーザコード"],
+          groups: [
+            new Group({
+              value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+            }),
+          ],
+        }),
+        new QueryView({
+          name: "",
+          alphabetName: "",
+          source: "A_勉強会申込",
+          columns: [
+            new ValueSurface({
+              name: "統計値",
+              alphabetName: "stat_value",
+              value: new AggregateValue({
+                pattern: new AggregatePattern({
+                  name: "COUNT",
+                }),
+                value: new SelectValue({
+                  sourceColumnName: "タイムスタンプ",
+                }),
+              }),
+            }),
+            new ValueSurface({
+              name: "統計種別ラベル",
+              alphabetName: "stat_label",
+              value: new ConstStringValue({ value: "勉強会_申込数" }),
+            }),
+          ],
+          inheritColumns: ["ユーザコード"],
+          groups: [
+            new Group({
+              value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+            }),
+          ],
+        }),
+        new QueryView({
+          name: "",
+          alphabetName: "",
+          source: "A_勉強会参加",
+          columns: [
+            new ValueSurface({
+              name: "統計値",
+              alphabetName: "stat_value",
+              value: new AggregateValue({
+                pattern: new AggregatePattern({
+                  name: "COUNT",
+                }),
+                value: new SelectValue({
+                  sourceColumnName: "タイムスタンプ",
+                }),
+              }),
+            }),
+            new ValueSurface({
+              name: "統計種別ラベル",
+              alphabetName: "stat_label",
+              value: new ConstStringValue({ value: "勉強会_参加数" }),
+            }),
+          ],
+          inheritColumns: ["ユーザコード"],
+          groups: [
+            new Group({
+              value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+            }),
+          ],
+        }),
+        new QueryView({
+          name: "",
+          alphabetName: "",
+          source: "A_勉強会申込",
+          columns: [
+            new ValueSurface({
+              name: "統計値",
+              alphabetName: "stat_value",
+              value: new AggregateValue({
+                pattern: new AggregatePattern({
+                  name: "MAX",
+                }),
+                value: new SelectValue({
+                  sourceColumnName: "タイムスタンプ",
+                }),
+              }),
+            }),
+            new ValueSurface({
+              name: "統計種別ラベル",
+              alphabetName: "stat_label",
+              value: new ConstStringValue({ value: "勉強会_最終申込日" }),
             }),
           ],
           inheritColumns: ["ユーザコード"],
