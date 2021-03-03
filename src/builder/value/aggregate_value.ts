@@ -22,6 +22,8 @@ export class AggregateValue extends Value {
       return `COUNT(${valueSql})`;
     } else if (this.pattern.name === "COUNT_DISTINCT") {
       return `COUNT(DISTINCT ${valueSql})`;
+    } else if (this.pattern.name === "MAX") {
+      return `MAX(${valueSql})`;
     } else {
       throw new Error(`${this.pattern.name}は未実装`);
     }
