@@ -327,14 +327,14 @@ END`,
         name: "タイムスタンプ",
         alphabetName: "time",
         value: new RawValue({
-          raw: "TIMESTAMP_SECONDS(playback_logs.time)",
+          raw: "TIMESTAMP_SECONDS(plus_kyozai_doc_pdf_click.time)",
         }),
       }),
     ],
     joins: [
       new RawJoin({
         raw:
-          "JOIN `h-navi.lo_production.users` users ON CAST(JSON_EXTRACT_SCALAR(playback_logs.message, '$.user_id') AS INT64) = users.id",
+          "JOIN `h-navi.lo_production.users` users ON CAST(JSON_EXTRACT_SCALAR(plus_kyozai_doc_pdf_click.message, '$.user_id') AS INT64) = users.id",
       }),
     ],
     mixinUsages: [new MixinUsage({ name: "ダミー流入元パラメータ" })],
