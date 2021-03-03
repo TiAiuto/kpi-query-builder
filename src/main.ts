@@ -1023,6 +1023,36 @@ function main() {
             }),
           ],
         }),
+        new QueryView({
+          name: "",
+          alphabetName: "",
+          source: "A_サイト内のどこかしらのページ表示",
+          columns: [
+            new ValueSurface({
+              name: "PLUS全体_累計PV",
+              alphabetName: "plus_all_visit",
+              value: new AggregateValue({
+                pattern: new AggregatePattern({
+                  name: "COUNT",
+                }),
+                value: new SelectValue({
+                  sourceColumnName: "タイムスタンプ",
+                }),
+              }),
+            }),
+            new ValueSurface({
+              name: "統計種別ラベル",
+              alphabetName: "stat_label",
+              value: new ConstStringValue({ value: "PLUS全体_累計PV" }),
+            }),
+          ],
+          inheritColumns: ["ユーザコード"],
+          groups: [
+            new Group({
+              value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+            }),
+          ],
+        }),
       ],
     });
     resolver.addView(reportUnionView);
