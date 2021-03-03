@@ -308,7 +308,7 @@ END`,
     name: "PLUS教材PDFクリック",
     alphabetName: "plus_kyozai_doc_pdf_click",
     physicalSource:
-      "`h-navi.lo_applog_stg.action_plus_kyozai_doc_pdf_click_*`",
+      "`h-navi.lo_applog.action_plus_kyozai_doc_pdf_click_*`",
     physicalSourceAlias: "plus_kyozai_doc_pdf_click",
     columns: [
       new ValueSurface({
