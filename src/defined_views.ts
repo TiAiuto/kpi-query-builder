@@ -181,6 +181,12 @@ END`,
         }),
       }),
     ],
+    joins: [
+      new RawJoin({
+        raw:
+          "JOIN `h-navi.lo_production.plus_study_meetings` study_meetings ON study_meeting_applications.study_meeting_code = study_meetings.id",
+      }),
+    ], 
     mixinUsages: [new MixinUsage({ name: "ダミー流入元パラメータ" })],
     dateSuffixEnabled: false,
   }),
@@ -258,6 +264,11 @@ END`,
         name: "勉強会タイトル",
         alphabetName: "study_meeting_title",
         value: new RawValue({ raw: "study_meetings.title" }),
+      }),
+      new ValueSurface({
+        name: "勉強会開催日", // 開始時間から毎回変換するのは面倒なのでここで日付にしてしまう
+        alphabetName: "study_meeting_held_on",
+        value: new RawValue({ raw: "DATE(study_meetings.meeting_start_at, 'UTC')" }), // ここはなぜかUTC表記で日本時間が入ってしまっているのでUTCが正しい
       }),
       new ValueSurface({
         name: "タイムスタンプ",
