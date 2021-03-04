@@ -109,7 +109,7 @@ END`,
         name: "申込日時",
         alphabetName: "application_datetime",
         value: new RawValue({
-          raw: "application_tickets.application_datetime",
+          raw: "application_tickets.application_datetime", // これはタスクでBigQueryに送ってるから正しいUTC
         }),
       }),
       new ValueSurface({
@@ -139,7 +139,7 @@ END`,
         name: "提出日時",
         alphabetName: "submitted_at",
         value: new RawValue({
-          raw: "second_question_tickets.submitted_at",
+          raw: "second_question_tickets.submitted_at", // これはタスクでBigQueryに送ってるから正しいUTC
         }),
       }),
       new ValueSurface({
@@ -233,14 +233,14 @@ END`,
         name: "完了日時",
         alphabetName: "completed_at",
         value: new RawValue({
-          raw: "plus_featured_content_check_histories.completed_at",
+          raw: "plus_featured_content_check_histories.completed_at", // これは要修正かも
         }),
       }),
       new ValueSurface({
         name: "最終表示日時",
         alphabetName: "last_displayed_at",
         value: new RawValue({
-          raw: "plus_featured_content_check_histories.last_displayed_at",
+          raw: "plus_featured_content_check_histories.last_displayed_at", // これは要修正かも
         }),
       }),
       new ValueSurface({
@@ -332,7 +332,7 @@ END`,
         name: "開封日時",
         alphabetName: "opened_at",
         value: new RawValue({
-          raw: "plus_notices.opened_at",
+          raw: "plus_notices.opened_at", // これは要修正かも
         }),
       }),
       new ValueSurface({
