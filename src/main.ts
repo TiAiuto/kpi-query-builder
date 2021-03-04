@@ -1002,7 +1002,7 @@ function main() {
               name: "統計値",
               alphabetName: "stat_value",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "変換_文字列" }),
+                pattern: new TransformPattern({ name: "タイムスタンプ_日抽出" }),
                 value: new AggregateValue({
                   pattern: new AggregatePattern({
                     name: "MAX",
@@ -1035,7 +1035,7 @@ function main() {
               name: "統計値",
               alphabetName: "stat_value",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "変換_文字列" }),
+                pattern: new TransformPattern({ name: "型変換_文字列" }),
                 value: new AggregateValue({
                   pattern: new AggregatePattern({
                     name: "COUNT",
@@ -1068,7 +1068,7 @@ function main() {
               name: "統計値",
               alphabetName: "stat_value",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "変換_文字列" }),
+                pattern: new TransformPattern({ name: "タイムスタンプ_日抽出" }),
                 value: new AggregateValue({
                   pattern: new AggregatePattern({
                     name: "MAX",
@@ -1101,7 +1101,7 @@ function main() {
               name: "統計値",
               alphabetName: "stat_value",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "変換_文字列" }),
+                pattern: new TransformPattern({ name: "型変換_文字列" }),
                 value: new AggregateValue({
                   pattern: new AggregatePattern({
                     name: "COUNT",
@@ -1134,7 +1134,7 @@ function main() {
               name: "統計値",
               alphabetName: "stat_value",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "変換_文字列" }),
+                pattern: new TransformPattern({ name: "型変換_文字列" }),
                 value: new AggregateValue({
                   pattern: new AggregatePattern({
                     name: "COUNT",
@@ -1167,7 +1167,7 @@ function main() {
               name: "統計値",
               alphabetName: "stat_value",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "変換_文字列" }),
+                pattern: new TransformPattern({ name: "型変換_文字列" }),
                 value: new AggregateValue({
                   pattern: new AggregatePattern({
                     name: "COUNT",
@@ -1202,7 +1202,7 @@ function main() {
               name: "統計値",
               alphabetName: "stat_value",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "変換_文字列" }),
+                pattern: new TransformPattern({ name: "タイムスタンプ_日抽出" }),
                 value: new AggregateValue({
                   pattern: new AggregatePattern({
                     name: "MAX",
@@ -1235,7 +1235,7 @@ function main() {
               name: "統計値",
               alphabetName: "stat_value",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "変換_文字列" }),
+                pattern: new TransformPattern({ name: "型変換_文字列" }),
                 value: new AggregateValue({
                   pattern: new AggregatePattern({
                     name: "COUNT",
@@ -1268,7 +1268,7 @@ function main() {
               name: "統計値",
               alphabetName: "stat_value",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "変換_文字列" }),
+                pattern: new TransformPattern({ name: "型変換_文字列" }),
                 value: new AggregateValue({
                   pattern: new AggregatePattern({
                     name: "COUNT",
@@ -1303,7 +1303,7 @@ function main() {
               name: "統計値",
               alphabetName: "stat_value",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "変換_文字列" }),
+                pattern: new TransformPattern({ name: "型変換_文字列" }),
                 value: new AggregateValue({
                   pattern: new AggregatePattern({
                     name: "COUNT",
@@ -1336,7 +1336,7 @@ function main() {
               name: "統計値",
               alphabetName: "stat_value",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "変換_文字列" }),
+                pattern: new TransformPattern({ name: "タイムスタンプ_日抽出" }),
                 value: new AggregateValue({
                   pattern: new AggregatePattern({
                     name: "MAX",
@@ -1369,7 +1369,7 @@ function main() {
               name: "統計値",
               alphabetName: "stat_value",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "変換_文字列" }),
+                pattern: new TransformPattern({ name: "型変換_文字列" }),
                 value: new AggregateValue({
                   pattern: new AggregatePattern({
                     name: "COUNT",
