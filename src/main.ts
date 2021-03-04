@@ -1450,6 +1450,128 @@ function main() {
     resolver.addView(reportUnionView);
   };
 
+  const userHealthScoreStatisticsMonthKyozaiLessonPv = function () {
+    const reportUnionView = new UnionView({
+      name: "集計クエリ",
+      alphabetName: "aggregated_view",
+      views: [
+        new QueryView({
+          name: "",
+          alphabetName: "",
+          source: "A_教材レッスンページ表示",
+          columns: [
+            new ValueSurface({
+              name: "統計値",
+              alphabetName: "stat_value",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "型変換_文字列" }),
+                value: new AggregateValue({
+                  pattern: new AggregatePattern({
+                    name: "COUNT",
+                  }),
+                  value: new SelectValue({
+                    sourceColumnName: "タイムスタンプ",
+                  }),
+                }),
+              }),
+            }),
+            new ValueSurface({
+              name: "集計期間",
+              alphabetName: "period",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                value: new SelectValue({
+                  sourceColumnName: "タイムスタンプ",
+                }),
+              }),
+            }),
+            new ValueSurface({
+              name: "統計種別ラベル",
+              alphabetName: "stat_label",
+              value: new ConstStringValue({ value: "PLUS全体_月別_教材_レッスンPV" }),
+            }),
+          ],
+          inheritColumns: ["ユーザコード"],
+          groups: [
+            new Group({
+              value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+            }),
+            new Group({
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                value: new SelectValue({
+                  sourceColumnName: "タイムスタンプ",
+                }),
+              }),
+            }),
+          ],
+        }),
+      ],
+    });
+    resolver.addView(reportUnionView);
+  };
+
+  const userHealthScoreStatisticsMonthKyozaiPdfClick = function () {
+    const reportUnionView = new UnionView({
+      name: "集計クエリ",
+      alphabetName: "aggregated_view",
+      views: [
+        new QueryView({
+          name: "",
+          alphabetName: "",
+          source: "A_教材PDFクリック",
+          columns: [
+            new ValueSurface({
+              name: "統計値",
+              alphabetName: "stat_value",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "型変換_文字列" }),
+                value: new AggregateValue({
+                  pattern: new AggregatePattern({
+                    name: "COUNT",
+                  }),
+                  value: new SelectValue({
+                    sourceColumnName: "タイムスタンプ",
+                  }),
+                }),
+              }),
+            }),
+            new ValueSurface({
+              name: "集計期間",
+              alphabetName: "period",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                value: new SelectValue({
+                  sourceColumnName: "タイムスタンプ",
+                }),
+              }),
+            }),
+            new ValueSurface({
+              name: "統計種別ラベル",
+              alphabetName: "stat_label",
+              value: new ConstStringValue({ value: "PLUS全体_月別_教材_PDFクリック" }),
+            }),
+          ],
+          inheritColumns: ["ユーザコード"],
+          groups: [
+            new Group({
+              value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+            }),
+            new Group({
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                value: new SelectValue({
+                  sourceColumnName: "タイムスタンプ",
+                }),
+              }),
+            }),
+          ],
+        }),
+      ],
+    });
+    resolver.addView(reportUnionView);
+  };
+
 
   // usersAfterContract();
   // usersContractedUsageSummary();
@@ -1457,7 +1579,9 @@ function main() {
   // usersContractedSourceParamAfterMonth();
   // usersContractedSourceParamEachService();
   // userHealthScoreStatistics();
-  userHealthScoreStatisticsMonthPv();
+  // userHealthScoreStatisticsMonthPv();
+  // userHealthScoreStatisticsMonthKyozaiLessonPv();
+  userHealthScoreStatisticsMonthKyozaiPdfClick();
 
   const bootstrapViewName = "集計クエリ";
 
