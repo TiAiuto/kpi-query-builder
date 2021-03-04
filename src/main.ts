@@ -1743,7 +1743,55 @@ function main() {
     resolver.addView(reportUnionView);
   };
 
-
+  const userHealthScoreStatisticsMonthStudyMeetingApplicationEachTitle = function () {
+    const reportUnionView = new UnionView({
+      name: "集計クエリ",
+      alphabetName: "aggregated_view",
+      views: [
+        new QueryView({
+          name: "",
+          alphabetName: "",
+          source: "オンライン勉強会申込",
+          columns: [
+            new ValueSurface({
+              name: "勉強会開催日",
+              alphabetName: "held_on",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "タイムスタンプ_日抽出" }),
+                value: new SelectValue({sourceColumnName: '勉強会開始日時タイムスタンプ'})
+              }),
+            }),
+            new ValueSurface({
+              name: "申込日",
+              alphabetName: "submiited_on",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "タイムスタンプ_日抽出" }),
+                value: new SelectValue({sourceColumnName: '申込日時'})
+              }),
+            }),
+            new ValueSurface({
+              name: "参加日",
+              alphabetName: "attended_on",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "タイムスタンプ_日抽出" }),
+                value: new SelectValue({sourceColumnName: '参加日時'})
+              }),
+            }),
+            new ValueSurface({
+              name: "キャンセル日",
+              alphabetName: "cancelled_on",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "タイムスタンプ_日抽出" }),
+                value: new SelectValue({sourceColumnName: 'キャンセル日時'})
+              }),
+            }),
+          ],
+          inheritColumns: ["ユーザコード", "勉強会コード", "勉強会タイトル"],
+        }),
+      ],
+    });
+    resolver.addView(reportUnionView);
+  };
   // usersAfterContract();
   // usersContractedUsageSummary();
   // usersContractedUsageSummaryMoreThanMonth();
@@ -1755,7 +1803,8 @@ function main() {
   // userHealthScoreStatisticsMonthKyozaiPdfClick();
   // userHealthScoreStatisticsMonthHintVideoPlay();
   // userHealthScoreStatisticsMonthStudyMeetingArchiveVideoPlay();
-  userHealthScoreStatisticsMonthStudyMeetingArchiveVideoEachTitle();
+  // userHealthScoreStatisticsMonthStudyMeetingArchiveVideoEachTitle();
+  userHealthScoreStatisticsMonthStudyMeetingApplicationEachTitle();
 
   const bootstrapViewName = "集計クエリ";
 

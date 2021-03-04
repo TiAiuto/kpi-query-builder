@@ -180,13 +180,38 @@ END`,
           raw: "study_meeting_applications.attended_at",
         }),
       }),
+      new ValueSurface({
+        name: "キャンセル日時",
+        alphabetName: "cancelled_at",
+        value: new RawValue({
+          raw: "study_meeting_applications.cancelled_at",
+        }),
+      }),
+      new ValueSurface({
+        name: "勉強会コード",
+        alphabetName: "study_meeting_code",
+        value: new RawValue({ raw: "study_meetings.code" }),
+      }),
+      new ValueSurface({
+        name: "勉強会タイトル",
+        alphabetName: "study_meeting_title",
+        value: new RawValue({ raw: "study_meetings.title" }),
+      }),
+      new ValueSurface({
+        name: "勉強会開始日時タイムスタンプ", // 開始時間から毎回変換するのは面倒なのでここで日付にしてしまう
+        alphabetName: "study_meeting_start_at",
+        value: new RawValue({
+          raw:
+            "TIMESTAMP_SUB(study_meetings.meeting_start_at, INTERVAL 9 HOUR)",
+        }), // ここはなぜかUTC表記で日本時間が入ってしまっているのでUTCが正しい
+      }),
     ],
     joins: [
       new RawJoin({
         raw:
-          "JOIN `h-navi.lo_production.plus_study_meetings` study_meetings ON study_meeting_applications.study_meeting_code = study_meetings.id",
+          "JOIN `h-navi.lo_production.plus_study_meetings` study_meetings ON study_meeting_applications.study_meeting_code = study_meetings.code",
       }),
-    ], 
+    ],
     mixinUsages: [new MixinUsage({ name: "ダミー流入元パラメータ" })],
     dateSuffixEnabled: false,
   }),
@@ -266,11 +291,6 @@ END`,
         value: new RawValue({ raw: "study_meetings.title" }),
       }),
       new ValueSurface({
-        name: "勉強会開催日", // 開始時間から毎回変換するのは面倒なのでここで日付にしてしまう
-        alphabetName: "study_meeting_held_on",
-        value: new RawValue({ raw: "DATE(study_meetings.meeting_start_at, 'UTC')" }), // ここはなぜかUTC表記で日本時間が入ってしまっているのでUTCが正しい
-      }),
-      new ValueSurface({
         name: "タイムスタンプ",
         alphabetName: "time",
         value: new RawValue({
@@ -336,8 +356,7 @@ END`,
   new RootView({
     name: "PLUS教材PDFクリック",
     alphabetName: "plus_kyozai_doc_pdf_click",
-    physicalSource:
-      "`h-navi.lo_applog.action_plus_kyozai_doc_pdf_click_*`",
+    physicalSource: "`h-navi.lo_applog.action_plus_kyozai_doc_pdf_click_*`",
     physicalSourceAlias: "plus_kyozai_doc_pdf_click",
     columns: [
       new ValueSurface({
@@ -349,7 +368,8 @@ END`,
         name: "教材資料ID",
         alphabetName: "kyozai_doc_id",
         value: new RawValue({
-          raw: "CAST(JSON_EXTRACT_SCALAR(plus_kyozai_doc_pdf_click.message, '$.doc_id') AS INT64)",
+          raw:
+            "CAST(JSON_EXTRACT_SCALAR(plus_kyozai_doc_pdf_click.message, '$.doc_id') AS INT64)",
         }),
       }),
       new ValueSurface({
@@ -808,7 +828,14 @@ END`,
     actionName: "A_勉強会過去動画再生開始",
     actionAlphabetName: "action_play_study_meeting_archive_video",
     source: "勉強会過去動画視聴履歴",
-    inheritColumns: ["ユーザコード", "流入元パラメータ", "タイムスタンプ", "過去動画コード", "勉強会コード", "勉強会タイトル"],
+    inheritColumns: [
+      "ユーザコード",
+      "流入元パラメータ",
+      "タイムスタンプ",
+      "過去動画コード",
+      "勉強会コード",
+      "勉強会タイトル",
+    ],
     mixinUsages: [new MixinUsage({ name: "動画再生履歴_視聴開始" })],
   }),
   new ActionView({
@@ -818,8 +845,7 @@ END`,
     inheritAllColumnsEnabled: true,
     conditions: [
       new RawCondition({
-        raw:
-          "REGEXP_CONTAINS(path, '^/plus/kyozai/lessons/\\\\w+?')",
+        raw: "REGEXP_CONTAINS(path, '^/plus/kyozai/lessons/\\\\w+?')",
       }),
     ],
   }),
