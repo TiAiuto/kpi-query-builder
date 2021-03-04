@@ -1694,6 +1694,55 @@ function main() {
     resolver.addView(reportUnionView);
   };
 
+  const userHealthScoreStatisticsMonthStudyMeetingArchiveVideoEachTitle = function () {
+    const reportUnionView = new UnionView({
+      name: "集計クエリ",
+      alphabetName: "aggregated_view",
+      views: [
+        new QueryView({
+          name: "",
+          alphabetName: "",
+          source: "A_勉強会過去動画再生開始",
+          columns: [
+            new ValueSurface({
+              name: "統計値",
+              alphabetName: "stat_value",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "型変換_文字列" }),
+                value: new AggregateValue({
+                  pattern: new AggregatePattern({
+                    name: "COUNT",
+                  }),
+                  value: new SelectValue({
+                    sourceColumnName: "タイムスタンプ",
+                  }),
+                }),
+              }),
+            }),
+            new ValueSurface({
+              name: "統計種別ラベル",
+              alphabetName: "stat_label",
+              value: new ConstStringValue({ value: "PLUS全体_勉強会別_過去動画視聴回数" }),
+            }),
+          ],
+          inheritColumns: ["ユーザコード", "勉強会コード", "勉強会タイトル"],
+          groups: [
+            new Group({
+              value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+            }),
+            new Group({
+              value: new SelectValue({ sourceColumnName: "勉強会コード" }),
+            }),
+            new Group({
+              value: new SelectValue({ sourceColumnName: "勉強会タイトル" }),
+            }),
+          ],
+        }),
+      ],
+    });
+    resolver.addView(reportUnionView);
+  };
+
 
   // usersAfterContract();
   // usersContractedUsageSummary();
@@ -1706,6 +1755,7 @@ function main() {
   // userHealthScoreStatisticsMonthKyozaiPdfClick();
   // userHealthScoreStatisticsMonthHintVideoPlay();
   // userHealthScoreStatisticsMonthStudyMeetingArchiveVideoPlay();
+  userHealthScoreStatisticsMonthStudyMeetingArchiveVideoEachTitle();
 
   const bootstrapViewName = "集計クエリ";
 

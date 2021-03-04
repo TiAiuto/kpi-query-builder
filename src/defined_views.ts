@@ -797,7 +797,7 @@ END`,
     actionName: "A_勉強会過去動画再生開始",
     actionAlphabetName: "action_play_study_meeting_archive_video",
     source: "勉強会過去動画視聴履歴",
-    inheritColumns: ["ユーザコード", "流入元パラメータ", "タイムスタンプ", "過去動画コード"],
+    inheritColumns: ["ユーザコード", "流入元パラメータ", "タイムスタンプ", "過去動画コード", "勉強会コード", "勉強会タイトル"],
     mixinUsages: [new MixinUsage({ name: "動画再生履歴_視聴開始" })],
   }),
   new ActionView({
