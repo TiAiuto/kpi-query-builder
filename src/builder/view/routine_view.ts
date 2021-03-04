@@ -17,20 +17,20 @@ export class RoutineView extends View {
       const [rangeType, dateRangeBegin, dateRangeEnd] = this.pattern.args;
       let sql = '';
       if (rangeType === '日単位') {
-        sql = `SELECT FORMAT_DATE('%Y-%m-%d', unit_raw_value) as period, 
+        sql = `SELECT FORMAT_DATE('%Y/%m/%d', unit_raw_value) as period, 
           unit_raw_value AS date_range_begin, 
           unit_raw_value AS date_range_end
           FROM UNNEST(GENERATE_DATE_ARRAY(PARSE_DATE("%Y%m%d", "${dateRangeBegin}"), 
             PARSE_DATE("%Y%m%d", "${dateRangeEnd}"))) AS unit_raw_value`
       } else if (rangeType === '週単位') {
         // TODO: (MONDAY)は可変にしてもよさそう
-        sql = `SELECT DISTINCT FORMAT_DATE('%Y-%m-%dW', DATE_TRUNC(unit_raw_value, WEEK(MONDAY))) AS period, 
+        sql = `SELECT DISTINCT FORMAT_DATE('%Y/%m/%dW', DATE_TRUNC(unit_raw_value, WEEK(MONDAY))) AS period, 
           DATE_TRUNC(unit_raw_value, WEEK(MONDAY)) AS date_range_begin, 
           DATE_SUB(DATE_ADD(DATE_TRUNC(unit_raw_value, WEEK(MONDAY)), INTERVAL 1 WEEK), INTERVAL 1 DAY) AS date_range_end 
           FROM UNNEST(GENERATE_DATE_ARRAY(PARSE_DATE("%Y%m%d", "${dateRangeBegin}"), 
             PARSE_DATE("%Y%m%d", "${dateRangeEnd}"))) AS unit_raw_value`
       } else if (rangeType === '月単位') {
-        sql = `SELECT DISTINCT FORMAT_DATE('%Y-%m', unit_raw_value) AS period, 
+        sql = `SELECT DISTINCT FORMAT_DATE('%Y/%m', unit_raw_value) AS period, 
           DATE_TRUNC(unit_raw_value, MONTH) AS date_range_begin, 
           DATE_SUB(DATE_ADD(DATE_TRUNC(unit_raw_value, MONTH), INTERVAL 1 MONTH), INTERVAL 1 DAY) AS date_range_end 
           FROM UNNEST(GENERATE_DATE_ARRAY(PARSE_DATE("%Y%m%d", "${dateRangeBegin}"), 
