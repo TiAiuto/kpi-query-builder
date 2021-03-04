@@ -225,7 +225,7 @@ END`,
   }),
   new RootView({
     name: "勉強会過去動画視聴履歴",
-    alphabetName: "action_plus_archive_videos_playback_logs",
+    alphabetName: "plus_archive_videos_playback_logs",
     physicalSource:
       "`h-navi.lo_applog.action_plus_archive_videos_playback_logs_*`",
     physicalSourceAlias: "playback_logs",
@@ -250,6 +250,16 @@ END`,
         }),
       }),
       new ValueSurface({
+        name: "勉強会コード",
+        alphabetName: "study_meeting_code",
+        value: new RawValue({ raw: "study_meetings.code" }),
+      }),
+      new ValueSurface({
+        name: "勉強会タイトル",
+        alphabetName: "study_meeting_title",
+        value: new RawValue({ raw: "study_meetings.title" }),
+      }),
+      new ValueSurface({
         name: "タイムスタンプ",
         alphabetName: "time",
         value: new RawValue({
@@ -261,6 +271,14 @@ END`,
       new RawJoin({
         raw:
           "JOIN `h-navi.lo_production.users` users ON CAST(JSON_EXTRACT_SCALAR(playback_logs.message, '$.user_id') AS INT64) = users.id",
+      }),
+      new RawJoin({
+        raw:
+          "JOIN `h-navi.lo_production.plus_study_meeting_archive_videos` archive_videos ON JSON_EXTRACT_SCALAR(playback_logs.message, '$.code') = archive_videos.code",
+      }),
+      new RawJoin({
+        raw:
+          "JOIN `h-navi.lo_production.plus_study_meetings` study_meetings ON archive_videos.plus_study_meeting_id = study_meetings.id",
       }),
     ],
     mixinUsages: [new MixinUsage({ name: "ダミー流入元パラメータ" })],

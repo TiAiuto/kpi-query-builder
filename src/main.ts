@@ -980,15 +980,6 @@ function main() {
   };
 
   const userHealthScoreStatistics = function () {
-    const logTimeCondition = new PlaceholderCondition({
-      template: 'DATE(?, "Asia/Tokyo") >= DATE("2020-10-01")',
-      values: [
-        new SelectValue({
-          sourceColumnName: "タイムスタンプ",
-        }),
-      ],
-    });
-
     const reportUnionView = new UnionView({
       name: "集計クエリ",
       alphabetName: "aggregated_view",
