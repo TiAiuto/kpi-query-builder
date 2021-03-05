@@ -1,3 +1,4 @@
+import { NotNullCondition } from "./builder/condition/not_null_condition";
 import { RawCondition } from "./builder/condition/raw_condition";
 import { RawJoin } from "./builder/join/raw_join";
 import { MixinUsage } from "./builder/mixin_usage";
