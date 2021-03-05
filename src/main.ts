@@ -1522,6 +1522,11 @@ function main() {
           source: "ユーザコード付きPLUS契約",
           columns: [
             new ValueSurface({
+              name: "ユーザコード",
+              alphabetName: "user_code",
+              value: new SelectValue({ sourceColumnName: '契約ユーザコード' }),
+            }),
+            new ValueSurface({
               name: "統計値",
               alphabetName: "stat_value",
               value: new TransformValue({
@@ -1541,11 +1546,6 @@ function main() {
               alphabetName: "stat_label",
               value: new ConstStringValue({ value: "契約_利用開始日" }),
             }),
-            new ValueSurface({
-              name: "ユーザコード",
-              alphabetName: "user_code",
-              value: new SelectValue({ sourceColumnName: '契約ユーザコード' }),
-            }),
           ],
           groups: [
             new Group({
@@ -1558,6 +1558,11 @@ function main() {
           alphabetName: "",
           source: "ユーザコード付きPLUS契約",
           columns: [
+            new ValueSurface({
+              name: "ユーザコード",
+              alphabetName: "user_code",
+              value: new SelectValue({ sourceColumnName: '契約ユーザコード' }),
+            }),
             new ValueSurface({
               name: "統計値",
               alphabetName: "stat_value",
@@ -1577,11 +1582,6 @@ function main() {
               name: "統計種別ラベル",
               alphabetName: "stat_label",
               value: new ConstStringValue({ value: "契約_利用終了日" }),
-            }),
-            new ValueSurface({
-              name: "ユーザコード",
-              alphabetName: "user_code",
-              value: new SelectValue({ sourceColumnName: '契約ユーザコード' }),
             }),
           ],
           groups: [
