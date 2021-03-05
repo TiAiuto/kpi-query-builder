@@ -170,22 +170,22 @@ END`,
       new ValueSurface({
         name: "申込日時",
         alphabetName: "application_datetime",
-        value: new RawValue({
-          raw: "study_meeting_applications.application_datetime",
+        value: new RawValue({ // ここはUTC表記で日本時間が入ってしまっているので補正
+          raw: "TIMESTAMP_SUB(study_meeting_applications.application_datetime, INTERVAL 9 HOUR)",
         }),
       }),
       new ValueSurface({
         name: "参加日時",
         alphabetName: "attended_at",
         value: new RawValue({
-          raw: "study_meeting_applications.attended_at",
+          raw: "TIMESTAMP_SUB(study_meeting_applications.attended_at, INTERVAL 9 HOURS)",
         }),
       }),
       new ValueSurface({
         name: "キャンセル日時",
         alphabetName: "cancelled_at",
         value: new RawValue({
-          raw: "study_meeting_applications.cancelled_at",
+          raw: "TIMESTAMP_SUB(study_meeting_applications.cancelled_at, INTERVAL 9 HOURS)",
         }),
       }),
       new ValueSurface({
@@ -204,7 +204,7 @@ END`,
         value: new RawValue({
           raw:
             "TIMESTAMP_SUB(study_meetings.meeting_start_at, INTERVAL 9 HOUR)",
-        }), // ここはなぜかUTC表記で日本時間が入ってしまっているのでUTCが正しい
+        }), // ここはUTC表記で日本時間が入ってしまっているので補正
       }),
     ],
     joins: [
@@ -233,15 +233,15 @@ END`,
       new ValueSurface({
         name: "完了日時",
         alphabetName: "completed_at",
-        value: new RawValue({
-          raw: "plus_featured_content_check_histories.completed_at", // これは要修正かも
+        value: new RawValue({ // ここはUTC表記で日本時間が入ってしまっているので補正
+          raw: "TIMESTAMP_SUB(plus_featured_content_check_histories.completed_at, INTERVAL 9 HOUR)",
         }),
       }),
       new ValueSurface({
         name: "最終表示日時",
         alphabetName: "last_displayed_at",
         value: new RawValue({
-          raw: "plus_featured_content_check_histories.last_displayed_at", // これは要修正かも
+          raw: "TIMESTAMP_SUB(plus_featured_content_check_histories.last_displayed_at, INTERVAL 9 HOUR)",
         }),
       }),
       new ValueSurface({
@@ -332,8 +332,8 @@ END`,
       new ValueSurface({
         name: "開封日時",
         alphabetName: "opened_at",
-        value: new RawValue({
-          raw: "plus_notices.opened_at", // これは要修正かも
+        value: new RawValue({ // ここはUTC表記で日本時間が入ってしまっているので補正
+          raw: "TIMESTAMP_SUB(plus_notices.opened_at, INTERVAL 9 HOUR)", // これは要修正かも
         }),
       }),
       new ValueSurface({
