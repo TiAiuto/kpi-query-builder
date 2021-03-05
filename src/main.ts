@@ -1384,6 +1384,105 @@ function main() {
             }),
           ],
         }),
+        new QueryView({
+          name: "",
+          alphabetName: "",
+          source: "A_個別ケース相談内のどこかしらのページ表示",
+          columns: [
+            new ValueSurface({
+              name: "統計値",
+              alphabetName: "stat_value",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "タイムスタンプ_日抽出" }),
+                value: new AggregateValue({
+                  pattern: new AggregatePattern({
+                    name: "MAX",
+                  }),
+                  value: new SelectValue({
+                    sourceColumnName: "タイムスタンプ",
+                  }),
+                }),
+              }),
+            }),
+            new ValueSurface({
+              name: "統計種別ラベル",
+              alphabetName: "stat_label",
+              value: new ConstStringValue({ value: "ケース相談_最終閲覧日" }),
+            }),
+          ],
+          inheritColumns: ["ユーザコード"],
+          groups: [
+            new Group({
+              value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+            }),
+          ],
+        }),
+        new QueryView({
+          name: "",
+          alphabetName: "",
+          source: "A_ケース相談一次相談申込",
+          columns: [
+            new ValueSurface({
+              name: "統計値",
+              alphabetName: "stat_value",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "型変換_文字列" }),
+                value: new AggregateValue({
+                  pattern: new AggregatePattern({
+                    name: "COUNT",
+                  }),
+                  value: new SelectValue({
+                    sourceColumnName: "タイムスタンプ",
+                  }),
+                }),
+              }),
+            }),
+            new ValueSurface({
+              name: "統計種別ラベル",
+              alphabetName: "stat_label",
+              value: new ConstStringValue({ value: "ケース相談_一次相談申込数" }),
+            }),
+          ],
+          inheritColumns: ["ユーザコード"],
+          groups: [
+            new Group({
+              value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+            }),
+          ],
+        }),
+        new QueryView({
+          name: "",
+          alphabetName: "",
+          source: "A_ケース相談一次相談申込",
+          columns: [
+            new ValueSurface({
+              name: "統計値",
+              alphabetName: "stat_value",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "タイムスタンプ_日抽出" }),
+                value: new AggregateValue({
+                  pattern: new AggregatePattern({
+                    name: "MAX",
+                  }),
+                  value: new SelectValue({
+                    sourceColumnName: "タイムスタンプ",
+                  }),
+                }),
+              }),
+            }),
+            new ValueSurface({
+              name: "統計種別ラベル",
+              alphabetName: "stat_label",
+              value: new ConstStringValue({ value: "ケース相談_最終一次相談申込日" }),
+            }),
+          ],
+          inheritColumns: ["ユーザコード"],
+          groups: [
+            new Group({
+              value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+            }),
+          ],
+        }),
       ],
     });
     resolver.addView(reportUnionView);
@@ -1797,14 +1896,14 @@ function main() {
   // usersContractedUsageSummaryMoreThanMonth();
   // usersContractedSourceParamAfterMonth();
   // usersContractedSourceParamEachService();
-  // userHealthScoreStatistics();
+  userHealthScoreStatistics();
   // userHealthScoreStatisticsMonthPv();
   // userHealthScoreStatisticsMonthKyozaiLessonPv();
   // userHealthScoreStatisticsMonthKyozaiPdfClick();
   // userHealthScoreStatisticsMonthHintVideoPlay();
   // userHealthScoreStatisticsMonthStudyMeetingArchiveVideoPlay();
   // userHealthScoreStatisticsMonthStudyMeetingArchiveVideoEachTitle();
-  userHealthScoreStatisticsMonthStudyMeetingApplicationEachTitle();
+  // userHealthScoreStatisticsMonthStudyMeetingApplicationEachTitle();
 
   const bootstrapViewName = "集計クエリ";
 
