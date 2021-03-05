@@ -170,22 +170,26 @@ END`,
       new ValueSurface({
         name: "申込日時",
         alphabetName: "application_datetime",
-        value: new RawValue({ // ここはUTC表記で日本時間が入ってしまっているので補正
-          raw: "TIMESTAMP_SUB(study_meeting_applications.application_datetime, INTERVAL 9 HOUR)",
+        value: new RawValue({
+          // ここはUTC表記で日本時間が入ってしまっているので補正
+          raw:
+            "TIMESTAMP_SUB(study_meeting_applications.application_datetime, INTERVAL 9 HOUR)",
         }),
       }),
       new ValueSurface({
         name: "参加日時",
         alphabetName: "attended_at",
         value: new RawValue({
-          raw: "TIMESTAMP_SUB(study_meeting_applications.attended_at, INTERVAL 9 HOURS)",
+          raw:
+            "TIMESTAMP_SUB(study_meeting_applications.attended_at, INTERVAL 9 HOUR)",
         }),
       }),
       new ValueSurface({
         name: "キャンセル日時",
         alphabetName: "cancelled_at",
         value: new RawValue({
-          raw: "TIMESTAMP_SUB(study_meeting_applications.cancelled_at, INTERVAL 9 HOURS)",
+          raw:
+            "TIMESTAMP_SUB(study_meeting_applications.cancelled_at, INTERVAL 9 HOUR)",
         }),
       }),
       new ValueSurface({
@@ -233,15 +237,18 @@ END`,
       new ValueSurface({
         name: "完了日時",
         alphabetName: "completed_at",
-        value: new RawValue({ // ここはUTC表記で日本時間が入ってしまっているので補正
-          raw: "TIMESTAMP_SUB(plus_featured_content_check_histories.completed_at, INTERVAL 9 HOUR)",
+        value: new RawValue({
+          // ここはUTC表記で日本時間が入ってしまっているので補正
+          raw:
+            "TIMESTAMP_SUB(plus_featured_content_check_histories.completed_at, INTERVAL 9 HOUR)",
         }),
       }),
       new ValueSurface({
         name: "最終表示日時",
         alphabetName: "last_displayed_at",
         value: new RawValue({
-          raw: "TIMESTAMP_SUB(plus_featured_content_check_histories.last_displayed_at, INTERVAL 9 HOUR)",
+          raw:
+            "TIMESTAMP_SUB(plus_featured_content_check_histories.last_displayed_at, INTERVAL 9 HOUR)",
         }),
       }),
       new ValueSurface({
@@ -332,7 +339,8 @@ END`,
       new ValueSurface({
         name: "開封日時",
         alphabetName: "opened_at",
-        value: new RawValue({ // ここはUTC表記で日本時間が入ってしまっているので補正
+        value: new RawValue({
+          // ここはUTC表記で日本時間が入ってしまっているので補正
           raw: "TIMESTAMP_SUB(plus_notices.opened_at, INTERVAL 9 HOUR)", // これは要修正かも
         }),
       }),
@@ -468,6 +476,9 @@ END`,
     mixinUsages: [
       new MixinUsage({ name: "完了済みオンボコンテンツ" }),
       new MixinUsage({ name: "オンボコンテンツ_WELCOMEスライド" }),
+      new MixinUsage({
+        name: "PLUS契約ユーザ（解約済み含む）",
+      }),
     ],
   }),
   new ActionView({
@@ -487,6 +498,9 @@ END`,
     mixinUsages: [
       new MixinUsage({ name: "完了済みオンボコンテンツ" }),
       new MixinUsage({ name: "オンボコンテンツ_勉強会モーダル" }),
+      new MixinUsage({
+        name: "PLUS契約ユーザ（解約済み含む）",
+      }),
     ],
   }),
   new ActionView({
@@ -506,6 +520,9 @@ END`,
     mixinUsages: [
       new MixinUsage({ name: "完了済みオンボコンテンツ" }),
       new MixinUsage({ name: "オンボコンテンツ_ケース相談モーダル" }),
+      new MixinUsage({
+        name: "PLUS契約ユーザ（解約済み含む）",
+      }),
     ],
   }),
   new ActionView({
@@ -522,7 +539,12 @@ END`,
       }),
     ],
     inheritColumns: ["ユーザコード", "流入元パラメータ"],
-    mixinUsages: [new MixinUsage({ name: "お知らせ_開封済み" })],
+    mixinUsages: [
+      new MixinUsage({ name: "お知らせ_開封済み" }),
+      new MixinUsage({
+        name: "PLUS契約ユーザ（解約済み含む）",
+      }),
+    ],
   }),
   new ActionView({
     actionName: "A_勉強会リリースお知らせ開封",
@@ -542,6 +564,9 @@ END`,
       new MixinUsage({ name: "お知らせ_開封済み" }),
       new MixinUsage({ name: "お知らせ_勉強会" }),
       new MixinUsage({ name: "お知らせ_コンテンツリリース" }),
+      new MixinUsage({
+        name: "PLUS契約ユーザ（解約済み含む）",
+      }),
     ],
   }),
   new ActionView({
@@ -696,6 +721,11 @@ END`,
         value: new SelectValue({ sourceColumnName: "作成日時" }),
       }),
     ],
+    mixinUsages: [
+      new MixinUsage({
+        name: "PLUS契約ユーザ（解約済み含む）",
+      }),
+    ],
     inheritColumns: ["ユーザコード", "流入元パラメータ"],
   }),
   new ActionView({
@@ -710,7 +740,12 @@ END`,
       }),
     ],
     inheritColumns: ["ユーザコード", "流入元パラメータ"],
-    mixinUsages: [new MixinUsage({ name: "申込済み一時相談" })],
+    mixinUsages: [
+      new MixinUsage({ name: "申込済み一時相談" }),
+      new MixinUsage({
+        name: "PLUS契約ユーザ（解約済み含む）",
+      }),
+    ],
   }),
   new ActionView({
     actionName: "A_ケース相談申込詳細表示",
@@ -736,6 +771,11 @@ END`,
         value: new SelectValue({ sourceColumnName: "作成日時" }),
       }),
     ],
+    mixinUsages: [
+      new MixinUsage({
+        name: "PLUS契約ユーザ（解約済み含む）",
+      }),
+    ],
     inheritColumns: ["ユーザコード", "流入元パラメータ"],
   }),
   new ActionView({
@@ -751,7 +791,12 @@ END`,
       }),
     ],
     inheritColumns: ["ユーザコード", "流入元パラメータ"],
-    mixinUsages: [new MixinUsage({ name: "申込済み二次相談" })],
+    mixinUsages: [
+      new MixinUsage({ name: "申込済み二次相談" }),
+      new MixinUsage({
+        name: "PLUS契約ユーザ（解約済み含む）",
+      }),
+    ],
   }),
   new ActionView({
     actionName: "A_勉強会TOP表示",
@@ -786,6 +831,11 @@ END`,
         value: new SelectValue({ sourceColumnName: "申込日時" }),
       }),
     ],
+    mixinUsages: [
+      new MixinUsage({
+        name: "PLUS契約ユーザ（解約済み含む）",
+      }),
+    ],
     inheritColumns: ["ユーザコード", "流入元パラメータ"],
   }),
   new ActionView({
@@ -812,7 +862,12 @@ END`,
       }),
     ],
     inheritColumns: ["ユーザコード", "流入元パラメータ"],
-    mixinUsages: [new MixinUsage({ name: "勉強会参加済み申込" })],
+    mixinUsages: [
+      new MixinUsage({ name: "勉強会参加済み申込" }),
+      new MixinUsage({
+        name: "PLUS契約ユーザ（解約済み含む）",
+      }),
+    ],
   }),
   new ActionView({
     actionName: "A_過去動画TOP表示",
@@ -837,7 +892,12 @@ END`,
       "勉強会コード",
       "勉強会タイトル",
     ],
-    mixinUsages: [new MixinUsage({ name: "動画再生履歴_視聴開始" })],
+    mixinUsages: [
+      new MixinUsage({ name: "動画再生履歴_視聴開始" }),
+      new MixinUsage({
+        name: "PLUS契約ユーザ（解約済み含む）",
+      }),
+    ],
   }),
   new ActionView({
     actionName: "A_教材レッスンページ表示",
@@ -855,12 +915,22 @@ END`,
     actionAlphabetName: "action_click_kyozai_pdf",
     source: "PLUS教材PDFクリック",
     inheritColumns: ["ユーザコード", "流入元パラメータ", "タイムスタンプ"],
+    mixinUsages: [
+      new MixinUsage({
+        name: "PLUS契約ユーザ（解約済み含む）",
+      }),
+    ],
   }),
   new ActionView({
     actionName: "A_ヒント動画再生開始",
     actionAlphabetName: "action_play_hint_video",
     source: "ヒント動画視聴履歴",
     inheritColumns: ["ユーザコード", "流入元パラメータ", "タイムスタンプ"],
-    mixinUsages: [new MixinUsage({ name: "動画再生履歴_視聴開始" })],
+    mixinUsages: [
+      new MixinUsage({ name: "動画再生履歴_視聴開始" }),
+      new MixinUsage({
+        name: "PLUS契約ユーザ（解約済み含む）",
+      }),
+    ],
   }),
 ];
