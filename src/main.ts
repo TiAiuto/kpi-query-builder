@@ -1486,39 +1486,6 @@ function main() {
         new QueryView({
           name: "",
           alphabetName: "",
-          source: "A_PLUS利用開始",
-          columns: [
-            new ValueSurface({
-              name: "統計値",
-              alphabetName: "stat_value",
-              value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_日抽出" }),
-                value: new AggregateValue({
-                  pattern: new AggregatePattern({
-                    name: "MAX",
-                  }),
-                  value: new SelectValue({
-                    sourceColumnName: "タイムスタンプ",
-                  }),
-                }),
-              }),
-            }),
-            new ValueSurface({
-              name: "統計種別ラベル",
-              alphabetName: "stat_label",
-              value: new ConstStringValue({ value: "契約_利用開始日" }),
-            }),
-          ],
-          inheritColumns: ["ユーザコード"],
-          groups: [
-            new Group({
-              value: new SelectValue({ sourceColumnName: "ユーザコード" }),
-            }),
-          ],
-        }),
-        new QueryView({
-          name: "",
-          alphabetName: "",
           source: "ユーザコード付きPLUS契約",
           columns: [
             new ValueSurface({
