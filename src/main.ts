@@ -1965,12 +1965,258 @@ function main() {
     });
     resolver.addView(reportUnionView);
   };
+
+
+  const userHealthScoreStatisticsMonthSubmitCounselingFirst = function () {
+    const reportUnionView = new UnionView({
+      name: "集計クエリ",
+      alphabetName: "aggregated_view",
+      views: [
+        new QueryView({
+          name: "",
+          alphabetName: "",
+          source: "A_ケース相談一次相談申込",
+          columns: [
+            new ValueSurface({
+              name: "統計値",
+              alphabetName: "stat_value",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "型変換_文字列" }),
+                value: new AggregateValue({
+                  pattern: new AggregatePattern({
+                    name: "COUNT",
+                  }),
+                  value: new SelectValue({
+                    sourceColumnName: "タイムスタンプ",
+                  }),
+                }),
+              }),
+            }),
+            new ValueSurface({
+              name: "集計期間",
+              alphabetName: "period",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                value: new SelectValue({
+                  sourceColumnName: "タイムスタンプ",
+                }),
+              }),
+            }),
+            new ValueSurface({
+              name: "統計種別ラベル",
+              alphabetName: "stat_label",
+              value: new ConstStringValue({ value: "ケース相談_月別_一次相談申込数" }),
+            }),
+          ],
+          inheritColumns: ["ユーザコード"],
+          groups: [
+            new Group({
+              value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+            }),
+            new Group({
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                value: new SelectValue({
+                  sourceColumnName: "タイムスタンプ",
+                }),
+              }),
+            }),
+          ],
+        }),
+      ],
+    });
+    resolver.addView(reportUnionView);
+  };
+
+  const userHealthScoreStatisticsMonthSubmitCounselingSecond = function () {
+    const reportUnionView = new UnionView({
+      name: "集計クエリ",
+      alphabetName: "aggregated_view",
+      views: [
+        new QueryView({
+          name: "",
+          alphabetName: "",
+          source: "A_ケース相談二次相談提出",
+          columns: [
+            new ValueSurface({
+              name: "統計値",
+              alphabetName: "stat_value",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "型変換_文字列" }),
+                value: new AggregateValue({
+                  pattern: new AggregatePattern({
+                    name: "COUNT",
+                  }),
+                  value: new SelectValue({
+                    sourceColumnName: "タイムスタンプ",
+                  }),
+                }),
+              }),
+            }),
+            new ValueSurface({
+              name: "集計期間",
+              alphabetName: "period",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                value: new SelectValue({
+                  sourceColumnName: "タイムスタンプ",
+                }),
+              }),
+            }),
+            new ValueSurface({
+              name: "統計種別ラベル",
+              alphabetName: "stat_label",
+              value: new ConstStringValue({ value: "ケース相談_月別_二次相談申込数" }),
+            }),
+          ],
+          inheritColumns: ["ユーザコード"],
+          groups: [
+            new Group({
+              value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+            }),
+            new Group({
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                value: new SelectValue({
+                  sourceColumnName: "タイムスタンプ",
+                }),
+              }),
+            }),
+          ],
+        }),
+      ],
+    });
+    resolver.addView(reportUnionView);
+  };
+  
+  const userHealthScoreStatisticsMonthEntryStudyMeeting = function () {
+    const reportUnionView = new UnionView({
+      name: "集計クエリ",
+      alphabetName: "aggregated_view",
+      views: [
+        new QueryView({
+          name: "",
+          alphabetName: "",
+          source: "A_勉強会申込",
+          columns: [
+            new ValueSurface({
+              name: "統計値",
+              alphabetName: "stat_value",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "型変換_文字列" }),
+                value: new AggregateValue({
+                  pattern: new AggregatePattern({
+                    name: "COUNT",
+                  }),
+                  value: new SelectValue({
+                    sourceColumnName: "タイムスタンプ",
+                  }),
+                }),
+              }),
+            }),
+            new ValueSurface({
+              name: "集計期間",
+              alphabetName: "period",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                value: new SelectValue({
+                  sourceColumnName: "タイムスタンプ",
+                }),
+              }),
+            }),
+            new ValueSurface({
+              name: "統計種別ラベル",
+              alphabetName: "stat_label",
+              value: new ConstStringValue({ value: "勉強会_月別_申込数" }),
+            }),
+          ],
+          inheritColumns: ["ユーザコード"],
+          groups: [
+            new Group({
+              value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+            }),
+            new Group({
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                value: new SelectValue({
+                  sourceColumnName: "タイムスタンプ",
+                }),
+              }),
+            }),
+          ],
+        }),
+      ],
+    });
+    resolver.addView(reportUnionView);
+  };
+
+  const userHealthScoreStatisticsMonthAttendStudyMeeting = function () {
+    const reportUnionView = new UnionView({
+      name: "集計クエリ",
+      alphabetName: "aggregated_view",
+      views: [
+        new QueryView({
+          name: "",
+          alphabetName: "",
+          source: "A_勉強会参加",
+          columns: [
+            new ValueSurface({
+              name: "統計値",
+              alphabetName: "stat_value",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "型変換_文字列" }),
+                value: new AggregateValue({
+                  pattern: new AggregatePattern({
+                    name: "COUNT",
+                  }),
+                  value: new SelectValue({
+                    sourceColumnName: "タイムスタンプ",
+                  }),
+                }),
+              }),
+            }),
+            new ValueSurface({
+              name: "集計期間",
+              alphabetName: "period",
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                value: new SelectValue({
+                  sourceColumnName: "タイムスタンプ",
+                }),
+              }),
+            }),
+            new ValueSurface({
+              name: "統計種別ラベル",
+              alphabetName: "stat_label",
+              value: new ConstStringValue({ value: "勉強会_月別_参加数" }),
+            }),
+          ],
+          inheritColumns: ["ユーザコード"],
+          groups: [
+            new Group({
+              value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+            }),
+            new Group({
+              value: new TransformValue({
+                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                value: new SelectValue({
+                  sourceColumnName: "タイムスタンプ",
+                }),
+              }),
+            }),
+          ],
+        }),
+      ],
+    });
+    resolver.addView(reportUnionView);
+  };
+
   // usersAfterContract();
   // usersContractedUsageSummary();
   // usersContractedUsageSummaryMoreThanMonth();
   // usersContractedSourceParamAfterMonth();
   // usersContractedSourceParamEachService();
-  userHealthScoreStatistics();
+  // userHealthScoreStatistics();
   // userHealthScoreStatisticsMonthPv();
   // userHealthScoreStatisticsMonthKyozaiLessonPv();
   // userHealthScoreStatisticsMonthKyozaiPdfClick();
@@ -1978,6 +2224,10 @@ function main() {
   // userHealthScoreStatisticsMonthStudyMeetingArchiveVideoPlay();
   // userHealthScoreStatisticsMonthStudyMeetingArchiveVideoEachTitle();
   // userHealthScoreStatisticsMonthStudyMeetingApplicationEachTitle();
+  // userHealthScoreStatisticsMonthSubmitCounselingFirst();
+  // userHealthScoreStatisticsMonthSubmitCounselingSecond();
+  // userHealthScoreStatisticsMonthEntryStudyMeeting();
+  userHealthScoreStatisticsMonthAttendStudyMeeting();
 
   const bootstrapViewName = "集計クエリ";
 
