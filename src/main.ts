@@ -2355,7 +2355,7 @@ function main() {
       new QueryView({
         name: "月次_視聴ユニーク回数_勉強会過去動画",
         alphabetName: "month_watch_unique_study_meeting_archive",
-        source: "勉強会過去動画視聴履歴",
+        source: "A_勉強会過去動画再生開始",
         columns: [
           new ValueSurface({
             name: "月次_視聴ユニーク回数_勉強会過去動画_値",
@@ -2384,7 +2384,7 @@ function main() {
       new QueryView({
         name: "月次_視聴回数_勉強会過去動画",
         alphabetName: "month_watch_study_meeting_archive",
-        source: "勉強会過去動画視聴履歴",
+        source: "A_勉強会過去動画再生開始",
         columns: [
           new ValueSurface({
             name: "月次_視聴回数_勉強会過去動画_値",
@@ -2556,7 +2556,7 @@ function main() {
       new QueryView({
         name: "月次_視聴ユニーク回数_ヒント動画",
         alphabetName: "month_watch_unique_hint_video",
-        source: "ヒント動画視聴履歴",
+        source: "A_ヒント動画再生開始",
         columns: [
           new ValueSurface({
             name: "月次_視聴ユニーク回数_ヒント動画",
@@ -2585,7 +2585,7 @@ function main() {
       new QueryView({
         name: "月次_視聴回数_ヒント動画",
         alphabetName: "month_watch_hint_video",
-        source: "ヒント動画視聴履歴",
+        source: "A_ヒント動画再生開始",
         columns: [
           new ValueSurface({
             name: "月次_視聴回数_ヒント動画",

@@ -925,7 +925,7 @@ END`,
     actionName: "A_ヒント動画再生開始",
     actionAlphabetName: "action_play_hint_video",
     source: "ヒント動画視聴履歴",
-    inheritColumns: ["ユーザコード", "流入元パラメータ", "タイムスタンプ"],
+    inheritColumns: ["ユーザコード", "流入元パラメータ", "タイムスタンプ", "ヒント動画コード"],
     mixinUsages: [
       new MixinUsage({ name: "動画再生履歴_視聴開始" }),
       new MixinUsage({
