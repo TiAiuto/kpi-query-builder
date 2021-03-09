@@ -2293,49 +2293,185 @@ function main() {
   };
 
   const userHealthScoreStatisticsMonthAll = function () {
-    const monthAggregateView = new QueryView({
-      name: "月次_参加_勉強会_クエリ",
-      alphabetName: "month_attend_study_query",
-      source: "A_勉強会参加",
-      columns: [
-        new ValueSurface({
-          name: "月次_参加_勉強会_値",
-          alphabetName: "month_attend_study_value",
-          value: new AggregateValue({
-            pattern: new AggregatePattern({
-              name: "COUNT",
-            }),
-            value: new SelectValue({
-              sourceColumnName: "ユーザコード",
+    resolver.addView(
+      new QueryView({
+        name: "月次_申込_勉強会",
+        alphabetName: "month_entry_study_query",
+        source: "A_勉強会申込",
+        columns: [
+          new ValueSurface({
+            name: "月次_申込_勉強会_値",
+            alphabetName: "month_entry_study_value",
+            value: new AggregateValue({
+              pattern: new AggregatePattern({
+                name: "COUNT",
+              }),
+              value: new SelectValue({
+                sourceColumnName: "ユーザコード",
+              }),
             }),
           }),
-        }),
-      ],
-      inheritColumns: ["ユーザコード"],
-      mixinUsages: [new MixinUsage({ name: "年月フォーム入力" })],
-      groups: [
-        new Group({
-          value: new SelectValue({ sourceColumnName: "ユーザコード" }),
-        }),
-      ],
-    });
-    resolver.addView(monthAggregateView);
+        ],
+        inheritColumns: ["ユーザコード"],
+        mixinUsages: [new MixinUsage({ name: "年月フォーム入力" })],
+        groups: [
+          new Group({
+            value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+          }),
+        ],
+      })
+    );
+
+    resolver.addView(
+      new QueryView({
+        name: "月次_参加_勉強会",
+        alphabetName: "month_attend_study",
+        source: "A_勉強会参加",
+        columns: [
+          new ValueSurface({
+            name: "月次_参加_勉強会_値",
+            alphabetName: "month_attend_study_value",
+            value: new AggregateValue({
+              pattern: new AggregatePattern({
+                name: "COUNT",
+              }),
+              value: new SelectValue({
+                sourceColumnName: "ユーザコード",
+              }),
+            }),
+          }),
+        ],
+        inheritColumns: ["ユーザコード"],
+        mixinUsages: [new MixinUsage({ name: "年月フォーム入力" })],
+        groups: [
+          new Group({
+            value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+          }),
+        ],
+      })
+    );
+
+    resolver.addView(
+      new QueryView({
+        name: "月次_視聴ユニーク回数_勉強会過去動画",
+        alphabetName: "month_watch_unique_study_meeting_archive",
+        source: "勉強会過去動画視聴履歴",
+        columns: [
+          new ValueSurface({
+            name: "月次_視聴ユニーク回数_勉強会過去動画_値",
+            alphabetName: "month_watch_unique_study_meeting_archive_value",
+            value: new AggregateValue({
+              pattern: new AggregatePattern({
+                name: "COUNT_DISTINCT",
+              }),
+              value: new SelectValue({
+                sourceColumnName: "過去動画コード",
+              }),
+            }),
+          }),
+        ],
+        inheritColumns: ["ユーザコード"],
+        mixinUsages: [new MixinUsage({ name: "年月フォーム入力" })],
+        groups: [
+          new Group({
+            value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+          }),
+        ],
+      })
+    );
+
+    resolver.addView(
+      new QueryView({
+        name: "月次_視聴回数_勉強会過去動画",
+        alphabetName: "month_watch_study_meeting_archive",
+        source: "勉強会過去動画視聴履歴",
+        columns: [
+          new ValueSurface({
+            name: "月次_視聴回数_勉強会過去動画_値",
+            alphabetName: "month_watch_study_meeting_archive_value",
+            value: new AggregateValue({
+              pattern: new AggregatePattern({
+                name: "COUNT",
+              }),
+              value: new SelectValue({
+                sourceColumnName: "過去動画コード",
+              }),
+            }),
+          }),
+        ],
+        inheritColumns: ["ユーザコード"],
+        mixinUsages: [new MixinUsage({ name: "年月フォーム入力" })],
+        groups: [
+          new Group({
+            value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+          }),
+        ],
+      })
+    );
 
     const aggregateView = new QueryView({
       name: "集計クエリ",
       alphabetName: "aggregate_query",
       source: "ユーザコード付きPLUS契約",
-      inheritColumns: ["契約ユーザコード", "月次_参加_勉強会_値"],
+      inheritColumns: [
+        "契約ユーザコード",
+        "月次_申込_勉強会_値",
+        "月次_参加_勉強会_値",
+        "月次_視聴ユニーク回数_勉強会過去動画_値",
+        "月次_視聴回数_勉強会過去動画_値",
+      ],
       joins: [
         new LeftJoin({
-          target: "月次_参加_勉強会_クエリ",
+          target: "月次_申込_勉強会",
           conditions: [
             new EqCondition({
               values: [
                 new SelectValue({ sourceColumnName: "契約ユーザコード" }),
                 new SelectValue({
                   sourceColumnName: "ユーザコード",
-                  source: "月次_参加_勉強会_クエリ",
+                  source: "月次_申込_勉強会",
+                }),
+              ],
+            }),
+          ],
+        }),
+        new LeftJoin({
+          target: "月次_参加_勉強会",
+          conditions: [
+            new EqCondition({
+              values: [
+                new SelectValue({ sourceColumnName: "契約ユーザコード" }),
+                new SelectValue({
+                  sourceColumnName: "ユーザコード",
+                  source: "月次_参加_勉強会",
+                }),
+              ],
+            }),
+          ],
+        }),
+        new LeftJoin({
+          target: "月次_視聴ユニーク回数_勉強会過去動画",
+          conditions: [
+            new EqCondition({
+              values: [
+                new SelectValue({ sourceColumnName: "契約ユーザコード" }),
+                new SelectValue({
+                  sourceColumnName: "ユーザコード",
+                  source: "月次_視聴ユニーク回数_勉強会過去動画",
+                }),
+              ],
+            }),
+          ],
+        }),
+        new LeftJoin({
+          target: "月次_視聴回数_勉強会過去動画",
+          conditions: [
+            new EqCondition({
+              values: [
+                new SelectValue({ sourceColumnName: "契約ユーザコード" }),
+                new SelectValue({
+                  sourceColumnName: "ユーザコード",
+                  source: "月次_視聴回数_勉強会過去動画",
                 }),
               ],
             }),
