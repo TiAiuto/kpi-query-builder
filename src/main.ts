@@ -2409,6 +2409,64 @@ function main() {
       })
     );
 
+    resolver.addView(
+      new QueryView({
+        name: "月次_申込回数_ケース相談_一次",
+        alphabetName: "month_submit_counseling_first",
+        source: "A_ケース相談一次相談申込",
+        columns: [
+          new ValueSurface({
+            name: "月次_申込回数_ケース相談_一次_値",
+            alphabetName: "month_submit_counseling_first_value",
+            value: new AggregateValue({
+              pattern: new AggregatePattern({
+                name: "COUNT",
+              }),
+              value: new SelectValue({
+                sourceColumnName: "タイムスタンプ",
+              }),
+            }),
+          }),
+        ],
+        inheritColumns: ["ユーザコード"],
+        mixinUsages: [new MixinUsage({ name: "年月フォーム入力" })],
+        groups: [
+          new Group({
+            value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+          }),
+        ],
+      })
+    );
+
+    resolver.addView(
+      new QueryView({
+        name: "月次_申込回数_ケース相談_二次",
+        alphabetName: "month_submit_counseling_second",
+        source: "A_ケース相談二次相談提出",
+        columns: [
+          new ValueSurface({
+            name: "月次_申込回数_ケース相談_二次_値",
+            alphabetName: "month_submit_counseling_second_value",
+            value: new AggregateValue({
+              pattern: new AggregatePattern({
+                name: "COUNT",
+              }),
+              value: new SelectValue({
+                sourceColumnName: "タイムスタンプ",
+              }),
+            }),
+          }),
+        ],
+        inheritColumns: ["ユーザコード"],
+        mixinUsages: [new MixinUsage({ name: "年月フォーム入力" })],
+        groups: [
+          new Group({
+            value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+          }),
+        ],
+      })
+    );
+
     const aggregateView = new QueryView({
       name: "集計クエリ",
       alphabetName: "aggregate_query",
@@ -2419,6 +2477,8 @@ function main() {
         "月次_参加_勉強会_値",
         "月次_視聴ユニーク回数_勉強会過去動画_値",
         "月次_視聴回数_勉強会過去動画_値",
+        "月次_申込回数_ケース相談_一次_値",
+        "月次_申込回数_ケース相談_二次_値",
       ],
       joins: [
         new LeftJoin({
@@ -2472,6 +2532,34 @@ function main() {
                 new SelectValue({
                   sourceColumnName: "ユーザコード",
                   source: "月次_視聴回数_勉強会過去動画",
+                }),
+              ],
+            }),
+          ],
+        }),
+        new LeftJoin({
+          target: "月次_申込回数_ケース相談_一次",
+          conditions: [
+            new EqCondition({
+              values: [
+                new SelectValue({ sourceColumnName: "契約ユーザコード" }),
+                new SelectValue({
+                  sourceColumnName: "ユーザコード",
+                  source: "月次_申込回数_ケース相談_一次",
+                }),
+              ],
+            }),
+          ],
+        }),
+        new LeftJoin({
+          target: "月次_申込回数_ケース相談_二次",
+          conditions: [
+            new EqCondition({
+              values: [
+                new SelectValue({ sourceColumnName: "契約ユーザコード" }),
+                new SelectValue({
+                  sourceColumnName: "ユーザコード",
+                  source: "月次_申込回数_ケース相談_二次",
                 }),
               ],
             }),
