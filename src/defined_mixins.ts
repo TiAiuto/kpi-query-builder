@@ -1,6 +1,7 @@
 import { EqCondition } from "./builder/condition/eq_condition";
 import { InCondition } from "./builder/condition/in_condition";
 import { NotNullCondition } from "./builder/condition/not_null_condition";
+import { PlaceholderCondition } from "./builder/condition/placeholder_condition";
 import { RawCondition } from "./builder/condition/raw_condition";
 import { Mixin } from "./builder/mixin";
 import { ConstStringValue } from "./builder/value/const_string_value";
@@ -145,6 +146,16 @@ export const DefinedMixins: Mixin[] = [
           new SelectValue({ sourceColumnName: "イベント種別" }),
           new ConstStringValue({ value: "play" }),
         ],
+      }),
+    ],
+  }),
+  new Mixin({
+    name: "年月フォーム入力",
+    conditions: [
+      new PlaceholderCondition({
+        template:
+          "FORMAT_TIMESTAMP('%Y/%m', ?, 'Asia/Tokyo') = '{{year}}/{{month}}'",
+        values: [new SelectValue({ sourceColumnName: "タイムスタンプ" })],
       }),
     ],
   }),
