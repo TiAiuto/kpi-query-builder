@@ -2551,21 +2551,51 @@ function main() {
         ],
       })
     );
+
     resolver.addView(
       new QueryView({
-        name: "月次_クリック_教材レッスンPDF",
-        alphabetName: "month_click_kyozai_lesson_pdf",
-        source: "A_教材PDFクリック",
+        name: "月次_視聴ユニーク回数_ヒント動画",
+        alphabetName: "month_watch_unique_hint_video",
+        source: "ヒント動画視聴履歴",
         columns: [
           new ValueSurface({
-            name: "月次_クリック_教材レッスンPDF",
-            alphabetName: "month_click_kyozai_lesson_pdf_value",
+            name: "月次_視聴ユニーク回数_ヒント動画",
+            alphabetName: "month_watch_unique_hint_video_value",
+            value: new AggregateValue({
+              pattern: new AggregatePattern({
+                name: "COUNT_DISTINCT",
+              }),
+              value: new SelectValue({
+                sourceColumnName: "ヒント動画コード",
+              }),
+            }),
+          }),
+        ],
+        inheritColumns: ["ユーザコード"],
+        mixinUsages: [new MixinUsage({ name: "年月フォーム入力" })],
+        groups: [
+          new Group({
+            value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+          }),
+        ],
+      })
+    );
+
+    resolver.addView(
+      new QueryView({
+        name: "月次_視聴回数_ヒント動画",
+        alphabetName: "month_watch_hint_video",
+        source: "ヒント動画視聴履歴",
+        columns: [
+          new ValueSurface({
+            name: "月次_視聴回数_ヒント動画",
+            alphabetName: "month_watch_hint_video_value",
             value: new AggregateValue({
               pattern: new AggregatePattern({
                 name: "COUNT",
               }),
               value: new SelectValue({
-                sourceColumnName: "ユーザコード",
+                sourceColumnName: "ヒント動画コード",
               }),
             }),
           }),
@@ -2592,9 +2622,11 @@ function main() {
         "月次_視聴回数_勉強会過去動画_値",
         "月次_申込回数_ケース相談_一次_値",
         "月次_申込回数_ケース相談_二次_値",
-        "月次_閲覧_PLUSどこでも", 
-        "月次_閲覧_教材レッスン", 
-        "月次_クリック_教材レッスンPDF", 
+        "月次_閲覧_PLUSどこでも",
+        "月次_閲覧_教材レッスン",
+        "月次_クリック_教材レッスンPDF",
+        "月次_視聴ユニーク回数_ヒント動画",
+        "月次_視聴回数_ヒント動画",
       ],
       joins: [
         new LeftJoin({
@@ -2718,6 +2750,34 @@ function main() {
                 new SelectValue({
                   sourceColumnName: "ユーザコード",
                   source: "月次_閲覧_PLUSどこでも",
+                }),
+              ],
+            }),
+          ],
+        }),
+        new LeftJoin({
+          target: "月次_視聴ユニーク回数_ヒント動画",
+          conditions: [
+            new EqCondition({
+              values: [
+                new SelectValue({ sourceColumnName: "契約ユーザコード" }),
+                new SelectValue({
+                  sourceColumnName: "ユーザコード",
+                  source: "月次_視聴ユニーク回数_ヒント動画",
+                }),
+              ],
+            }),
+          ],
+        }),
+        new LeftJoin({
+          target: "月次_視聴回数_ヒント動画",
+          conditions: [
+            new EqCondition({
+              values: [
+                new SelectValue({ sourceColumnName: "契約ユーザコード" }),
+                new SelectValue({
+                  sourceColumnName: "ユーザコード",
+                  source: "月次_視聴回数_ヒント動画",
                 }),
               ],
             }),
