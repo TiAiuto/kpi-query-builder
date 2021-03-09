@@ -19,6 +19,8 @@ import { RawCondition } from "./builder/condition/raw_condition";
 import { PlaceholderCondition } from "./builder/condition/placeholder_condition";
 import { EqCondition } from "./builder/condition/eq_condition";
 import { ConstStringValue } from "./builder/value/const_string_value";
+import { MixinUsage } from "./builder/mixin_usage";
+import { LeftJoin } from "./builder/join/left_join";
 
 function main() {
   const resolver = new ViewResolver({
@@ -993,7 +995,9 @@ function main() {
               name: "統計値",
               alphabetName: "stat_value",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_日抽出" }),
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_日抽出",
+                }),
                 value: new AggregateValue({
                   pattern: new AggregatePattern({
                     name: "MAX",
@@ -1059,7 +1063,9 @@ function main() {
               name: "統計値",
               alphabetName: "stat_value",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_日抽出" }),
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_日抽出",
+                }),
                 value: new AggregateValue({
                   pattern: new AggregatePattern({
                     name: "MAX",
@@ -1193,7 +1199,9 @@ function main() {
               name: "統計値",
               alphabetName: "stat_value",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_日抽出" }),
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_日抽出",
+                }),
                 value: new AggregateValue({
                   pattern: new AggregatePattern({
                     name: "MAX",
@@ -1327,7 +1335,9 @@ function main() {
               name: "統計値",
               alphabetName: "stat_value",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_日抽出" }),
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_日抽出",
+                }),
                 value: new AggregateValue({
                   pattern: new AggregatePattern({
                     name: "MAX",
@@ -1393,7 +1403,9 @@ function main() {
               name: "統計値",
               alphabetName: "stat_value",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_日抽出" }),
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_日抽出",
+                }),
                 value: new AggregateValue({
                   pattern: new AggregatePattern({
                     name: "MAX",
@@ -1440,7 +1452,9 @@ function main() {
             new ValueSurface({
               name: "統計種別ラベル",
               alphabetName: "stat_label",
-              value: new ConstStringValue({ value: "ケース相談_一次相談申込数" }),
+              value: new ConstStringValue({
+                value: "ケース相談_一次相談申込数",
+              }),
             }),
           ],
           inheritColumns: ["ユーザコード"],
@@ -1459,7 +1473,9 @@ function main() {
               name: "統計値",
               alphabetName: "stat_value",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_日抽出" }),
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_日抽出",
+                }),
                 value: new AggregateValue({
                   pattern: new AggregatePattern({
                     name: "MAX",
@@ -1473,7 +1489,9 @@ function main() {
             new ValueSurface({
               name: "統計種別ラベル",
               alphabetName: "stat_label",
-              value: new ConstStringValue({ value: "ケース相談_最終一次相談申込日" }),
+              value: new ConstStringValue({
+                value: "ケース相談_最終一次相談申込日",
+              }),
             }),
           ],
           inheritColumns: ["ユーザコード"],
@@ -1491,13 +1509,15 @@ function main() {
             new ValueSurface({
               name: "ユーザコード",
               alphabetName: "user_code",
-              value: new SelectValue({ sourceColumnName: '契約ユーザコード' }),
+              value: new SelectValue({ sourceColumnName: "契約ユーザコード" }),
             }),
             new ValueSurface({
               name: "統計値",
               alphabetName: "stat_value",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_日抽出" }),
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_日抽出",
+                }),
                 value: new AggregateValue({
                   pattern: new AggregatePattern({
                     name: "MAX",
@@ -1528,13 +1548,15 @@ function main() {
             new ValueSurface({
               name: "ユーザコード",
               alphabetName: "user_code",
-              value: new SelectValue({ sourceColumnName: '契約ユーザコード' }),
+              value: new SelectValue({ sourceColumnName: "契約ユーザコード" }),
             }),
             new ValueSurface({
               name: "統計値",
               alphabetName: "stat_value",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_日抽出" }),
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_日抽出",
+                }),
                 value: new AggregateValue({
                   pattern: new AggregatePattern({
                     name: "MAX",
@@ -1591,7 +1613,9 @@ function main() {
               name: "集計期間",
               alphabetName: "period",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_月抽出",
+                }),
                 value: new SelectValue({
                   sourceColumnName: "タイムスタンプ",
                 }),
@@ -1610,7 +1634,9 @@ function main() {
             }),
             new Group({
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_月抽出",
+                }),
                 value: new SelectValue({
                   sourceColumnName: "タイムスタンプ",
                 }),
@@ -1652,7 +1678,9 @@ function main() {
               name: "集計期間",
               alphabetName: "period",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_月抽出",
+                }),
                 value: new SelectValue({
                   sourceColumnName: "タイムスタンプ",
                 }),
@@ -1661,7 +1689,9 @@ function main() {
             new ValueSurface({
               name: "統計種別ラベル",
               alphabetName: "stat_label",
-              value: new ConstStringValue({ value: "PLUS全体_月別_教材_レッスンPV" }),
+              value: new ConstStringValue({
+                value: "PLUS全体_月別_教材_レッスンPV",
+              }),
             }),
           ],
           inheritColumns: ["ユーザコード"],
@@ -1671,7 +1701,9 @@ function main() {
             }),
             new Group({
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_月抽出",
+                }),
                 value: new SelectValue({
                   sourceColumnName: "タイムスタンプ",
                 }),
@@ -1713,7 +1745,9 @@ function main() {
               name: "集計期間",
               alphabetName: "period",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_月抽出",
+                }),
                 value: new SelectValue({
                   sourceColumnName: "タイムスタンプ",
                 }),
@@ -1722,7 +1756,9 @@ function main() {
             new ValueSurface({
               name: "統計種別ラベル",
               alphabetName: "stat_label",
-              value: new ConstStringValue({ value: "PLUS全体_月別_教材_PDFクリック" }),
+              value: new ConstStringValue({
+                value: "PLUS全体_月別_教材_PDFクリック",
+              }),
             }),
           ],
           inheritColumns: ["ユーザコード"],
@@ -1732,7 +1768,9 @@ function main() {
             }),
             new Group({
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_月抽出",
+                }),
                 value: new SelectValue({
                   sourceColumnName: "タイムスタンプ",
                 }),
@@ -1774,7 +1812,9 @@ function main() {
               name: "集計期間",
               alphabetName: "period",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_月抽出",
+                }),
                 value: new SelectValue({
                   sourceColumnName: "タイムスタンプ",
                 }),
@@ -1783,7 +1823,9 @@ function main() {
             new ValueSurface({
               name: "統計種別ラベル",
               alphabetName: "stat_label",
-              value: new ConstStringValue({ value: "PLUS全体_月別_ヒント動画_視聴回数" }),
+              value: new ConstStringValue({
+                value: "PLUS全体_月別_ヒント動画_視聴回数",
+              }),
             }),
           ],
           inheritColumns: ["ユーザコード"],
@@ -1793,7 +1835,9 @@ function main() {
             }),
             new Group({
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_月抽出",
+                }),
                 value: new SelectValue({
                   sourceColumnName: "タイムスタンプ",
                 }),
@@ -1835,7 +1879,9 @@ function main() {
               name: "集計期間",
               alphabetName: "period",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_月抽出",
+                }),
                 value: new SelectValue({
                   sourceColumnName: "タイムスタンプ",
                 }),
@@ -1844,7 +1890,9 @@ function main() {
             new ValueSurface({
               name: "統計種別ラベル",
               alphabetName: "stat_label",
-              value: new ConstStringValue({ value: "PLUS全体_月別_勉強会_過去動画視聴回数" }),
+              value: new ConstStringValue({
+                value: "PLUS全体_月別_勉強会_過去動画視聴回数",
+              }),
             }),
           ],
           inheritColumns: ["ユーザコード"],
@@ -1854,7 +1902,9 @@ function main() {
             }),
             new Group({
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_月抽出",
+                }),
                 value: new SelectValue({
                   sourceColumnName: "タイムスタンプ",
                 }),
@@ -1895,7 +1945,9 @@ function main() {
             new ValueSurface({
               name: "統計種別ラベル",
               alphabetName: "stat_label",
-              value: new ConstStringValue({ value: "PLUS全体_勉強会別_過去動画視聴回数" }),
+              value: new ConstStringValue({
+                value: "PLUS全体_勉強会別_過去動画視聴回数",
+              }),
             }),
           ],
           inheritColumns: ["ユーザコード", "勉強会コード", "勉強会タイトル"],
@@ -1930,32 +1982,42 @@ function main() {
               name: "勉強会開催日",
               alphabetName: "held_on",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_日抽出" }),
-                value: new SelectValue({sourceColumnName: '勉強会開始日時タイムスタンプ'})
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_日抽出",
+                }),
+                value: new SelectValue({
+                  sourceColumnName: "勉強会開始日時タイムスタンプ",
+                }),
               }),
             }),
             new ValueSurface({
               name: "申込日",
               alphabetName: "submiited_on",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_日抽出" }),
-                value: new SelectValue({sourceColumnName: '申込日時'})
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_日抽出",
+                }),
+                value: new SelectValue({ sourceColumnName: "申込日時" }),
               }),
             }),
             new ValueSurface({
               name: "参加日",
               alphabetName: "attended_on",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_日抽出" }),
-                value: new SelectValue({sourceColumnName: '参加日時'})
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_日抽出",
+                }),
+                value: new SelectValue({ sourceColumnName: "参加日時" }),
               }),
             }),
             new ValueSurface({
               name: "キャンセル日",
               alphabetName: "cancelled_on",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_日抽出" }),
-                value: new SelectValue({sourceColumnName: 'キャンセル日時'})
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_日抽出",
+                }),
+                value: new SelectValue({ sourceColumnName: "キャンセル日時" }),
               }),
             }),
           ],
@@ -1965,7 +2027,6 @@ function main() {
     });
     resolver.addView(reportUnionView);
   };
-
 
   const userHealthScoreStatisticsMonthSubmitCounselingFirst = function () {
     const reportUnionView = new UnionView({
@@ -1996,7 +2057,9 @@ function main() {
               name: "集計期間",
               alphabetName: "period",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_月抽出",
+                }),
                 value: new SelectValue({
                   sourceColumnName: "タイムスタンプ",
                 }),
@@ -2005,7 +2068,9 @@ function main() {
             new ValueSurface({
               name: "統計種別ラベル",
               alphabetName: "stat_label",
-              value: new ConstStringValue({ value: "ケース相談_月別_一次相談申込数" }),
+              value: new ConstStringValue({
+                value: "ケース相談_月別_一次相談申込数",
+              }),
             }),
           ],
           inheritColumns: ["ユーザコード"],
@@ -2015,7 +2080,9 @@ function main() {
             }),
             new Group({
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_月抽出",
+                }),
                 value: new SelectValue({
                   sourceColumnName: "タイムスタンプ",
                 }),
@@ -2057,7 +2124,9 @@ function main() {
               name: "集計期間",
               alphabetName: "period",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_月抽出",
+                }),
                 value: new SelectValue({
                   sourceColumnName: "タイムスタンプ",
                 }),
@@ -2066,7 +2135,9 @@ function main() {
             new ValueSurface({
               name: "統計種別ラベル",
               alphabetName: "stat_label",
-              value: new ConstStringValue({ value: "ケース相談_月別_二次相談申込数" }),
+              value: new ConstStringValue({
+                value: "ケース相談_月別_二次相談申込数",
+              }),
             }),
           ],
           inheritColumns: ["ユーザコード"],
@@ -2076,7 +2147,9 @@ function main() {
             }),
             new Group({
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_月抽出",
+                }),
                 value: new SelectValue({
                   sourceColumnName: "タイムスタンプ",
                 }),
@@ -2088,7 +2161,7 @@ function main() {
     });
     resolver.addView(reportUnionView);
   };
-  
+
   const userHealthScoreStatisticsMonthEntryStudyMeeting = function () {
     const reportUnionView = new UnionView({
       name: "集計クエリ",
@@ -2118,7 +2191,9 @@ function main() {
               name: "集計期間",
               alphabetName: "period",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_月抽出",
+                }),
                 value: new SelectValue({
                   sourceColumnName: "タイムスタンプ",
                 }),
@@ -2137,7 +2212,9 @@ function main() {
             }),
             new Group({
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_月抽出",
+                }),
                 value: new SelectValue({
                   sourceColumnName: "タイムスタンプ",
                 }),
@@ -2179,7 +2256,9 @@ function main() {
               name: "集計期間",
               alphabetName: "period",
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_月抽出",
+                }),
                 value: new SelectValue({
                   sourceColumnName: "タイムスタンプ",
                 }),
@@ -2198,7 +2277,9 @@ function main() {
             }),
             new Group({
               value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
+                pattern: new TransformPattern({
+                  name: "タイムスタンプ_月抽出",
+                }),
                 value: new SelectValue({
                   sourceColumnName: "タイムスタンプ",
                 }),
@@ -2212,64 +2293,57 @@ function main() {
   };
 
   const userHealthScoreStatisticsMonthAll = function () {
-    const reportUnionView = new UnionView({
+    const monthAggregateView = new QueryView({
+      name: "月次_参加_勉強会_クエリ",
+      alphabetName: "month_attend_study_query",
+      source: "A_勉強会参加",
+      columns: [
+        new ValueSurface({
+          name: "月次_参加_勉強会_値",
+          alphabetName: "month_attend_study_value",
+          value: new AggregateValue({
+            pattern: new AggregatePattern({
+              name: "COUNT",
+            }),
+            value: new SelectValue({
+              sourceColumnName: "ユーザコード",
+            }),
+          }),
+        }),
+      ],
+      inheritColumns: ["ユーザコード"],
+      mixinUsages: [new MixinUsage({ name: "年月フォーム入力" })],
+      groups: [
+        new Group({
+          value: new SelectValue({ sourceColumnName: "ユーザコード" }),
+        }),
+      ],
+    });
+    resolver.addView(monthAggregateView);
+
+    const aggregateView = new QueryView({
       name: "集計クエリ",
-      alphabetName: "aggregated_view",
-      views: [
-        new QueryView({
-          name: "",
-          alphabetName: "",
-          source: "A_勉強会参加",
-          columns: [
-            new ValueSurface({
-              name: "統計値",
-              alphabetName: "stat_value",
-              value: new TransformValue({
-                pattern: new TransformPattern({ name: "型変換_文字列" }),
-                value: new AggregateValue({
-                  pattern: new AggregatePattern({
-                    name: "COUNT",
-                  }),
-                  value: new SelectValue({
-                    sourceColumnName: "タイムスタンプ",
-                  }),
+      alphabetName: "aggregate_query",
+      source: "ユーザコード付きPLUS契約",
+      inheritColumns: ["契約ユーザコード", "月次_参加_勉強会_値"],
+      joins: [
+        new LeftJoin({
+          target: "月次_参加_勉強会_クエリ",
+          conditions: [
+            new EqCondition({
+              values: [
+                new SelectValue({ sourceColumnName: "契約ユーザコード" }),
+                new SelectValue({
+                  sourceColumnName: "ユーザコード",
+                  source: "月次_参加_勉強会_クエリ",
                 }),
-              }),
-            }),
-            new ValueSurface({
-              name: "集計期間",
-              alphabetName: "period",
-              value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
-                value: new SelectValue({
-                  sourceColumnName: "タイムスタンプ",
-                }),
-              }),
-            }),
-            new ValueSurface({
-              name: "統計種別ラベル",
-              alphabetName: "stat_label",
-              value: new ConstStringValue({ value: "勉強会_月別_参加数" }),
-            }),
-          ],
-          inheritColumns: ["ユーザコード"],
-          groups: [
-            new Group({
-              value: new SelectValue({ sourceColumnName: "ユーザコード" }),
-            }),
-            new Group({
-              value: new TransformValue({
-                pattern: new TransformPattern({ name: "タイムスタンプ_月抽出" }),
-                value: new SelectValue({
-                  sourceColumnName: "タイムスタンプ",
-                }),
-              }),
+              ],
             }),
           ],
         }),
       ],
     });
-    resolver.addView(reportUnionView);
+    resolver.addView(aggregateView);
   };
 
   // usersAfterContract();
